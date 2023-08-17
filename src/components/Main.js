@@ -21,10 +21,7 @@ class Main extends Component{
                 else
                     alert("로그인 성공");
             })
-        this.setState({
-            id:'',
-            pw:''
-        })
+
     }
     login = () => {
         const url = '/member/login';
