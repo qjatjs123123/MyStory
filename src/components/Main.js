@@ -65,7 +65,7 @@ class Main extends Component{
                             </Form>
                         </Card.Text>
                         <div style={{display: 'flex', justifyContent: 'center'}}>
-                            <StyledNavLink to="/main">회원가입</StyledNavLink>
+                            <StyledNavLink to="/join">회원가입</StyledNavLink>
                             <StyledNavLink to="/FindId">아이디찾기</StyledNavLink>
                             <StyledNavLink to="/FindPw">비밀번호찾기</StyledNavLink>
                         </div>
