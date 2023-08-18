@@ -1,23 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-let id = '';
-let idCheck = false;
-let pw = '';
-let pwCheck = false;
-let pwCheckCheck = false;
-let first = '';
-let firstcheck = false;
-let second = '';
-let secondcheck = false;
-let name = '';
-let namedcheck = false;
-let email = '';
-let emailcheck = false;
+
 
 function Join() {
+    const [id, setId] = useState('');
+    const [idCheck, setIdCheck] = useState(false);
+    const [pw, setPw] = useState('');
+    const [pwCheck, setPwCheck] = useState(false);
+    const [pwCheckCheck, setPwCheckCheck] = useState(false);
+    const [first, setFirst] = useState('');
+    const [firstcheck, setFirstCheck] = useState(false);
+    const [second, setSecond] = useState('');
+    const [secondcheck, setSecondCheck] = useState(false);
+    const [name, setName] = useState('');
+    const [namedcheck, setNamedCheck] = useState(false);
+    const [email, setEmail] = useState('');
+    const [emailcheck, setEmailCheck] = useState(false);
+
     const [idResult, setIdResult] = useState('');
     const [pwResult, setPwResult] = useState('');
     const [pwCheckResult, setPwCheckResult] = useState('');
@@ -26,22 +28,28 @@ function Join() {
     const [emailResult, setEmailResult] = useState('');
     const navigate = useNavigate();
 
+    useEffect(() => {
+        if (firstcheck && secondcheck) {
+            setFirstResult('올바른 주민번호 입니다.');
+        }
+    }, [firstcheck, secondcheck]);
     const duplicateIdCheck = (e) => {
-        id = e.target.value;
+        
+        setId(e.target.value);
         if (e.target.value === '') return;
         IdCheck()
             .then((response) => {
                 if (response.data.length === 0) {
                     setIdResult('사용가능한 아이디 입니다.');
-                    idCheck = true;
+                    setIdCheck(true);
                 }
                 else {
                     setIdResult('중복된 아이디 입니다.');
-                    idCheck = false;
+                    setIdCheck(false);
                 }
             })
     }
-
+    
     const IdCheck = () => {
         const url = '/member/idcheck';
         const data = {
@@ -52,16 +60,16 @@ function Join() {
     }
 
     const passwordCheck = (e) => {
-        pw = e.target.value;
+        setPw(e.target.value);
         if (e.target.value === '') return;
         let reg = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/;
         if (!reg.test(e.target.value)) {
             setPwResult('비밀번호 규칙 위반입니다.');
-            pwCheck = false;
+            setPwCheck(false);
         }
         else {
             setPwResult('사용가능한 비밀번호입니다.');
-            pwCheck = true;
+            setPwCheck(true);
         }
     }
 
@@ -69,10 +77,10 @@ function Join() {
         if (e.target.value === '') return;
         if (e.target.value === pw) {
             setPwCheckResult('비밀번호 일치합니다.');
-            pwCheckCheck = true;
+            setPwCheckCheck(true);
         } else {
             setPwCheckResult('비밀번호 불일치합니다.');
-            pwCheckCheck = false;
+            setPwCheckCheck(false);
         }
     }
 
@@ -82,49 +90,51 @@ function Join() {
             let reg = /^\d{6}/;
             if (!reg.test(e.target.value)) {
                 setFirstResult('주민번호 오류입니다.');
-                firstcheck = false;
+                setFirstCheck(false);
             } else {
-                firstcheck = true;
+                setFirstCheck(true);
+                console.log(firstcheck , secondcheck)
             }
-            first = e.target.value;
+            setFirst(e.target.value);
         } else {
             let reg = /^\d{7}/;
             if (!reg.test(e.target.value)) {
                 setFirstResult('주민번호 오류입니다.');
-                secondcheck = false;
+                setSecondCheck(false);
             } else {
-                secondcheck = true;
+                setSecondCheck(true);
             }
-            second = e.target.value;
+            setSecond(e.target.value);
         }
+        
         if (firstcheck && secondcheck) setFirstResult('올바른 주민번호 입니다.');
     }
 
     const nameCheck = (e) => {
         if (e.target.value === '') return;
-        name = e.target.value;
+        setName(e.target.value);
         let reg = /\s/;
         if (!reg.test(e.target.value)) {
             setNameResult('좋은 이름입니다.');
-            namedcheck = true;
+            setNamedCheck(true);
         }
         else {
             setNameResult('공백이 있습니다.');
-            namedcheck = false;
+            setNamedCheck(false);
         }
     }
 
     const emailCheck = (e) => {
         if (e.target.value === '') return;
-        email = e.target.value;
+        setEmail(e.target.value);
         let reg = /^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
         if (!reg.test(e.target.value)) {
             setEmailResult('이메일 형식 오류입니다.');
-            emailcheck = false;
+            setEmailCheck(false);
         }
         else {
             setEmailResult('올바른 이메일 형식입니다.');
-            emailcheck = true;
+            setEmailCheck(true);
         }
     }
 
