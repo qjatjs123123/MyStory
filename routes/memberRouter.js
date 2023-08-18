@@ -28,11 +28,11 @@ async function sendMail(email){
         })
 
         const mailOptions = {
-            from: 'hi <qjatjs123123@gmail.com>',
+            from: '관리자 <qjatjs123123@gmail.com>',
             to: email,
-            subject: "Hello from gmail using API",
-            text: 'Hello from gmail email using API',
-            html: '<h1>Hello from gmail email using API <h1>'
+            subject: "비밀번호 인증입니다.",
+            text: '비밀번호 인증입니다.',
+            html: '<h1>비밀번호 인증입니다.<h1><br/><h3><a href="http://localhost:3000/">비밀번호 변경하기</a><h3>'
         };
         const result = await transport.sendMail(mailOptions);
         return result;
@@ -47,7 +47,6 @@ router.post("/sendEmail", (req, res) => {
     getConnection((conn) => {
         const sql = "SELECT * FROM member WHERE userID = ? AND userNum = ? AND userMail = ?";
         let params = [userName, userNum, userEmail];
-        console.log(userName,userNum, userEmail);
         conn.query(sql,params,
             (err,rows,fields) => {
                 conn.release();
