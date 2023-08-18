@@ -26,7 +26,19 @@ router.post("/idcheck", (req, res) => {
         conn.query(sql,params,
             (err,rows,fields) => {
                 conn.release();
-                console.log(rows);
+                res.send(rows);
+            })
+    })
+})
+
+router.post("/join", (req, res) => {
+    const {userId, userPw, userName, userMail, userNum} = req.body;  
+    getConnection((conn) => {
+        const sql = 'INSERT INTO member VALUES (?, ?, ?, ?, ?)';
+        let params = [userId, userPw, userName, userMail, userNum];
+        conn.query(sql,params,
+            (err,rows,fields) => {
+                conn.release();
                 res.send(rows);
             })
     })
