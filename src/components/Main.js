@@ -54,13 +54,13 @@ class Main extends Component{
                 <Card style={{ width: '25rem', background:'lightgray'}}>
                     <Card.Body>
                         <Card.Title style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '30px'}}>게시판</Card.Title>
-                        <Card.Text>
+                        <div>
                             <Form style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                 <input type="text" placeholder="ID" name='ID' onChange={this.handleValueChange} style={{ marginBottom: '10px', width: '23rem',marginTop:'20px'}} />
                                 <input type="password" placeholder="PW" name ='PW' onChange={this.handleValueChange} style={{width: '23rem'}}/> <br/>
-                                <button type="submit" className="btn btn-primary" style={{ width: '6rem'}} onClick={this.loginSubmit}>로그인</button>
+                                <button type="submit" className="btn btn-primary" style={{ width: '6rem', marginBottom:'15px'}} onClick={this.loginSubmit}>로그인</button>
                             </Form>
-                        </Card.Text>
+                        </div>
                         <div style={{display: 'flex', justifyContent: 'center'}}>
                             <StyledNavLink to="/join">회원가입</StyledNavLink>
                             <StyledNavLink to="/FindId">아이디찾기</StyledNavLink>

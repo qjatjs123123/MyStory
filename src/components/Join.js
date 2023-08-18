@@ -174,7 +174,7 @@ function Join() {
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '30px' }}>
-            <p style={{ fontSize: '3rem', fontWeight: 'bold', color: 'brown' }}>회원가입</p>
+            <div style={{ fontSize: '3rem', fontWeight: 'bold', color: 'brown' }}>회원가입</div>
             <Form >
                 <Form.Group className="mb-3" controlId="formGroupEmail">
                     <Form.Label>아이디</Form.Label>
@@ -196,7 +196,7 @@ function Join() {
                     <Form.Label>주민등록번호</Form.Label>
                     <div style={{ display: 'flex', flexDirection: 'row' }}>
                         <Form.Control onBlur={numCheck} name='first' type="text" placeholder="First" style={{ width: '237px', border: '2px solid black', marginRight: '10px' }} />
-                        <p>-</p>
+                        <div>-</div>
                         <Form.Control onBlur={numCheck} name='second' type="password" placeholder="Second" style={{ width: '237px', border: '2px solid black', marginLeft: '10px' }} />
                     </div>
                     <div style={{ height: '10px', fontSize: '13px', color: firstResult === '주민번호 오류입니다.' ? 'red' : 'green' }}>{firstResult}</div>

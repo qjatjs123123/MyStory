@@ -44,4 +44,17 @@ router.post("/join", (req, res) => {
     })
 })
 
+router.post("/findId", (req, res) => {
+    const {userName, userNum} = req.body;  
+    getConnection((conn) => {
+        const sql = "SELECT * FROM member WHERE userName = ? AND userNum = ?";
+        let params = [userName, userNum];
+        conn.query(sql,params,
+            (err,rows,fields) => {
+                conn.release();
+                res.send(rows);
+            })
+    })
+})
+
 module.exports = router;
