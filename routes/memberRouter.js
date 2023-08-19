@@ -82,7 +82,7 @@ router.post("/changePw", (req, res) => {
     let params = [userPw, userID];
     getConnection((conn) => {
         const sql = "UPDATE member SET userPassword = ? WHERE userID = ?";
-        let params = [userPw, userID];
+        let params = [encrypt(userPw), userID];
         conn.query(sql,params,
             (err,rows,fields) => {
                 conn.release();
@@ -94,18 +94,22 @@ router.post("/changePw", (req, res) => {
 router.post("/sendEmail", (req, res) => {
     const {userName, userNum, userEmail} = req.body;  
     getConnection((conn) => {
-        const sql = "SELECT * FROM member WHERE userID = ? AND userNum = ? AND userMail = ?";
-        let params = [userName, userNum, userEmail];
+        const sql = "SELECT * FROM member WHERE userID = ? AND userMail = ?";
+        let params = [userName, userEmail];
         conn.query(sql,params,
             (err,rows,fields) => {
                 conn.release();
-                if (rows.length === 0) res.send('존재하지 않는 정보입니다.');
-                else{
-                    sendMail(userName, userEmail)
-                        .then((result) => res.send('이메일을 발송하였습니다.'))
-                        .catch((error) => res.send('이메일 발송 중 에러가 발생하였습니다.'));
-                    
-                }
+                let flg = false;
+                rows.forEach((row) => {      
+                    if(bcrypt.compareSync(userNum,row.userNum)){
+                        flg = true;
+                        sendMail(userName, userEmail)
+                            .then((result) => res.send('이메일을 발송하였습니다.'))
+                            .catch((error) => res.send('이메일 발송 중 에러가 발생하였습니다.'));
+                    }
+                })
+                if (!flg) res.send('존재하지 않는 정보입니다.');
+
             })
     })
 })
