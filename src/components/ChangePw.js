@@ -13,10 +13,13 @@ function ChangePw() {
     const [pwResult, setPwResult] = useState('');
     const [pwCheckResult, setPwCheckResult] = useState('');
     const [isCorrect, setIsCorrect] = useState('');
+    const [userID, setuserID] = useState('');
+    const navigate = useNavigate();
     useEffect (() => {
         const urlParams = new URL(window.location.href).searchParams;
         const token = urlParams.get('token');
         const userID = urlParams.get('userID');   
+        setuserID(userID);
         checkTokenSubmit(token,userID);
     }, [isCorrect]);
 
@@ -70,7 +73,8 @@ function ChangePw() {
     const changePw = () => {
         const url = '/member/changePw';
         const data = {
-            userPw: pw
+            userPw: pw,
+            userID:userID
         };
 
         return axios.post(url, data);
@@ -84,7 +88,9 @@ function ChangePw() {
                     if (response.data.length === 0)
                         alert("비밀번호변경 실패");
                     else {
+                        console.log(response.data);
                         alert("비밀번호변경 성공");
+                        navigate("/main");
                     }
                 })
         }

@@ -36,7 +36,6 @@ async function sendMail(userName, email){
             html: `<h1>비밀번호 인증입니다.<h1><br/><h3><a href=http://localhost:3000/changePw?token=${randomBytes}&userID=${userName}>비밀번호 변경하기</a><h3>`
         };
         await insertEmailCode(randomBytes,userName, email);
-        console.log(mailOptions);
         const result = await transport.sendMail(mailOptions);
         return result;
     }catch(error){
@@ -60,12 +59,11 @@ async function insertEmailCode(token,userID, userEmail){
 router.post("/checkToken", (req, res) => {
     const {userEmailCode, userID} = req.body;  
     getConnection((conn) => {
-        const sql = "SELECT * FROM member WHERE userID = ? AND userEmailCode = ? AND userEmailTime > NOW()";
+        const sql = "SELECT * FROM member WHERE userID = ? AND userEmailCode = ? AND userEmailTime > NOW()-60000";
         let params = [userID,userEmailCode];
         conn.query(sql,params,
             (err,rows,fields) => {
                 conn.release();
-                console.log(rows);
                 if (rows.length === 0) res.send(false);
                 else res.send(true);
             })
@@ -73,15 +71,14 @@ router.post("/checkToken", (req, res) => {
 })
 
 router.post("/changePw", (req, res) => {
-    const {userPw} = req.body;
-    let params = [userPw];
+    const {userPw, userID} = req.body;
+    let params = [userPw, userID];
     getConnection((conn) => {
-        const sql = "UPDATE member SET userPassword = ?";
-        let params = [userPw];
+        const sql = "UPDATE member SET userPassword = ? WHERE userID = ?";
+        let params = [userPw, userID];
         conn.query(sql,params,
             (err,rows,fields) => {
                 conn.release();
-                console.log(rows);
                 res.send(rows);
             })
     })
