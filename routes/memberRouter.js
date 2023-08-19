@@ -66,7 +66,7 @@ async function insertEmailCode(token,userID, userEmail){
 router.post("/checkToken", (req, res) => {
     const {userEmailCode, userID} = req.body;  
     getConnection((conn) => {
-        const sql = "SELECT * FROM member WHERE userID = ? AND userEmailCode = ? AND userEmailTime > NOW()-60000";
+        const sql = "SELECT * FROM member WHERE userID = ? AND userEmailCode = ? AND userEmailTime > NOW()";
         let params = [userID,userEmailCode];
         conn.query(sql,params,
             (err,rows,fields) => {

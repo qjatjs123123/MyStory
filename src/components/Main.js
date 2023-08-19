@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Card, Form } from 'react-bootstrap';
+import {Card, Form,Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Link} from 'react-router-dom';
 import styled from 'styled-components';
@@ -56,9 +56,15 @@ class Main extends Component{
                         <Card.Title style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '30px'}}>게시판</Card.Title>
                         <div>
                             <Form style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                <input type="text" placeholder="ID" name='ID' onChange={this.handleValueChange} style={{ marginBottom: '10px', width: '23rem',marginTop:'20px'}} />
-                                <input type="password" placeholder="PW" name ='PW' onChange={this.handleValueChange} style={{width: '23rem'}}/> <br/>
-                                <button type="submit" className="btn btn-primary" style={{ width: '6rem', marginBottom:'15px'}} onClick={this.loginSubmit}>로그인</button>
+                                <Form.Group className="mb-3" controlId="formGroupEmail">
+                                    <Form.Label>아이디</Form.Label>
+                                    <Form.Control type="text" placeholder="ID" name='ID' onChange={this.handleValueChange} style={{width: '23rem'}}/>
+                                </Form.Group>
+                                <Form.Group className="mb-3" controlId="formGroupPassword">
+                                    <Form.Label>비밀번호</Form.Label>
+                                    <Form.Control type="password" placeholder="PW" name ='PW' onChange={this.handleValueChange} style={{width: '23rem'}}/> <br/>        
+                                </Form.Group>
+                                <Button type="submit" className="btn btn-primary" style={{ width: '6rem', marginBottom:'15px'}} onClick={this.loginSubmit}>로그인</Button>
                             </Form>
                         </div>
                         <div style={{display: 'flex', justifyContent: 'center'}}>
