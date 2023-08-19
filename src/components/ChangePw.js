@@ -7,20 +7,14 @@ import axios from 'axios';
 
 
 function ChangePw() {
-    const [pw, setPw] = useState('');
-    const [pwCheck, setPwCheck] = useState(false);
-    const [pwCheckCheck, setPwCheckCheck] = useState(false);
-    const [pwResult, setPwResult] = useState('');
-    const [pwCheckResult, setPwCheckResult] = useState('');
     const [isCorrect, setIsCorrect] = useState('');
     const [userID, setuserID] = useState('');
-    const navigate = useNavigate();
-    useEffect (() => {
+    useEffect(() => {
         const urlParams = new URL(window.location.href).searchParams;
         const token = urlParams.get('token');
-        const userID = urlParams.get('userID');   
+        const userID = urlParams.get('userID');
         setuserID(userID);
-        checkTokenSubmit(token,userID);
+        checkTokenSubmit(token, userID);
     }, [isCorrect]);
 
     const checkToken = (token, userID) => {
@@ -44,6 +38,35 @@ function ChangePw() {
             })
     }
 
+    if (isCorrect === true) {
+        return < CorrectForm userID={userID}/>
+    } else if (isCorrect === false) {
+        return <NotCorrectForm/>
+    } else {
+        return
+    }
+}
+
+function NotCorrectForm(){
+    return (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
+            <Card style={{ width: '30rem', background: 'ivory' }}>
+                <Card.Body>
+                    <Card.Title style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '30px' }}>잘못된 접근입니다.</Card.Title><br />
+                </Card.Body>
+            </Card>
+        </div>
+    )
+}
+
+function CorrectForm (props){
+    const [pw, setPw] = useState('');
+    const [pwCheck, setPwCheck] = useState(false);
+    const [pwCheckCheck, setPwCheckCheck] = useState(false);
+    const [pwResult, setPwResult] = useState('');
+    const [pwCheckResult, setPwCheckResult] = useState('');
+
+    const navigate = useNavigate();
 
     const passwordCheck = (e) => {
         setPw(e.target.value);
@@ -74,7 +97,7 @@ function ChangePw() {
         const url = '/member/changePw';
         const data = {
             userPw: pw,
-            userID:userID
+            userID: props.userID
         };
 
         return axios.post(url, data);
@@ -98,9 +121,8 @@ function ChangePw() {
             alert("제대로 입력하세요");
         }
     }
-    if(isCorrect === true){
     return (
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
                 <Card style={{ width: '30rem', background: 'ivory' }}>
                     <Card.Body>
                         <Card.Title style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '30px' }}>비밀번호변경</Card.Title><br />
@@ -124,19 +146,7 @@ function ChangePw() {
                     </Card.Body>
                 </Card>
             </div>
-        )
-    }else if(isCorrect === false){
-        return (
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
-                <Card style={{ width: '30rem', background: 'ivory' }}>
-                    <Card.Body>
-                        <Card.Title style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '30px' }}>잘못된 접근입니다.</Card.Title><br />
-                    </Card.Body>
-                </Card>
-            </div>
-        )
-    }else{
-        return}
+    )
 }
 
 
