@@ -6,6 +6,7 @@ import FindPw from './components/FindPw';
 import Header from './components/Nav';
 import Join from './components/Join';
 import ChangePw from './components/ChangePw';
+import Board from './components/Board';
 class Routing extends Component{
     render(){
         return(
@@ -18,6 +19,7 @@ class Routing extends Component{
                     <Route path='/FindId' element={<FindId />} />
                     <Route path='/FindPw' element={<FindPw />} />
                     <Route path='/ChangePw' element={<ChangePw />} />
+                    <Route path='/Board' element={<Board />} />
                 </Routes>
             </BrowserRouter>
         )
