@@ -3,6 +3,7 @@ const router = express.Router();
 const getConnection = require('../db');
 const {google} = require('googleapis');
 const nodemailer = require('nodemailer');
+const crypto = require('crypto');
 
 const CLIENT_ID = '241966183545-i1kij6ck37n9l4so3sra5388tvogb3jf.apps.googleusercontent.com';
 const CLIENT_SECRET = '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';
@@ -11,7 +12,7 @@ const REFRESH_TOKEN = '1//046ucT9uHX1sCCgYIARAAGAQSNwF-L9Ircxy-UzMkJoqKskGQNB97q
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET);
 oAuth2Client.setCredentials({refresh_token: REFRESH_TOKEN});
 
-async function sendMail(email){
+async function sendMail(userName, email){
     try{
         const accessToken = await oAuth2Client.getAccessToken();
 
@@ -26,14 +27,16 @@ async function sendMail(email){
                 accessToken: accessToken
             }
         })
-
+        const randomBytes = crypto.randomBytes(20).toString('hex');
         const mailOptions = {
             from: '관리자 <qjatjs123123@gmail.com>',
             to: email,
             subject: "비밀번호 인증입니다.",
             text: '비밀번호 인증입니다.',
-            html: '<h1>비밀번호 인증입니다.<h1><br/><h3><a href="http://localhost:3000/">비밀번호 변경하기</a><h3>'
+            html: `<h1>비밀번호 인증입니다.<h1><br/><h3><a href=http://localhost:3000/changePw?token=${randomBytes}&userID=${userName}>비밀번호 변경하기</a><h3>`
         };
+        await insertEmailCode(randomBytes,userName, email);
+        console.log(mailOptions);
         const result = await transport.sendMail(mailOptions);
         return result;
     }catch(error){
@@ -41,6 +44,48 @@ async function sendMail(email){
         throw error;
     }
 }
+
+async function insertEmailCode(token,userID, userEmail){
+    getConnection((conn) => {
+        const sql = "UPDATE member SET userEmailCode = ?, userEmailTime = DATE_ADD(NOW(), INTERVAL 1 MINUTE) WHERE userID = ? AND userMail = ?";
+        let params = [token,userID,userEmail];
+        conn.query(sql,params,
+            (err,rows,fields) => {
+                if(err) throw err;
+                conn.release();
+            })
+    })
+}
+
+router.post("/checkToken", (req, res) => {
+    const {userEmailCode, userID} = req.body;  
+    getConnection((conn) => {
+        const sql = "SELECT * FROM member WHERE userID = ? AND userEmailCode = ? AND userEmailTime > NOW()";
+        let params = [userID,userEmailCode];
+        conn.query(sql,params,
+            (err,rows,fields) => {
+                conn.release();
+                console.log(rows);
+                if (rows.length === 0) res.send(false);
+                else res.send(true);
+            })
+    })
+})
+
+router.post("/changePw", (req, res) => {
+    const {userPw} = req.body;
+    let params = [userPw];
+    getConnection((conn) => {
+        const sql = "UPDATE member SET userPassword = ?";
+        let params = [userPw];
+        conn.query(sql,params,
+            (err,rows,fields) => {
+                conn.release();
+                console.log(rows);
+                res.send(rows);
+            })
+    })
+})
 
 router.post("/sendEmail", (req, res) => {
     const {userName, userNum, userEmail} = req.body;  
@@ -52,7 +97,7 @@ router.post("/sendEmail", (req, res) => {
                 conn.release();
                 if (rows.length === 0) res.send('존재하지 않는 정보입니다.');
                 else{
-                    sendMail(userEmail)
+                    sendMail(userName, userEmail)
                         .then((result) => res.send('이메일을 발송하였습니다.'))
                         .catch((error) => res.send('이메일 발송 중 에러가 발생하였습니다.'));
                     

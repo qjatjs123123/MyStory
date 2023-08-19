@@ -153,8 +153,6 @@ function Join() {
 
     const joinSubmit = (e) => {
         e.preventDefault();
-        console.log(idCheck , pwCheck , pwCheckCheck ,
-            firstcheck , secondcheck , namedcheck ,emailcheck);
         if (idCheck && pwCheck && pwCheckCheck &&
             firstcheck && secondcheck && namedcheck && emailcheck) {
             join()
