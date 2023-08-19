@@ -33,7 +33,7 @@ function FindId(){
                     if (response.data.length === 0)
                         setResult('해당하는 ID가 없습니다.');
                     else {
-                        setResult(response.data[0].userID);
+                        setResult(response.data.userID);
                     }
                 })
         }

@@ -4,6 +4,8 @@ const getConnection = require('../db');
 const {google} = require('googleapis');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
+const bcrypt = require('bcrypt');
+
 
 const CLIENT_ID = '241966183545-i1kij6ck37n9l4so3sra5388tvogb3jf.apps.googleusercontent.com';
 const CLIENT_SECRET = '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';
@@ -11,6 +13,11 @@ const REDIRECT_URI = 'https://developers.google.com/oauthplayground';
 const REFRESH_TOKEN = '1//046ucT9uHX1sCCgYIARAAGAQSNwF-L9Ircxy-UzMkJoqKskGQNB97q2i06PCiGCcoUovcthjth9fhhCcs7-zZ-AqS2UvndVufT_c';
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET);
 oAuth2Client.setCredentials({refresh_token: REFRESH_TOKEN});
+
+
+function encrypt(target){
+    return bcrypt.hashSync(target, 10);
+}
 
 async function sendMail(userName, email){
     try{
@@ -135,12 +142,13 @@ router.post("/idcheck", (req, res) => {
 router.post("/join", (req, res) => {
     const {userId, userPw, userName, userMail, userNum} = req.body;  
     getConnection((conn) => {
-        const sql = 'INSERT INTO member VALUES (?, ?, ?, ?, ?)';
-        let params = [userId, userPw, userName, userMail, userNum];
+        const sql = 'INSERT INTO member VALUES (?, ?, ?, ?, ?, ?,?)';
+        let params = [userId, encrypt(userPw), userName, userMail, encrypt(userNum),null,null];
         conn.query(sql,params,
             (err,rows,fields) => {
                 conn.release();
                 res.send(rows);
+                console.log(err);
             })
     })
 })
@@ -148,12 +156,17 @@ router.post("/join", (req, res) => {
 router.post("/findId", (req, res) => {
     const {userName, userNum} = req.body;  
     getConnection((conn) => {
-        const sql = "SELECT * FROM member WHERE userName = ? AND userNum = ?";
-        let params = [userName, userNum];
+        const sql = "SELECT * FROM member WHERE userName = ?";
+        let params = [userName];
         conn.query(sql,params,
             (err,rows,fields) => {
                 conn.release();
-                res.send(rows);
+                let flg = false;
+                rows.forEach((row) => {      
+                    if(bcrypt.compareSync(userNum,row.userNum)){res.send(row); flg=true;}
+                })
+                if (!flg) res.send([]);
+                
             })
     })
 })
