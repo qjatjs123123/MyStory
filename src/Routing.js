@@ -8,18 +8,30 @@ import Join from './components/Join';
 import ChangePw from './components/ChangePw';
 import Board from './components/Board';
 class Routing extends Component{
+    constructor(props){
+        super(props);
+            this.state = {
+                count : 1
+            };
+    }
+
+    setlogin = () => {
+        this.setState({count:this.state.count+1});
+        console.log(this.state.count);
+    }
+
     render(){
         return(
             <BrowserRouter>
-                <Header/>
+                <Header count={this.state.count}/>
                 <Routes>
-                    <Route path='/' element={<Main />} />  
+                    <Route path='/' element={<Main setlogin={this.setlogin}/>} />  
                     <Route path='/join' element={<Join />} /> 
-                    <Route path='/main' element={<Main />} />
+                    <Route path='/main' element={<Main setlogin={this.setlogin}/>} />
                     <Route path='/FindId' element={<FindId />} />
                     <Route path='/FindPw' element={<FindPw />} />
                     <Route path='/ChangePw' element={<ChangePw />} />
-                    <Route path='/Board' element={<Board />} />
+                    <Route path='/Board' element={ <Board />} />
                 </Routes>
             </BrowserRouter>
         )

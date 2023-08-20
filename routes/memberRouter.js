@@ -132,13 +132,13 @@ router.post("/login", (req, res) => {
                     console.log();  
                     if(bcrypt.compareSync(userPw,row.userPassword)){
                         flg=true;
-
+                        insertUserLoginTime(userId);
                         token = jwt.sign({
                             userID: row.userID,
                             userName: row.userName,
                             userEmail : row.userMail
                           }, SECRET_KEY, {
-                            expiresIn: '1m', // 만료시간 15분
+                            expiresIn: '30m', // 만료시간 15분
                             issuer: 'hong',
                           });
                         res.cookie('jwt', token);
@@ -154,6 +154,18 @@ router.post("/login", (req, res) => {
             })
     })
 })
+
+function insertUserLoginTime(userId){
+    getConnection((conn) => {
+        const sql = "UPDATE member SET userLoginTime = NOW() WHERE userID = ?";
+        let params = [userId];
+        conn.query(sql,params,
+            (err,rows,fields) => {
+                conn.release();
+                console.log(err);
+            })
+    })
+}
 
 router.post("/idcheck", (req, res) => {
     const {userId} = req.body;

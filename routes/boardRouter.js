@@ -1,23 +1,33 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const getConnection = require('../db');
 
-const verfyCheck = (req, res) => {
+
+
+router.post("/loginCheck", (req, res) => {
     try{
         const verified = jwt.verify(req.cookies.jwt, "1234");
-        return true;
+        res.send(true);
     }catch(err){
-        return false;
+        res.send(false);
     }
-}
+})
 
-router.post("/test", (req, res) => {
-    console.log( req.cookies.jwt );
+router.post("/getTimer", (req, res) => {
     try{
-        const verified = jwt.verify(req.cookies.jwt, "1234");
-        console.log(verified);
+        const userID = jwt.verify(req.cookies.jwt, "1234").userID;
+        getConnection((conn) => {
+            const sql = "SELECT TIMESTAMPDIFF(SECOND, userLoginTime , NOW()) AS TIMER FROM member WHERE userID = ?";
+            let params = [userID];
+            conn.query(sql,params,
+                (err,rows,fields) => {
+                    conn.release();
+                    res.send(rows[0]);
+                })
+        })
     }catch(err){
-        console.log(err);
+        res.send('logout')
     }
 })
 

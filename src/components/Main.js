@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-function Main(){
+function Main(props){
     const [ID, setID] = useState('');
     const [PW, setPW] = useState('');
     const navigate = useNavigate();
@@ -30,6 +30,7 @@ function Main(){
                     alert("로그인 실패");
                 else
                     navigate('/Board');
+                    props.setlogin();
             })
 
     }
@@ -47,7 +48,7 @@ function Main(){
     const handleValueChange = (e) => {
 
         if (e.target.name === 'ID') setID(e.target.value);
-        else if(e.target.name ==='PW') setPW(                                   e.target.value);
+        else if(e.target.name ==='PW') setPW(e.target.value);
     }
 
     return (
