@@ -25,6 +25,7 @@ function Main(){
         e.preventDefault();
         login()
             .then((response) => {
+                console.log(response.data);
                 if (response.data.length === 0)
                     alert("로그인 실패");
                 else
@@ -46,7 +47,7 @@ function Main(){
     const handleValueChange = (e) => {
 
         if (e.target.name === 'ID') setID(e.target.value);
-        else if(e.target.name ==='PW') setPW(e.target.value);
+        else if(e.target.name ==='PW') setPW(                                   e.target.value);
     }
 
     return (

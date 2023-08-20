@@ -5,7 +5,10 @@ const {google} = require('googleapis');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
-
+const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
+const app = express();
+app.use(cookieParser())
 
 const CLIENT_ID = '241966183545-i1kij6ck37n9l4so3sra5388tvogb3jf.apps.googleusercontent.com';
 const CLIENT_SECRET = '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';
@@ -13,7 +16,7 @@ const REDIRECT_URI = 'https://developers.google.com/oauthplayground';
 const REFRESH_TOKEN = '1//046ucT9uHX1sCCgYIARAAGAQSNwF-L9Ircxy-UzMkJoqKskGQNB97q2i06PCiGCcoUovcthjth9fhhCcs7-zZ-AqS2UvndVufT_c';
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET);
 oAuth2Client.setCredentials({refresh_token: REFRESH_TOKEN});
-
+const SECRET_KEY = '1234';
 
 function encrypt(target){
     return bcrypt.hashSync(target, 10);
@@ -114,6 +117,7 @@ router.post("/sendEmail", (req, res) => {
     })
 })
 
+
 router.post("/login", (req, res) => {
     const {userId, userPw} = req.body;
     let params = [userId, userPw];
@@ -126,7 +130,24 @@ router.post("/login", (req, res) => {
                 let flg = false;
                 rows.forEach((row) => {    
                     console.log();  
-                    if(bcrypt.compareSync(userPw,row.userPassword)){res.send(row); flg=true;}
+                    if(bcrypt.compareSync(userPw,row.userPassword)){
+                        flg=true;
+
+                        token = jwt.sign({
+                            userID: row.userID,
+                            userName: row.userName,
+                            userEmail : row.userMail
+                          }, SECRET_KEY, {
+                            expiresIn: '1m', // 만료시간 15분
+                            issuer: 'hong',
+                          });
+                        res.cookie('jwt', token);
+                        res.status(200).json({
+                            code: 200,
+                            message: '토큰이 발급되었습니다.',
+                            jwt: token
+                          });
+                    }
                 })
                 
                 if (!flg) res.send([]);
