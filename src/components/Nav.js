@@ -30,7 +30,7 @@ class Header extends Component {
             <div>
                 <Navbar bg="dark" data-bs-theme="dark">
                     <Container>
-                        <Navbar.Brand href="#home">게시판</Navbar.Brand>
+                        <StyledNavLink to="/board" style={{color:'white'}}>게시판</StyledNavLink>
                         <Nav className="me-auto">
 
                             <StyledNavLink to="/main">메인</StyledNavLink>
@@ -100,7 +100,6 @@ function Timer(props) {
                     navigate('/Main');
                 }
                 setCount(count +1);
-                console.log(count);
             })
     }
 

@@ -7,6 +7,10 @@ import Header from './components/Nav';
 import Join from './components/Join';
 import ChangePw from './components/ChangePw';
 import Board from './components/Board';
+
+
+
+
 class Routing extends Component{
     constructor(props){
         super(props);
@@ -17,7 +21,6 @@ class Routing extends Component{
 
     setlogin = () => {
         this.setState({count:this.state.count+1});
-        console.log(this.state.count);
     }
 
     render(){
