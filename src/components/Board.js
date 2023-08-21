@@ -26,7 +26,7 @@ function Board(){
     }, []);
 
     useEffect(() => {
-        console.log("qweqweqwe");
+        if(curpage > maxpage) setPage(maxpage);
         loginCheckSubmit();
         selectBbsListSubmit();
         selectBbsListCountSubmit();
@@ -114,7 +114,7 @@ function Board(){
             })}
         </tbody>
       </Table> 
-      <Page curpage = {curpage} maxpage={maxpage} limit = {limit} plusPage = {plusPage} minusPage = {minusPage}/>
+      <Page curpage = {curpage} maxpage={maxpage} limit = {limit} plusPage = {plusPage} minusPage = {minusPage} setPage={setPage}/>
       </div></div>) : (<div></div>)
     )
 }
@@ -139,10 +139,23 @@ function BbsData(props){
 
 function Page(props) {
     const [show, setShow] = useState(false);
-
+    let value = 0;
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     
+    const changePage = () => {
+        if (value >= 1 && value <= props.maxpage)
+        {
+            props.setPage(value);
+            setShow(false);
+        }
+        else alert("다시 입력해주세요")
+        
+    }
+
+    const changeValue = (e) => {
+        value = parseInt(e.target.value)
+    }
 
     return (
       <div>
@@ -164,14 +177,14 @@ function Page(props) {
                 <Modal.Title>페이지 이동</Modal.Title>
                 </Modal.Header>
                 <Modal.Body style={{textAlign:'center'}}>
-                    <Form.Control style={{marginBottom:'15px'}} type="text" placeholder="이동할 페이지를 입력하세요" />
+                    <Form.Control onChange={changeValue} style={{marginBottom:'15px'}} type="text" placeholder="이동할 페이지를 입력하세요" />
                     <span >현재 <span style={{color:'red'}}>{props.curpage} Page</span> / 최대 <span style={{color:'red'}}>{props.maxpage} Page</span></span>
                 </Modal.Body>
                 <Modal.Footer>
                 <Button variant="secondary" onClick={handleClose}>
                     닫기
                 </Button>
-                <Button variant="primary">이동</Button>
+                <Button onClick={changePage} variant="primary">이동</Button>
                 </Modal.Footer>
             </Modal>
       </div>
