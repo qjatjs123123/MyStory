@@ -7,25 +7,54 @@ import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
+import Dropdown from 'react-bootstrap/Dropdown';
 
 function Board(){
     //page,limit
-    const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState(5);
+    const [curpage, setPage] = useState(1);
+    const [maxpage, setMaxPage] = useState(1);
+    const [limit, setLimit] = useState(3);
 
     const [bbslist, setBbslist] = useState([]);
     const [isLogin, setLogin] = useState(false);
     const navigate = useNavigate();
+
     useEffect(() => {
         loginCheckSubmit();
         selectBbsListSubmit();
+        selectBbsListCountSubmit();
     }, []);
 
+    useEffect(() => {
+        console.log("qweqweqwe");
+        loginCheckSubmit();
+        selectBbsListSubmit();
+        selectBbsListCountSubmit();
+    }, [curpage, maxpage, limit]);
+
+    const selectBbsListCount = () => {
+        const url = '/board/bbsListCount';
+        const data={};
+        return axios.post(url, data,{ withCredentials: true });
+    }
     
+    const selectBbsListCountSubmit = () => {
+        selectBbsListCount()
+            .then((response) => {
+                if(response.data === false){
+                    alert("에러 발생");
+                    navigate('/Main');
+                }
+                setMaxPage(Math.ceil(response.data[0].COUNT / limit));
+            })
+    }
 
     const selectBbsList = () => {
         const url = '/board/bbsList';
-        const data={};
+        const data={
+            limit:limit,
+            page:curpage
+        };
         return axios.post(url, data,{ withCredentials: true });
     }
 
@@ -46,7 +75,8 @@ function Board(){
         const data = {};
         return axios.post(url, data,{ withCredentials: true });
     }
-
+    const plusPage = () => {if (curpage + 1 <= maxpage) {setPage(curpage + 1);}}
+    const minusPage = () => {if (curpage > 1) {setPage(curpage - 1);}}
     const loginCheckSubmit = () => {
         loginCheck()
             .then((response) => {
@@ -62,11 +92,15 @@ function Board(){
     return (
         isLogin ? (
         <div>
+        
         <div style={{width:'80%', textAlign:'center',marginLeft:'10%',display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-            <h3 style={{marginTop:'50px', marginBottom:'25px', fontWeight:'bolder'}}>게시판</h3>
+            <h3 style={{marginTop:'50px', fontWeight:'bolder'}}>게시판</h3>
+            <div style={{ marginLeft: 'auto' }}>
+            <PageLimit limit={limit} setLimit={setLimit} />
+          </div>
         <Table striped bordered hover variant="dark" style={{borderColor:'white'}}>
         <thead>
-          <tr style={{}}>
+          <tr>
             <th>번호</th>
             <th>제목</th>
             <th>작성자</th>
@@ -80,7 +114,7 @@ function Board(){
             })}
         </tbody>
       </Table> 
-      <Page page = {page} limit = {limit}/>
+      <Page curpage = {curpage} maxpage={maxpage} limit = {limit} plusPage = {plusPage} minusPage = {minusPage}/>
       </div></div>) : (<div></div>)
     )
 }
@@ -103,17 +137,19 @@ function BbsData(props){
     )
 }
 
-function Page() {
+function Page(props) {
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    
+
     return (
       <div>
             <ButtonGroup aria-label="Basic example"  size="lg">
-                <Button variant="secondary" active="false">이전</Button>
-                <Button onClick={handleShow} variant="secondary">1</Button>
-                <Button variant="secondary">다음</Button>
+                <Button onClick = {props.minusPage} variant="secondary" disabled={props.curpage === 1 ? true : false}>이전</Button>
+                <Button onClick={handleShow} variant="secondary">{props.curpage}</Button>
+                <Button onClick = {props.plusPage} variant="secondary" disabled={props.curpage === props.maxpage ? true : false}>다음</Button>
             </ButtonGroup>
 
             <Modal
@@ -129,7 +165,7 @@ function Page() {
                 </Modal.Header>
                 <Modal.Body style={{textAlign:'center'}}>
                     <Form.Control style={{marginBottom:'15px'}} type="text" placeholder="이동할 페이지를 입력하세요" />
-                    <span >현재 <span style={{color:'red'}}>1 Page</span> / 최대 <span style={{color:'red'}}>30 Page</span></span>
+                    <span >현재 <span style={{color:'red'}}>{props.curpage} Page</span> / 최대 <span style={{color:'red'}}>{props.maxpage} Page</span></span>
                 </Modal.Body>
                 <Modal.Footer>
                 <Button variant="secondary" onClick={handleClose}>
@@ -142,6 +178,25 @@ function Page() {
     );
   }
 
+  function PageLimit(props) {
+    const limitValueHandle = (param) => () => {
+        props.setLimit(param);
+    }
+    return (
+        <div >
+      <Dropdown>
+        <Dropdown.Toggle variant="success" id="dropdown-basic">
+          
+        </Dropdown.Toggle>
   
+        <Dropdown.Menu>
+          <Dropdown.Item as="button" onClick={limitValueHandle(3)}>3</Dropdown.Item>
+          <Dropdown.Item as="button" onClick={limitValueHandle(6)}>6</Dropdown.Item>
+          <Dropdown.Item as="button" onClick={limitValueHandle(9)}>9</Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+      </div>
+    );
+  }
 
 export default Board;

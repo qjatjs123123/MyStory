@@ -3,13 +3,25 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const getConnection = require('../db');
 
-
-
-router.post("/bbsList", (req, res) => {
+router.post("/bbsListCount", (req, res) => {
     
     getConnection((conn) => {
-        const sql = "SELECT bbsID, bbsTitle, userID, bbsDate, bbsContent FROM bbs";
+        const sql = "SELECT COUNT(*) AS COUNT FROM bbs WHERE bbsAvailable = 1";
         conn.query(sql, [],
+            (err, rows, fields) => {
+                if (err) res.send(false);
+                else res.send(rows);
+                conn.release();
+            })
+    })
+
+})
+
+router.post("/bbsList", (req, res) => {
+    const {limit, page} = req.body;  
+    getConnection((conn) => {
+        const sql = "SELECT bbsID, bbsTitle, userID, bbsDate, bbsContent FROM bbs WHERE bbsAvailable = 1 ORDER BY bbsID DESC LIMIT ?, ?";
+        conn.query(sql, [limit*(page-1), limit],
             (err, rows, fields) => {
                 if (err) res.send(false);
                 else res.send(rows);
