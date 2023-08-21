@@ -5,28 +5,42 @@ const getConnection = require('../db');
 
 
 
+router.post("/bbsList", (req, res) => {
+    
+    getConnection((conn) => {
+        const sql = "SELECT bbsID, bbsTitle, userID, bbsDate, bbsContent FROM bbs";
+        conn.query(sql, [],
+            (err, rows, fields) => {
+                if (err) res.send(false);
+                else res.send(rows);
+                conn.release();
+            })
+    })
+
+})
+
 router.post("/loginCheck", (req, res) => {
-    try{
+    try {
         const verified = jwt.verify(req.cookies.jwt, "1234");
         res.send(true);
-    }catch(err){
+    } catch (err) {
         res.send(false);
     }
 })
 
 router.post("/getTimer", (req, res) => {
-    try{
+    try {
         const userID = jwt.verify(req.cookies.jwt, "1234").userID;
         getConnection((conn) => {
             const sql = "SELECT TIMESTAMPDIFF(SECOND, userLoginTime , NOW()) AS TIMER FROM member WHERE userID = ?";
             let params = [userID];
-            conn.query(sql,params,
-                (err,rows,fields) => {
+            conn.query(sql, params,
+                (err, rows, fields) => {
                     conn.release();
                     res.send(rows[0]);
                 })
         })
-    }catch(err){
+    } catch (err) {
         res.send('logout')
     }
 })

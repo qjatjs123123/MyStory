@@ -6,11 +6,33 @@ import { useNavigate } from 'react-router-dom';
 import Table from 'react-bootstrap/Table';
 
 function Board(){
+    const [bbslist, setBbslist] = useState([]);
     const [isLogin, setLogin] = useState(false);
     const navigate = useNavigate();
     useEffect(() => {
         loginCheckSubmit();
+        selectBbsListSubmit();
     }, []);
+
+    
+
+    const selectBbsList = () => {
+        const url = '/board/bbsList';
+        const data={};
+        return axios.post(url, data,{ withCredentials: true });
+    }
+
+    const selectBbsListSubmit = () => {
+        selectBbsList()
+            .then((response) => {
+                if(response.data === false){
+                    alert("에러 발생");
+                    navigate('/Main');
+                }
+                else setBbslist(response.data);
+                console.log(response.data,bbslist);
+            })
+    }
 
     const loginCheck = () => {
         const url = '/board/loginCheck';
@@ -30,38 +52,46 @@ function Board(){
                 else setLogin(true);
             })
     }
-
     return (
         isLogin ? (
-        <Table striped bordered hover variant="dark">
+        <div>
+        <div style={{width:'80%', textAlign:'center',marginLeft:'10%'}}>
+            <h3 style={{marginTop:'50px', marginBottom:'25px', fontWeight:'bolder'}}>게시판</h3>
+        <Table striped bordered hover variant="dark" style={{borderColor:'white'}}>
         <thead>
-          <tr>
-            <th>#</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Username</th>
+          <tr style={{}}>
+            <th>번호</th>
+            <th>제목</th>
+            <th>작성자</th>
+            <th>작성일</th>
           </tr>
         </thead>
+            
         <tbody>
-          <tr>
-            <td>1</td>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>@fat</td>
-          </tr>
-          <tr>
-            <td>3</td>
-            <td >Larry the Bird</td>
-            <td>@twitter</td>
-          </tr>
+        {bbslist.map((c) => {
+            return <BbsData key = {c.bbsID} num = {c.bbsID} title={c.bbsTitle} name={c.userID} date={c.bbsDate} />
+            })}
         </tbody>
-      </Table>) : (<div></div>)
+      </Table> 
+      </div></div>) : (<div></div>)
+    )
+}
+
+function BbsData(props){
+    const dateFormat=(param)=>{
+        const date = new Date(param);
+        const year = date.getFullYear();
+        const month = ('0' + (date.getMonth() + 1)).slice(-2);
+        const day = ('0' + date.getDate()).slice(-2);
+        return `${year}-${month}-${day}`;
+    }
+    return(
+        <tr >
+            <td >{props.num}</td>
+            <td>{props.title}</td>
+            <td>{props.name}</td>
+            <td>{dateFormat(props.date)}</td>
+        </tr>
     )
 }
 
