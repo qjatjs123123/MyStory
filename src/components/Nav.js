@@ -8,6 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 class Header extends Component {
 
@@ -46,11 +47,13 @@ class Header extends Component {
 }
 
 function Timer(props) {
-    
+    const [count, setCount] = useState(0);
     const [min, setMin] = useState(0);
     const [sec, setSec] = useState(0);
     const time = useRef(1800);
     const timerId = useRef(null);
+    const navigate = useNavigate();
+
     const getTimer = () => {
         
         const url = '/board/getTimer';
@@ -73,10 +76,9 @@ function Timer(props) {
     }
     
     useEffect(() => {      
-        console.log("qweqwewqeqwe");
         getTimerSubmit();
         return () => clearInterval(timerId.current)
-    }, [props.count])
+    }, [props.count,count])
 
     useEffect(() => {
         if(time.current <= 0){
@@ -84,10 +86,28 @@ function Timer(props) {
         }
     }, [sec]);
 
+    const refreshToken = () => {
+        const url = '/member/refreshToken';
+        const data = {};
+        return axios.post(url, data,{ withCredentials: true });
+    }
+
+    const refreshTokenSubmit = () => {
+        refreshToken()
+            .then( (response) => {
+                if (response.data === false){
+                    alert("다시 로그인 해주세요");
+                    navigate('/Main');
+                }
+                setCount(count +1);
+                console.log(count);
+            })
+    }
+
     return (
         <Form className="d-flex">
             <Navbar.Text> {min}분:{sec}초</Navbar.Text>
-            <Button variant="outline-success" style={{ marginLeft: '10px' }}>연장</Button>
+            <Button onClick={refreshTokenSubmit} variant="outline-success" style={{ marginLeft: '10px' }}>연장</Button>
         </Form>
     )
 }

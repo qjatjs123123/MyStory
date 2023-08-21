@@ -22,7 +22,7 @@ function Board(){
             .then((response) => {
                 console.log(response.data);
                 if(response.data === false){
-                    alert("로그아웃 되었습니다.");
+                    alert("다시 로그인 해주세요");
                     navigate('/Main');
                 }
             })

@@ -155,6 +155,32 @@ router.post("/login", (req, res) => {
     })
 })
 
+router.post("/refreshToken", (req, res) => {
+    try{
+        const userID = jwt.verify(req.cookies.jwt, "1234").userID;
+        const userName = jwt.verify(req.cookies.jwt, "1234").userName;
+        const userEmail = jwt.verify(req.cookies.jwt, "1234").userEmail;
+        insertUserLoginTime(userID);
+        token = jwt.sign({
+            userID: userID,
+            userName: userName,
+            userEmail : userEmail
+          }, SECRET_KEY, {
+            expiresIn: '30m', // 만료시간 15분
+            issuer: 'hong',
+          });
+        res.cookie('jwt', token);
+        res.status(200).json({
+            code: 200,
+            message: '토큰이 발급되었습니다.',
+            jwt: token
+          });
+    }catch(err){
+        res.send(false)
+    }
+})
+
+
 function insertUserLoginTime(userId){
     getConnection((conn) => {
         const sql = "UPDATE member SET userLoginTime = NOW() WHERE userID = ?";
