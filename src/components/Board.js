@@ -179,9 +179,14 @@ function Page(props) {
   }
 
   function PageLimit(props) {
-    const limitValueHandle = (param) => () => {
-        props.setLimit(param);
+
+    const limitValueHandle = (e) => {
+        props.setLimit(parseInt(e.target.name));
     }
+
+    // const limitValueHandle = (param) => () => {
+    //     props.setLimit(param);
+    // }
     return (
         <div >
       <Dropdown>
@@ -190,9 +195,9 @@ function Page(props) {
         </Dropdown.Toggle>
   
         <Dropdown.Menu>
-          <Dropdown.Item as="button" onClick={limitValueHandle(3)}>3</Dropdown.Item>
-          <Dropdown.Item as="button" onClick={limitValueHandle(6)}>6</Dropdown.Item>
-          <Dropdown.Item as="button" onClick={limitValueHandle(9)}>9</Dropdown.Item>
+          <Dropdown.Item as="button" name='3' onClick={limitValueHandle}>3</Dropdown.Item>
+          <Dropdown.Item as="button" name='6' onClick={limitValueHandle}>6</Dropdown.Item>
+          <Dropdown.Item as="button" name='9' onClick={limitValueHandle}>9</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
       </div>
