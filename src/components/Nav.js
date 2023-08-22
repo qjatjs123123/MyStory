@@ -81,8 +81,10 @@ function Timer(props) {
     }, [props.count,count])
 
     useEffect(() => {
-        if(time.current <= 0){
+        if(time.current+1 <= 0){
+            alert("다시 로그인 해주세요");
             clearInterval(timerId.current);
+            navigate('/Main');
         }
     }, [sec]);
 

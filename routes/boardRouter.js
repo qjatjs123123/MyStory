@@ -3,13 +3,43 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const getConnection = require('../db');
 
-router.post("/bbsListCount", (req, res) => {
-    
+router.post("/bbsListCount", (req, res) => {   
     getConnection((conn) => {
-        const sql = "SELECT COUNT(*) AS COUNT FROM bbs WHERE bbsAvailable = 1";
-        conn.query(sql, [],
+        const {title, userID, startDate, endDate} = req.body;  
+        let param = [];
+        let sql = "SELECT COUNT(*) AS COUNT FROM bbs WHERE bbsAvailable = 1 ";
+        if (title !== '') {sql += 'AND bbsTitle = ?'; param.push(title)}
+        if (userID !== '') {sql += 'AND userID = ?'; param.push(userID)}
+        if (startDate !== null) {sql += 'AND bbsDate >= ?'; param.push(startDate)}
+        if (endDate !== null) {sql += 'AND bbsDate <= ?'; param.push(endDate)}
+
+
+        conn.query(sql, param,
             (err, rows, fields) => {
-                if (err) res.send(false);
+                console.log(err);
+                if (err) {res.send(false);console.log(err);}
+                else res.send(rows);
+                conn.release();
+            })
+    })
+
+})
+
+router.post("/bbsConditionList", (req, res) => {
+    const {title, userID, startDate, endDate,limit, page} = req.body;  
+    let param = [];
+    let sql = "SELECT bbsID, bbsTitle, userID, bbsDate, bbsContent FROM bbs WHERE 1=1 ";
+    if (title !== '') {sql += 'AND bbsTitle = ?'; param.push(title)}
+    if (userID !== '') {sql += 'AND userID = ?'; param.push(userID)}
+    if (startDate !== null) {sql += 'AND bbsDate >= ?'; param.push(startDate)}
+    if (endDate !== null) {sql += 'AND bbsDate <= ?'; param.push(endDate)}
+    sql += "AND bbsAvailable = 1 ORDER BY bbsID DESC LIMIT ?, ?";
+    param.push(limit*(page-1));
+    param.push(limit);
+    getConnection((conn) => {
+        conn.query(sql, param,
+            (err, rows, fields) => {
+                if (err) {res.send(false);console.log(err);}
                 else res.send(rows);
                 conn.release();
             })
@@ -23,7 +53,7 @@ router.post("/bbsList", (req, res) => {
         const sql = "SELECT bbsID, bbsTitle, userID, bbsDate, bbsContent FROM bbs WHERE bbsAvailable = 1 ORDER BY bbsID DESC LIMIT ?, ?";
         conn.query(sql, [limit*(page-1), limit],
             (err, rows, fields) => {
-                if (err) res.send(false);
+                if (err) {res.send(false);console.log(err);}
                 else res.send(rows);
                 conn.release();
             })
@@ -36,6 +66,7 @@ router.post("/loginCheck", (req, res) => {
         const verified = jwt.verify(req.cookies.jwt, "1234");
         res.send(true);
     } catch (err) {
+        console.log(err);
         res.send(false);
     }
 })
