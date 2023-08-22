@@ -81,6 +81,26 @@ router.post("/bbsListInsert", async (req, res) => {
     
 
 })
+router.post("/bbsUpdate", async (req, res) => {
+    try{
+        const {bbsID, bbsTitle, bbsContent} = req.body;    
+
+        getConnection((conn) => {
+        const sql = "UPDATE bbs SET bbsTitle = ?, bbsContent = ? WHERE bbsID = ?";
+        conn.query(sql, [bbsTitle, bbsContent, bbsID],
+            (err, rows, fields) => {
+                if (err) {throw err}
+                else res.send(rows);
+                conn.release();
+            })
+        })
+        
+    }catch(error){
+        res.send(false);
+    }
+    
+
+})
 
 router.post("/bbsConditionList", (req, res) => {
     const {title, userID, startDate, endDate,limit, page, orderTarget,orderValue} = req.body;  
@@ -118,10 +138,11 @@ router.post("/selectBbsIDInfo", (req, res) => {
 
 })
 
+
 router.post("/loginCheck", (req, res) => {
     try {
         const verified = jwt.verify(req.cookies.jwt, "1234");
-        res.send(true);
+        res.send(jwt.verify(req.cookies.jwt, "1234").userID);
     } catch (err) {
         res.send(false);
     }

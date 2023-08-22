@@ -6,15 +6,18 @@ import { useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
-function BoardWrite() {
-    const [html, setHtml] = useState('');
-    const [title, setTitle] = useState('');
+function BoardWrite(props) {
+    const [isUpdate, setisUpdate] = useState(props.update);
+    const [bbsID, setbbsID] = useState(props.bbsID);
+    const [html, setHtml] = useState(props.bbsContent);
+    const [title, setTitle] = useState(props.bbsTitle);
     const quillRef = useRef(null);
     const navigate = useNavigate();
     const [isLogin, setLogin] = useState(false);
 
     useEffect(() => {
         loginCheckSubmit();
+        console.log(props.update, props.bbsID, props.bbsContent, props.bbsTitle);
     }, []);
 
     const loginCheck = () => {
@@ -57,6 +60,31 @@ function BoardWrite() {
                 }
                 else {
                     alert("글쓰기 실패");
+                    navigate('/board');
+                }
+            })
+    }
+
+    const bbsUpdate = () => {
+        const url = '/board/bbsUpdate';
+        const data = {
+            bbsTitle: title,
+            bbsContent: html,
+            bbsID:bbsID
+        };
+        return axios.post(url, data, { withCredentials: true });
+    }
+
+    const bbsUpdateSubmit = () =>{
+        bbsUpdate()
+            .then((response) => {
+                console.log(response.data);
+                if (response.data !== false) {
+                    alert("글수정 성공");
+                    navigate('/board');
+                }
+                else {
+                    alert("글수정 실패");
                     navigate('/board');
                 }
             })
@@ -139,8 +167,8 @@ function BoardWrite() {
     return (
         isLogin ? (
             <div style={{ width: '80%', marginLeft: '10%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <h3 style={{ marginTop: '50px', fontWeight: 'bolder', marginBottom: '20px' }}>글쓰기</h3>
-                <input onChange={valueHandle} placeholder='제목을 입력해주세요' style={{ width: '100%', height: '40px', marginBottom: '10px' }}></input>
+                <h3 style={{ marginTop: '50px', fontWeight: 'bolder', marginBottom: '20px' }}>{isUpdate === false ? '글쓰기': '글수정'}</h3>
+                <input value={title} onChange={valueHandle} placeholder='제목을 입력해주세요' style={{ width: '100%', height: '40px', marginBottom: '10px' }}></input>
                 <div style={{ background: 'white', width: '100%' }}>
                     <ReactQuill
                         ref={quillRef}
@@ -153,7 +181,7 @@ function BoardWrite() {
                     />
                 </div>
                 <div style={{ marginLeft: 'auto' }}>
-                    <Button onClick={bbsWriteSubmit} variant="dark" style={{ marginTop: '10px' }}>글쓰기</Button>
+                    {isUpdate === false ? <Button onClick={bbsWriteSubmit} variant="dark" style={{ marginTop: '10px' }}>글쓰기</Button> :<Button onClick={bbsUpdateSubmit} variant="dark" style={{ marginTop: '10px' }}>글수정</Button>}
                 </div>
             </div>
         ) : <div></div>

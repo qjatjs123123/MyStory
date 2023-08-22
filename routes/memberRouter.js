@@ -210,13 +210,12 @@ router.post("/idcheck", (req, res) => {
 router.post("/join", (req, res) => {
     const {userId, userPw, userName, userMail, userNum} = req.body;  
     getConnection((conn) => {
-        const sql = 'INSERT INTO member VALUES (?, ?, ?, ?, ?, ?,?)';
-        let params = [userId, encrypt(userPw), userName, userMail, encrypt(userNum),null,null];
+        const sql = 'INSERT INTO member VALUES (?, ?, ?, ?, ?, ?,?,?)';
+        let params = [userId, encrypt(userPw), userName, userMail, encrypt(userNum),null,null,null];
         conn.query(sql,params,
             (err,rows,fields) => {
                 conn.release();
                 res.send(rows);
-                console.log(err);
             })
     })
 })

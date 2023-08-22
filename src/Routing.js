@@ -9,19 +9,26 @@ import ChangePw from './components/ChangePw';
 import Board from './components/Board';
 import BoardWrite from './components/BoardWrite';
 import BoardRead from './components/BoardRead';
+import BoardUpdate from './components/BoardUpdate';
 
 
 class Routing extends Component{
     constructor(props){
         super(props);
             this.state = {
-                count : 1
+                count : 1,
+                bbsID : 0,
+                bbsTitle: 0,
+                bbsContent:0
             };
     }
 
     setlogin = () => {
         this.setState({count:this.state.count+1});
     }
+    setbbsID = (param) => {this.setState({bbsID: param})}
+    setbbsTitle = (param) => {this.setState({bbsTitle: param})}
+    setbbsContent = (param) => {this.setState({bbsContent: param})}
 
     render(){
         return(
@@ -35,9 +42,9 @@ class Routing extends Component{
                     <Route path='/FindPw' element={<FindPw />} />
                     <Route path='/ChangePw' element={<ChangePw />} />
                     <Route path='/Board' element={ <Board />} />
-                    <Route path='/BoardWrite' element={ <BoardWrite />} />
-                    <Route path='/BoardRead' element={ <BoardRead />} />
-                    
+                    <Route path='/BoardWrite' element={ <BoardWrite update={false} bbsID={''} bbsTitle={''} bbsContent={''}/>} />
+                    <Route path='/BoardRead' element={ <BoardRead setbbsID={this.setbbsID} setbbsTitle={this.setbbsTitle} setbbsContent={this.setbbsContent}/>} />
+                    <Route  path='/BoardWrite/Update' element={ <BoardWrite update={true} bbsID={this.state.bbsID} bbsTitle={this.state.bbsTitle} bbsContent={this.state.bbsContent}/> } />
                 </Routes>
             </BrowserRouter>
         )
