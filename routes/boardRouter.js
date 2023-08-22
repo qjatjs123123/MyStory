@@ -81,6 +81,29 @@ router.post("/bbsListInsert", async (req, res) => {
     
 
 })
+
+
+router.post("/bbsDelete", async (req, res) => {
+    try{
+        const {bbsID} = req.body;    
+
+        getConnection((conn) => {
+        const sql = "UPDATE bbs SET bbsAvailable = 0 WHERE bbsID = ?";
+        conn.query(sql, [bbsID],
+            (err, rows, fields) => {
+                if (err) {throw err}
+                else res.send(true);
+                conn.release();
+            })
+        })
+        
+    }catch(error){
+        res.send(false);
+    }
+    
+
+})
+
 router.post("/bbsUpdate", async (req, res) => {
     try{
         const {bbsID, bbsTitle, bbsContent} = req.body;    

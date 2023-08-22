@@ -58,6 +58,32 @@ function BoardRead(props) {
         navigate('/BoardWrite/Update');
     }
 
+    const bbsDelete = () => {
+        const url = '/board/bbsDelete';
+        const data = { 
+            bbsID:bbsID
+        }
+        return axios.post(url, data, { withCredentials: true });
+    }
+
+    const bbsDeleteSubmit = (e) =>{
+        const result = window.confirm("정말로 삭제하시겠습니까?");
+            if (result) {
+                bbsDelete()
+                    .then((response) => {
+                        if (response.data === true) {
+                            alert("삭제 완료");
+                            navigate('/board');
+                        }
+                        else{
+                            alert("삭제 오류");
+                            navigate('/board');
+                        }
+                    })
+            } 
+        }
+    
+
     function dateFormat(date) {
         let month = date.getMonth() + 1;
         let day = date.getDate();
@@ -96,7 +122,7 @@ function BoardRead(props) {
     return (
         isLogin ? (
             <div>
-                <BoardContent MoveToBbsUpdate={MoveToBbsUpdate} curuserID={curuserID} content={bbsContent} bbsTitle = {bbsTitle} userID={userID} bbsDate={bbsDate}/>
+                <BoardContent bbsDeleteSubmit={bbsDeleteSubmit} MoveToBbsUpdate={MoveToBbsUpdate} curuserID={curuserID} content={bbsContent} bbsTitle = {bbsTitle} userID={userID} bbsDate={bbsDate}/>
             </div>
         ):<div></div>
 
@@ -110,7 +136,10 @@ function BoardContent(props) {
             <h3 style={{ marginTop: '50px', fontWeight: 'bolder',marginBottom:'20px'}}>내용</h3> 
             <div style={{borderTop : '5px solid black'}}>
                 <div style={{marginTop:'20px', borderBottom : '1px solid black'}}>
-                    <h5 style={{fontWeight: 'bold'}}>{props.bbsTitle} {props.curuserID === props.userID ? <Button onClick={props.MoveToBbsUpdate} size="sm" style={{marginLeft:'10px'}} variant="dark">글수정</Button> : null}</h5>
+                    <h5 style={{fontWeight: 'bold'}}>{props.bbsTitle} 
+                        {props.curuserID === props.userID ? <Button onClick={props.MoveToBbsUpdate} size="sm" style={{marginLeft:'10px'}} variant="dark">글수정</Button> : null}
+                        {props.curuserID === props.userID ? <Button onClick={props.bbsDeleteSubmit} size="sm" style={{marginLeft:'10px'}} variant="danger">글삭제</Button> : null}
+                    </h5>
                     <div style={{marginBottom:'20px'}}>{props.userID} | {props.bbsDate}</div>
                 </div>
                 <div style={{marginTop:'20px'}}dangerouslySetInnerHTML={{ __html: props.content }} />
