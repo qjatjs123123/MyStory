@@ -40,6 +40,48 @@ router.post("/bbsListCount", (req, res) => {
 
 })
 
+async function getMaxbbsID(){
+    return new Promise((resolve, reject) => {
+        getConnection((conn) => {
+            const sql = "SELECT MAX(bbsID)+1 AS max FROM bbs";
+            conn.query(sql, [], (err, rows, fields) => {
+                if (err) {
+                    console.log(err);
+                    reject(err);
+                    return;
+                }
+                conn.release();
+                const result = rows[0].max;
+                console.log(result);
+                resolve(result);
+            });
+        });
+    });
+    
+}
+
+router.post("/bbsListInsert", async (req, res) => {
+    try{
+        const {bbsTitle, bbsContent} = req.body;    
+        const bbsID = await getMaxbbsID();
+
+        getConnection((conn) => {
+        const sql = "INSERT INTO bbs(bbsID, bbsTitle, userID, bbsDate, bbsContent, bbsAvailable) VALUES (?, ?, ?, NOW(), ?, ?)";
+        conn.query(sql, [bbsID, bbsTitle, jwt.verify(req.cookies.jwt, "1234").userID, bbsContent,1],
+            (err, rows, fields) => {
+                if (err) {throw err}
+                else res.send(true);
+                conn.release();
+            })
+        })
+        
+    }catch(error){
+        return false
+    }
+    
+
+})
+
 router.post("/bbsConditionList", (req, res) => {
     const {title, userID, startDate, endDate,limit, page, orderTarget,orderValue} = req.body;  
     let param = [];
