@@ -8,7 +8,7 @@ import Join from './components/Join';
 import ChangePw from './components/ChangePw';
 import Board from './components/Board';
 import BoardWrite from './components/BoardWrite';
-
+import BoardRead from './components/BoardRead';
 
 
 class Routing extends Component{
@@ -36,6 +36,8 @@ class Routing extends Component{
                     <Route path='/ChangePw' element={<ChangePw />} />
                     <Route path='/Board' element={ <Board />} />
                     <Route path='/BoardWrite' element={ <BoardWrite />} />
+                    <Route path='/BoardRead' element={ <BoardRead />} />
+                    
                 </Routes>
             </BrowserRouter>
         )

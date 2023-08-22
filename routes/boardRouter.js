@@ -104,11 +104,11 @@ router.post("/bbsConditionList", (req, res) => {
 
 })
 
-router.post("/bbsList", (req, res) => {
-    const {limit, page} = req.body;  
+router.post("/selectBbsIDInfo", (req, res) => {
+    const {bbsID} = req.body;  
     getConnection((conn) => {
-        const sql = "SELECT bbsID, bbsTitle, userID, bbsDate, bbsContent FROM bbs WHERE bbsAvailable = 1 ORDER BY bbsID DESC LIMIT ?, ?";
-        conn.query(sql, [limit*(page-1), limit],
+        const sql = "SELECT * FROM bbs WHERE bbsAvailable = 1 AND bbsID = ?";
+        conn.query(sql, [bbsID],
             (err, rows, fields) => {
                 if (err) {res.send(false);console.log(err);}
                 else res.send(rows);

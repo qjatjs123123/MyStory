@@ -150,7 +150,7 @@ function Board() {
 
                         <tbody>
                             {bbslist.map((c) => {
-                                return <BbsData key={c.bbsID} num={c.bbsID} title={c.bbsTitle} name={c.userID} date={c.bbsDate} />
+                                return <BbsData key={c.bbsID} num={c.bbsID} title={c.bbsTitle} name={c.userID} date={c.bbsDate} readClick ={()=>{navigate(`/BoardRead/?bbsID=${c.bbsID}`)}}/>
                             })}
                         </tbody>
                     </Table>
@@ -214,7 +214,7 @@ function BbsData(props) {
         return `${year}-${month}-${day}`;
     }
     return (
-        <tr >
+        <tr onClick = {props.readClick}>
             <td >{props.num}</td>
             <td>{props.title}</td>
             <td>{props.name}</td>
