@@ -26,14 +26,14 @@ router.post("/bbsListCount", (req, res) => {
 })
 
 router.post("/bbsConditionList", (req, res) => {
-    const {title, userID, startDate, endDate,limit, page} = req.body;  
+    const {title, userID, startDate, endDate,limit, page, orderTarget,orderValue} = req.body;  
     let param = [];
-    let sql = "SELECT bbsID, bbsTitle, userID, bbsDate, bbsContent FROM bbs WHERE 1=1 ";
+    let sql = "SELECT bbsID, bbsTitle, userID, bbsDate, bbsContent FROM bbs WHERE bbsAvailable = 1 ";
     if (title !== '') {sql += 'AND bbsTitle = ?'; param.push(title)}
     if (userID !== '') {sql += 'AND userID = ?'; param.push(userID)}
     if (startDate !== null) {sql += 'AND bbsDate >= ?'; param.push(startDate)}
     if (endDate !== null) {sql += 'AND bbsDate <= ?'; param.push(endDate)}
-    sql += "AND bbsAvailable = 1 ORDER BY bbsID DESC LIMIT ?, ?";
+    sql += `ORDER BY ${orderTarget} ${orderValue} LIMIT ?, ?`;
     param.push(limit*(page-1));
     param.push(limit);
     getConnection((conn) => {

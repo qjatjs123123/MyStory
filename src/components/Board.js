@@ -24,11 +24,16 @@ function Board() {
     const [isLogin, setLogin] = useState(false);
     const navigate = useNavigate();
 
+    // Condition Form
     const [flg, setFlg] = useState(false);
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
     const [title, setTitle] = useState('');
     const [userID, setuserID] = useState('');
+
+    // Order Flg
+    const [orderTarget, setorderTarget] = useState('bbsID');
+    const [orderValue, setorderValue] = useState('DESC');
 
 
     useEffect(() => {
@@ -37,7 +42,7 @@ function Board() {
         loginCheckSubmit();
         selectBbsListSubmit();
         selectBbsListCountSubmit();
-    }, [curpage, limit,flg]);
+    }, [curpage, limit,flg,orderTarget,orderValue]);
 
     const selectBbsListCount = () => {
         const url = '/board/bbsListCount';
@@ -68,7 +73,10 @@ function Board() {
             startDate: startDate !== null ?`${startDate.getFullYear()}-${startDate.getMonth()+1}-${startDate.getDate()} 00:00:00` : null,
             endDate: endDate !== null ?`${endDate.getFullYear()}-${endDate.getMonth()+1}-${endDate.getDate()} 23:59:59` : null,
             limit: limit,
-            page: curpage
+            page: curpage,
+            orderTarget:orderTarget,
+            orderValue:orderValue
+
         };
         return axios.post(url, data, { withCredentials: true });
     }
@@ -104,6 +112,22 @@ function Board() {
             })
     }
 
+    const orderValueHandle = (param) => {
+        if(param === orderTarget) orderValue === 'DESC' ? setorderValue('ASC') : setorderValue('DESC');
+        else{
+            setorderTarget(param);
+            setorderValue('DESC');
+        }
+        
+    }
+
+    const printOrder = (param) =>{
+        if (param === orderTarget){
+            if (orderValue === 'DESC') return '(v)';
+            else return '(^)';
+        }else return
+    }
+
     return (
         isLogin ? (
             <div>
@@ -116,10 +140,10 @@ function Board() {
                     <Table striped bordered hover variant="dark" style={{ borderColor: 'white' }}>
                         <thead>
                             <tr>
-                                <th>번호</th>
-                                <th>제목</th>
-                                <th>작성자</th>
-                                <th>작성일</th>
+                                <th  onClick={() => orderValueHandle('bbsID')}>번호{printOrder('bbsID')}</th>
+                                <th  onClick={() => orderValueHandle('bbsTitle')}>제목{printOrder('bbsTitle')}</th>
+                                <th  onClick={() => orderValueHandle('userID')}>작성자{printOrder('userID')}</th>
+                                <th  onClick={() => orderValueHandle('bbsDate')}>작성일{printOrder('bbsDate')}</th>
                             </tr>
                         </thead>
 
