@@ -7,7 +7,7 @@ import Header from './components/Nav';
 import Join from './components/Join';
 import ChangePw from './components/ChangePw';
 import Board from './components/Board';
-
+import BoardWrite from './components/BoardWrite';
 
 
 
@@ -35,6 +35,7 @@ class Routing extends Component{
                     <Route path='/FindPw' element={<FindPw />} />
                     <Route path='/ChangePw' element={<ChangePw />} />
                     <Route path='/Board' element={ <Board />} />
+                    <Route path='/BoardWrite' element={ <BoardWrite />} />
                 </Routes>
             </BrowserRouter>
         )

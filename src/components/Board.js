@@ -36,9 +36,7 @@ function Board() {
     const [orderValue, setorderValue] = useState('DESC');
 
 
-    useEffect(() => {
-        console.log(curpage, limit);   
-        if (curpage > maxpage) setPage(maxpage);
+    useEffect(() => {  
         loginCheckSubmit();
         selectBbsListSubmit();
         selectBbsListCountSubmit();
@@ -60,8 +58,11 @@ function Board() {
                     alert("에러 발생");
                     navigate('/Main');
                 }
-                if (Math.ceil(response.data[0].COUNT / limit) === 0) setMaxPage(1);
-                else setMaxPage(Math.ceil(response.data[0].COUNT / limit));
+                let maxvalue = 1
+                if (Math.ceil(response.data[0].COUNT / limit) === 0) setMaxPage(maxvalue);
+                else {setMaxPage(Math.ceil(response.data[0].COUNT / limit)); maxvalue=Math.ceil(response.data[0].COUNT / limit)}
+                
+                if (curpage > maxvalue) setPage(maxvalue);
             })
     }
 

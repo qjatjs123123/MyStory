@@ -30,13 +30,12 @@ class Header extends Component {
             <div>
                 <Navbar bg="dark" data-bs-theme="dark">
                     <Container>
-                        <StyledNavLink to="/board" style={{color:'white'}}>게시판</StyledNavLink>
+                        <StyledNavLink to="/main" style={{color:'white'}}>메인</StyledNavLink>
                         <Nav className="me-auto">
-
-                            <StyledNavLink to="/main">메인</StyledNavLink>
                             <StyledNavLink to="/FindId">아이디찾기</StyledNavLink>
                             <StyledNavLink to="/FindPw">비밀번호찾기</StyledNavLink>
-
+                            <StyledNavLink to="/board">게시판</StyledNavLink>
+                            <StyledNavLink to="/BoardWrite">글쓰기</StyledNavLink>
                         </Nav>
                         <Timer count = {this.props.count}/>
                     </Container>
