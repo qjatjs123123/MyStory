@@ -23,7 +23,7 @@ router.post("/bbsListCount", (req, res) => {
         const { title, userID, startDate, endDate } = req.body;
         let param = [];
         let sql = "SELECT COUNT(*) AS COUNT FROM bbs WHERE bbsAvailable = 1 ";
-        if (title !== '') { sql += 'AND bbsTitle = ?'; param.push(title) }
+        if (title !== '') { sql += 'AND bbsTitle LIKE ?'; param.push(`%${title}%`) }
         if (userID !== '') { sql += 'AND userID = ?'; param.push(userID) }
         if (startDate !== null) { sql += 'AND bbsDate >= ?'; param.push(startDate) }
         if (endDate !== null) { sql += 'AND bbsDate <= ?'; param.push(endDate) }
@@ -263,6 +263,23 @@ router.post("/selectreReplyData", async (req, res) => {
     })
 
 })
+router.post("/selectreReply", async (req, res) => {
+    const { bbsID, replyID } = req.body;
+
+    let param = [bbsID, replyID ];
+    let sql = "SELECT * FROM rereply WHERE rereplyAvailable = 1 AND bbsID = ? AND replyID= ?";
+    getConnection((conn) => {
+        conn.query(sql, param,
+            (err, rows, fields) => {
+                console.log(rows);
+                if (err) { res.send(false); console.log(err); }
+                else res.send(rows);
+                conn.release();
+            })
+    })
+
+})
+
 
 router.post("/selectreplyTotal", (req, res) => {
     const { bbsID } = req.body;
@@ -364,7 +381,7 @@ router.post("/bbsConditionList", (req, res) => {
     const { title, userID, startDate, endDate, limit, page, orderTarget, orderValue } = req.body;
     let param = [];
     let sql = "SELECT bbsID, bbsTitle, userID, bbsDate, bbsContent FROM bbs WHERE bbsAvailable = 1 ";
-    if (title !== '') { sql += 'AND bbsTitle = ?'; param.push(title) }
+    if (title !== '') { sql += 'AND bbsTitle LIKE ?'; param.push(`%${title}%`) }
     if (userID !== '') { sql += 'AND userID = ?'; param.push(userID) }
     if (startDate !== null) { sql += 'AND bbsDate >= ?'; param.push(startDate) }
     if (endDate !== null) { sql += 'AND bbsDate <= ?'; param.push(endDate) }

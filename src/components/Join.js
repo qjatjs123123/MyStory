@@ -36,8 +36,9 @@ function Join() {
     const duplicateIdCheck = (e) => {
         
         setId(e.target.value);
+        console.log(e.target.value);
         if (e.target.value === '') return;
-        IdCheck()
+        IdCheck(e.target.value)
             .then((response) => {
                 if (response.data.length === 0) {
                     setIdResult('사용가능한 아이디 입니다.');
@@ -50,7 +51,7 @@ function Join() {
             })
     }
     
-    const IdCheck = () => {
+    const IdCheck = (id) => {
         const url = '/member/idcheck';
         const data = {
             userId: id,

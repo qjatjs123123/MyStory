@@ -43,20 +43,22 @@ function BoardRead(props) {
     useEffect(() => {
         curpage=page;
         initflg = false;
+        if(page === -1){
+            setpage(0);
+            return;
+        }
         loginCheckSubmit();
         selectReplyDataSubmit();
         selectreReplyDataSubmit();
         selectreplyTotalSubmit();
-    }, [page,replyflg])
+    }, [page])
 
     const init = () =>{
-        setreplyflg(!replyflg);
+        //setreplyflg(!replyflg);
         initflg = true;
-        const scrollHeight = document.documentElement.scrollHeight;
-        const clientHeight = document.documentElement.clientHeight;
         setrereplyData(new Map());
         setReplyData([]);
-        setpage(0);
+        setpage(-1);
     }
 
     const infiniteScroll = () => {
@@ -253,13 +255,12 @@ function BoardRead(props) {
                 }
             })
     }
-
     return (
         isLogin ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <BoardContent bbsDeleteSubmit={bbsDeleteSubmit} MoveToBbsUpdate={MoveToBbsUpdate} curuserID={curuserID} content={bbsContent} bbsTitle={bbsTitle} userID={userID} bbsDate={bbsDate} />
                 <EstimateContent reommendflg={reommendflg} bbsID={bbsID} curuserID={curuserID} setreommendflg={setreommendflg} good={good} bad={bad}/>
-                <Reply init={init} bbsID={bbsID} curuserID={curuserID} replyTotal={replyTotal} replyData = {replyData} rereplyData={rereplyData}/>
+                <Reply init={init} bbsID={bbsID} curuserID={curuserID} replyTotal={replyTotal} replyData = {replyData} rereplyData={rereplyData} setrereplyData={setrereplyData}/>
             </div>
         ) : <div></div>
 
@@ -362,7 +363,7 @@ function Reply(props) {
                 </div>
             </div>
             {props.replyData.map((c) => {
-                return < ReplyContent replyID = {c.replyID} bbsID={props.bbsID} init={props.init} curuserID={props.curuserID} key={c.replyID} id ={c.userID} content= {c.replyContent} rereplyData = {props.rereplyData.get(c.replyID)} />
+                return < ReplyContent setrereplyData={props.setrereplyData} rereplyDatatotal={props.rereplyData} replyID = {c.replyID} bbsID={props.bbsID} init={props.init} curuserID={props.curuserID} key={c.replyID} id ={c.userID} content= {c.replyContent} rereplyData = {props.rereplyData.get(c.replyID)} />
             })}
         </div>
     )
@@ -375,6 +376,21 @@ function ReplyContent(props) {
     const valueChange = (e) => {
         e.preventDefault();
         setinputReply(e.target.value);
+    }
+    const selectreReply = () => {
+        const url = '/board/selectreReply';
+        const data = {bbsID: parseInt(props.bbsID),
+                      replyID: props.replyID 
+                    };
+        return axios.post(url, data, { withCredentials: true });
+    }
+    const selectreReplySubmit = () => {
+        selectreReply()
+            .then((response) =>{
+                let newContents = new Map(JSON.parse(JSON.stringify(Array.from(props.rereplyDatatotal))));
+                newContents.set(props.replyID, response.data)
+                props.setrereplyData(newContents);  
+            })
     }
 
     const insertReply = () => {
@@ -399,7 +415,7 @@ function ReplyContent(props) {
                 if(response.data === false) alert("답글 실패");
                 else{
                     setinputReply('');
-                    props.init();
+                    selectreReplySubmit();
                     }
             })
     }

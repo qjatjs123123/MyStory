@@ -207,6 +207,13 @@ router.post("/idcheck", (req, res) => {
     })
 })
 
+router.post("/logout", (req, res) => {
+    res.cookie('jwt', '', {
+        maxAge: 0
+    })
+    res.send(true)
+})
+
 router.post("/join", (req, res) => {
     const {userId, userPw, userName, userMail, userNum} = req.body;  
     getConnection((conn) => {
