@@ -20,21 +20,26 @@ function BoardRead(props) {
     const [isLogin, setLogin] = useState(false);
     const [curuserID, setCuruserID] = useState('');
     const [replyData, setReplyData] = useState([]);
-    const [rereplyData, setrereplyData] = useState([]);
+    const [rereplyData, setrereplyData] = useState(new Map());
     const [page , setpage] = useState(0);
     const [replyTotal , setreplyTotal] = useState(0);
     const [flg , setflg] = useState(false);
     const [replyflg, setreplyflg] = useState(false);
+    const [reommendflg, setreommendflg] = useState(false);
+    const [good, setgood] = useState(0);
+    const [bad, setbad] = useState(0);
     const navigate = useNavigate();
 
     useEffect(() => {
         document.addEventListener('scroll', infiniteScroll);
         loginCheckSubmit();
         selectBbsIDInfoSubmit();
-       
+
     }, []);
 
-
+    useEffect (() =>{
+        selectrecommendSubmit();
+    },[reommendflg])
     useEffect(() => {
         curpage=page;
         initflg = false;
@@ -49,7 +54,7 @@ function BoardRead(props) {
         initflg = true;
         const scrollHeight = document.documentElement.scrollHeight;
         const clientHeight = document.documentElement.clientHeight;
-        setrereplyData([]);
+        setrereplyData(new Map());
         setReplyData([]);
         setpage(0);
     }
@@ -65,6 +70,21 @@ function BoardRead(props) {
            // document.removeEventListener('scroll', infiniteScroll)   ;
         };
     }
+
+    const selectrecommend = () =>{
+        const url = '/board/selectrecommend';
+        const data = {bbsID: parseInt(bbsID),};
+        return axios.post(url, data, { withCredentials: true });
+    }
+
+    const selectrecommendSubmit = () =>{
+        selectrecommend()
+            .then((response) => {   
+                setgood(response.data[0].bbsGood);  
+                setbad(response.data[0].bbsBad);  
+            })
+    }
+
     const selectreplyTotal = () =>{
         const url = '/board/selectreplyTotal';
         const data = {bbsID: parseInt(bbsID),};
@@ -95,12 +115,20 @@ function BoardRead(props) {
                     navigate('/Main');
                 }
                 else {
-                    let newContents = JSON.parse(JSON.stringify(rereplyData));
-                    for (let i = 0; i < 5; i++) newContents.push(new Array());
+                    
+                    let newContents = new Map(JSON.parse(JSON.stringify(Array.from(rereplyData))));
+                    
                     response.data.forEach((e) => {
-                        newContents[e.replyID-1].push(e);
+                        if (!newContents.has(e.replyID)) newContents.set(e.replyID, [e]);
+                        else {
+                            let newArray = Array.from(newContents.get(e.replyID));
+                            newArray.push(e)
+                            newContents.set(e.replyID, newArray);
+                        }
                     })        
-                    setrereplyData(newContents);                 
+                    setrereplyData(newContents);   
+                    console.log("qweqwe:",newContents);
+                             
                 }
 
             })
@@ -127,7 +155,6 @@ function BoardRead(props) {
                         newContents.push(e);
                     })       
                     setReplyData(newContents);
-                    console.log("qweqwe",newContents);
                     flg1 = true;
                 }
             })
@@ -231,7 +258,7 @@ function BoardRead(props) {
         isLogin ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <BoardContent bbsDeleteSubmit={bbsDeleteSubmit} MoveToBbsUpdate={MoveToBbsUpdate} curuserID={curuserID} content={bbsContent} bbsTitle={bbsTitle} userID={userID} bbsDate={bbsDate} />
-                <EstimateContent />
+                <EstimateContent reommendflg={reommendflg} bbsID={bbsID} curuserID={curuserID} setreommendflg={setreommendflg} good={good} bad={bad}/>
                 <Reply init={init} bbsID={bbsID} curuserID={curuserID} replyTotal={replyTotal} replyData = {replyData} rereplyData={rereplyData}/>
             </div>
         ) : <div></div>
@@ -258,15 +285,32 @@ function BoardContent(props) {
     );
 }
 
-function EstimateContent() {
+function EstimateContent(props) {
+    const insertRecommend = (flg) => {
+        const url = '/board/insertRecommend';
+        const data = {
+            bbsID:props.bbsID,
+            userID:props.curuserID,
+            flg:flg
+        };
+        return axios.post(url, data, { withCredentials: true });
+    }
+    const insertRecommendSubmit = (e) => {
+        
+        insertRecommend(e.target.name)
+            .then((response) => {
+                if (response.data === 'already') alert("더이상 추천할 수 없습니다.");
+                else if(response.data === true) props.setreommendflg(!props.reommendflg);
+            })
+    }
     return (
         <div style={{ marginTop: '20px' }}>
             <Card style={{ width: '18rem', background: 'ivory', border: '1px solid black' }}>
                 <Card.Body style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                    <div style={{ color: "red" }}>104</div>
-                    <Button style={{ borderRadius: '50%', padding: '15px 15px', lineHeight: '1', marginRight: '5px', marginLeft: '15px' }} variant="primary">♥<br />추천</Button>
-                    <Button style={{ borderRadius: '50%', padding: '15px 15px', lineHeight: '1', marginLeft: '5px', marginRight: '15px' }} variant="secondary">♡<br />비추</Button>
-                    <div style={{}}>22</div>
+                    <div style={{ color: "red" }}>{props.good}</div>
+                    <Button name='good' onClick = {insertRecommendSubmit} style={{ borderRadius: '50%', padding: '15px 15px', lineHeight: '1', marginRight: '5px', marginLeft: '15px' }} variant="primary">♥<br />추천</Button>
+                    <Button name='bad'  onClick = {insertRecommendSubmit} style={{ borderRadius: '50%', padding: '15px 15px', lineHeight: '1', marginLeft: '5px', marginRight: '15px' }} variant="secondary">♡<br />비추</Button>
+                    <div style={{}}>{props.bad}</div>
                 </Card.Body>
             </Card>
         </div>
@@ -318,7 +362,7 @@ function Reply(props) {
                 </div>
             </div>
             {props.replyData.map((c) => {
-                return < ReplyContent init={props.init} curuserID={props.curuserID} key={c.replyID} id ={c.userID} content= {c.replyContent} rereplyData = {props.rereplyData[c.replyID-1]} />
+                return < ReplyContent replyID = {c.replyID} bbsID={props.bbsID} init={props.init} curuserID={props.curuserID} key={c.replyID} id ={c.userID} content= {c.replyContent} rereplyData = {props.rereplyData.get(c.replyID)} />
             })}
         </div>
     )
@@ -334,10 +378,11 @@ function ReplyContent(props) {
     }
 
     const insertReply = () => {
+        console.log("insertReply",props)
         const url = '/board/insertreReply';
-        const data = {bbsID: parseInt(props.rereplyData[0].bbsID),
-                      replyID: props.rereplyData[0].replyID,
-                      rereplyID: props.rereplyData[0].rereplyID,
+        const data = {bbsID: parseInt(props.bbsID),
+                      replyID: props.replyID ,
+                      rereplyID: props.rereplyData !== undefined && props.rereplyData.length !==0 ? props.rereplyData.length +1 : 1,
                       userID: props.curuserID,
                       replyContent: inputReply
                     };
