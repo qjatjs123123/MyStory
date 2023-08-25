@@ -1,16 +1,14 @@
 import React, {Component} from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Main from './components/Main';
-import FindId from './components/FindId';
-import FindPw from './components/FindPw';
-import Header from './components/Nav';
-import Join from './components/Join';
-import ChangePw from './components/ChangePw';
-import Board from './components/Board';
-import BoardWrite from './components/BoardWrite';
-import BoardRead from './components/BoardRead';
-import BoardUpdate from './components/BoardUpdate';
-
+import Main from './components/pages/memberPage/Main';
+import FindId from './components/pages/memberPage/FindId';
+import FindPw from './components/pages/memberPage/FindPw';
+import Header from './components/nav/header';
+import Join from './components/pages/memberPage/Join';
+import ChangePw from './components/pages/memberPage/ChangePw';
+import BoardWrite from './components/pages/boardwritePage/BoardWrite';
+import BoardRead from './components/pages/boardreadPage/BoardRead';
+import BoardMain from './components/pages/boardmainPage/BoardMain';
 
 class Routing extends Component{
     constructor(props){
@@ -41,7 +39,7 @@ class Routing extends Component{
                     <Route path='/FindId' element={<FindId />} />
                     <Route path='/FindPw' element={<FindPw />} />
                     <Route path='/ChangePw' element={<ChangePw />} />
-                    <Route path='/Board' element={ <Board />} />
+                    <Route path='/Board' element={ <BoardMain />} />
                     <Route path='/BoardWrite' element={ <BoardWrite update={false} bbsID={''} bbsTitle={''} bbsContent={''}/>} />
                     <Route path='/BoardRead' element={ <BoardRead setbbsID={this.setbbsID} setbbsTitle={this.setbbsTitle} setbbsContent={this.setbbsContent}/>} />
                     <Route  path='/BoardWrite/Update' element={ <BoardWrite update={true} bbsID={this.state.bbsID} bbsTitle={this.state.bbsTitle} bbsContent={this.state.bbsContent}/> } />

@@ -316,8 +316,29 @@ async function getMaxReplyID(bbsID) {
 
 }
 
+async function getMaxReReplyID(bbsID,replyID) {
+    return new Promise((resolve, reject) => {
+        getConnection((conn) => {
+            const sql = "SELECT MAX(rereplyID)+1 AS max FROM rereply WHERE bbsID = ? AND replyID = ?";
+            conn.query(sql, [bbsID,replyID], (err, rows, fields) => {
+                if (err) {
+                    console.log(err);
+                    reject(err);
+                    return;
+                }
+                conn.release();
+                let result = rows[0].max;
+                if (result === null) result = 1
+                resolve(result);
+            });
+        });
+    });
+
+}
+
 router.post("/insertreReply", async (req, res) => {
-    const { bbsID, replyID, rereplyID, userID, replyContent } = req.body;
+    const { bbsID, replyID,  userID, replyContent } = req.body;
+    const rereplyID = await getMaxReReplyID(bbsID,replyID);
     let param = [bbsID, replyID, rereplyID, userID, replyContent, 1];
     let sql = "INSERT INTO rereply (bbsID, replyID, rereplyID, userID, rereplyContent, rereplyDate, rereplyAvailable) VALUES  (?, ?, ?, ?, ?, NOW(), ?)";
     getConnection((conn) => {
