@@ -63,8 +63,8 @@ function BBSContent(props) {
             <div style={{ borderTop: '5px solid black' }}>
                 <div style={{ marginTop: '20px', borderBottom: '1px solid black' }}>
                     <h5 style={{ fontWeight: 'bold' }}>{bbsTitle}
-                        {props.curuserID === userID ? <Button  size="sm" style={{ marginLeft: '10px' }} variant="dark">글수정</Button> : null}
-                        {props.curuserID === userID ? <Button  size="sm" style={{ marginLeft: '10px' }} variant="danger">글삭제</Button> : null}
+                        {props.curuserID === userID ? <Button onClick={() => props.MoveToBbsUpdate(bbsTitle,bbsContent)} size="sm" style={{ marginLeft: '10px' }} variant="dark">글수정</Button> : null}
+                        {props.curuserID === userID ? <Button onClick={props.bbsDeleteSubmit} size="sm" style={{ marginLeft: '10px' }} variant="danger">글삭제</Button> : null}
                     </h5>
                     <div style={{ marginBottom: '20px' }}>{userID} | {bbsDate}</div>
                 </div>

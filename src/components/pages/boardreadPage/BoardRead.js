@@ -47,11 +47,41 @@ function BoardRead(props) {
             }
         })
     }
+    const MoveToBbsUpdate = (bbsTitle, bbsContent) => {
+        props.setbbsID(bbsID);
+        props.setbbsTitle(bbsTitle);
+        props.setbbsContent(bbsContent);
+        navigate('/BoardWrite/Update');
+    }
 
+    const bbsDelete = () => {
+        const url = '/board/bbsDelete';
+        const data = {
+            bbsID: bbsID
+        }
+        return axios.post(url, data, { withCredentials: true });
+    }
+
+    const bbsDeleteSubmit = (e) => {
+        const result = window.confirm("정말로 삭제하시겠습니까?");
+        if (result) {
+            bbsDelete()
+                .then((response) => {
+                    if (response.data === true) {
+                        alert("삭제 완료");
+                        navigate('/board');
+                    }
+                    else {
+                        alert("삭제 오류");
+                        navigate('/board');
+                    }
+                })
+        }
+    }
     return (
         isLogin ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <BBSContent curuserID={curuserID} bbsID={bbsID}/>  
+                <BBSContent MoveToBbsUpdate={MoveToBbsUpdate} bbsDeleteSubmit={bbsDeleteSubmit} curuserID={curuserID} bbsID={bbsID}/>  
                 <BBSRecommend curuserID={curuserID} bbsID={bbsID}/>
                 <BBSReply curuserID={curuserID} bbsID={bbsID} loginCheckSubmitProps={loginCheckSubmitProps}/>
             </div>

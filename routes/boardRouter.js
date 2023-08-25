@@ -138,7 +138,8 @@ router.post("/insertRecommend", async (req, res) => {
 })
 router.post("/bbsListInsert", async (req, res) => {
     const { bbsTitle, bbsContent } = req.body;
-    const bbsID = await getMaxbbsID();
+    let bbsID = await getMaxbbsID();
+    bbsID === null ? bbsID = 1 : null;
     getConnection(async (conn) => {
 
         conn.beginTransaction();
