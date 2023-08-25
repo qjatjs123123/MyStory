@@ -6,15 +6,28 @@ import BBSReReplyData from './BBSReReplyData';
 
 function BBSReplyData(props) {
     const [showreReply, setshowreReply] = useState(false);
+    const [showForm, setshowForm] = useState(false);
     const [inputReply, setinputReply] = useState('');
     const [rereplyData, setrereplyData] = useState([]);
+    const [deleteflg, setdeleteflg] = useState(false);
+    const [deletereflyflg, setdeletereflyflg] = useState(false);
+    const [inputReplyUpdate, setinputReplyUpdate] = useState(props.content);
+    const [inputReplyChange, setinputReplyChange] = useState(props.content);
+    const [isFirst , setisFirst] = useState(true);
     useEffect (() =>{
         selectreReplySubmit();
-    },[])
+    },[deleteflg])
+
     const valueChange = (e) => {
         e.preventDefault();
         setinputReply(e.target.value);
     }
+
+    const valueChangereply = (e) => {
+        e.preventDefault();
+        setinputReplyUpdate(e.target.value);
+    }
+
     const selectreReply = () => {
         const url = '/board/selectreReply';
         const data = {bbsID: parseInt(props.bbsID),
@@ -57,24 +70,88 @@ function BBSReplyData(props) {
                     }
             })
     }
+
+    const replyDelete = () => {
+        const url = '/board/replyDelete';
+        const data = {
+            bbsID: props.bbsID,
+            replyID: props.replyID
+        }
+        return axios.post(url, data, { withCredentials: true });
+    }
+
+    const replyDeleteSubmit = (e) => {
+        const result = window.confirm("정말로 삭제하시겠습니까?");
+        if (result) {
+            replyDelete()
+                .then((response) => {
+                    if (response.data === true) setdeletereflyflg(true);
+                    else alert("삭제 오류");
+                })
+        }
+    }
+
+    const replyUpdate = () => {
+        const url = '/board/replyUpdate';
+        const data = {
+            bbsID: props.bbsID,
+            replyID: props.replyID,
+            replyContent : inputReplyUpdate
+        }
+        return axios.post(url, data, { withCredentials: true });
+    }
+
+    const replyUpdateSubmit = (e) => {
+        replyUpdate()
+            .then((response) => {
+                console.log(response.data);
+                if (response.data === false) alert("수정 오류")
+                else {
+                    setisFirst(false);
+                    setinputReplyUpdate('');
+                    setinputReplyChange(response.data[0].replyContent);
+                }
+                
+            })
+
+    }
+
+    const showClick = () =>{
+        setshowForm(!showForm)
+        setinputReplyUpdate(inputReplyChange);
+    }
     return (
+        deletereflyflg  ? <div></div> :
         <div style={{ borderBottom: '1px solid #999', marginBottom: '10px' }}>
             <div style={{ display: 'flex', flexDirection: 'row', fontSize: '1.2em' }}>
                 <div>
                     {props.id}
                 </div>
                 <div style={{ marginLeft: '50px', fontWeight: 'bold' }}>
-                    {props.content}
+                    {isFirst ? props.content: inputReplyChange}
                 </div>
             </div>
-
+            {props.curuserID === props.id ?
+                <div style={{ marginTop: '10px', display: 'flex', flexDirection: 'row' }}>
+                    <Button onClick={showClick} style={{ borderColor:'ivory', fontSize: '12px', height: '30px', width: '5%', }}size="sm" variant="outline-success"  >수정</Button>
+                    <Button onClick={replyDeleteSubmit} style={{ borderColor:'ivory', fontSize: '12px', height: '30px', width: '5%' }} variant="outline-danger" size="sm">삭제</Button>
+                    {
+                        showForm ?
+                            <div style={{ width: '90%', display: 'flex', flexDirection: 'row' }}>
+                                <Form.Control onChange={valueChangereply} name='id' type="text" placeholder="답글 수정..." style={{ borderColor: 'black', width: '90%', height: '30px', marginLeft: '10px' }} value={inputReplyUpdate} />
+                                <Button onClick={replyUpdateSubmit} style={{ fontSize: '12px', height: '30px' }} variant="outline-primary">수정</Button>{' '} </div>
+                            : <div></div>
+                    }
+                </div> : <div></div>
+            }
             <div style={{ marginLeft: "30px", marginTop: "10px" }}>
                 <Card style={{ width: '100%',backgroundColor: 'rgb(240, 240, 230)', border: '1px solid black' }}>
                     <Card.Body>
                         
                     {rereplyData != null ? rereplyData.map((c) => {
-                            console.log("qwe",c);
-                            return < BBSReReplyData key={c.rereplyID} id={c.userID}  content={c.rereplyContent} />
+                            return < BBSReReplyData replyID={props.replyID} deleteflg ={deleteflg} setdeleteflg={setdeleteflg} 
+                                    rereplyID={c.rereplyID} curuserID={props.curuserID} 
+                                    key={c.rereplyID} id={c.userID}  content={c.rereplyContent} bbsID={props.bbsID}/>
                         }) : null}
                     </Card.Body>
                 </Card>

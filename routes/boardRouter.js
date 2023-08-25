@@ -60,7 +60,7 @@ async function getMaxbbsID() {
 
 }
 
-function bbsPromise(conn, sql, param, isFinish,res) {
+function bbsPromise(conn, sql, param, isFinish, res) {
     return new Promise((resolve, reject) => {
         conn.query(sql, param,
             (err, rows, fields) => {
@@ -68,7 +68,7 @@ function bbsPromise(conn, sql, param, isFinish,res) {
                     console.log("reject");
                     reject(err);
                 } else {
-                    if (isFinish){
+                    if (isFinish) {
                         res.send(true);
                         conn.commit();
                     }
@@ -78,8 +78,9 @@ function bbsPromise(conn, sql, param, isFinish,res) {
     });
 }
 
+
 router.post("/insertRecommend", async (req, res) => {
-    const { bbsID, userID,flg } = req.body;
+    const { bbsID, userID, flg } = req.body;
     getConnection(async (conn) => {
         conn.beginTransaction();
         let sql = "SELECT * FROM recommenduserid WHERE bbsID = ? AND userID = ?";
@@ -90,12 +91,12 @@ router.post("/insertRecommend", async (req, res) => {
                 (err, rows, fields) => {
                     if (err) {
                         reject("select");
-                    } else if( rows.length === 1) reject("already")
-                    else {resolve(rows);}
+                    } else if (rows.length === 1) reject("already")
+                    else { resolve(rows); }
                 });
         });
         flg === "good" ? sql = "UPDATE recommend SET bbsGood = bbsGood + 1 WHERE bbsID = ?" :
-        sql = "UPDATE recommend SET bbsBad = bbsBad + 1 WHERE bbsID = ?"
+            sql = "UPDATE recommend SET bbsBad = bbsBad + 1 WHERE bbsID = ?"
         const promises = [
             bbsPromise(
                 conn,
@@ -103,22 +104,23 @@ router.post("/insertRecommend", async (req, res) => {
                 [bbsID, userID],
                 false,
                 res
-             ),
-             bbsPromise(
+            ),
+            bbsPromise(
                 conn,
                 sql,
                 [bbsID],
                 false,
                 res
-             )
+            )
         ];
 
-        query1.then( () => {
+        query1.then(() => {
             Promise.all(promises)
                 .then(
                     () => {
                         res.send(true);
-                        conn.commit();}           
+                        conn.commit();
+                    }
                 )
                 .catch(
                     () => {
@@ -126,13 +128,13 @@ router.post("/insertRecommend", async (req, res) => {
                         res.send("error");
                     }
                 )
-            }
+        }
         )
-        .catch(error =>{
-            conn.rollback();
-            res.send("already");
+            .catch(error => {
+                conn.rollback();
+                res.send("already");
             }
-        )
+            )
         conn.release();
     })
 })
@@ -149,22 +151,22 @@ router.post("/bbsListInsert", async (req, res) => {
             false,
             res)
 
-        query1.then( () => {
+        query1.then(() => {
             return bbsPromise(
                 conn,
                 "INSERT INTO recommend(bbsID, bbsGood, bbsBad) VALUES (?, ?, ?)",
                 [bbsID, 0, 0],
                 true,
                 res
-             )
-            }
+            )
+        }
         )
-        .catch(error =>{
-            console.log("rollback");
-            conn.rollback();
-            res.send(false);
+            .catch(error => {
+                console.log("rollback");
+                conn.rollback();
+                res.send(false);
             }
-        )
+            )
         conn.release();
     })
 })
@@ -227,6 +229,104 @@ router.post("/bbsDelete", async (req, res) => {
         res.send(false);
     }
 })
+function ReplyPromise(conn, sql, param, isFinish, res) {
+    return new Promise((resolve, reject) => {
+        conn.query(sql, param,
+            (err, rows, fields) => {
+                if (err) {
+                    console.log("reject");
+                    reject(err);
+                } else {
+                    if (isFinish) {
+                        res.send(rows);
+                        conn.commit();
+                    }
+                    resolve(rows);
+                }
+            });
+    });
+}
+router.post("/replyUpdate", (req, res) => {
+
+    const { bbsID, replyID, replyContent } = req.body;
+    getConnection(async (conn) => {
+        conn.beginTransaction();
+        const query1 = ReplyPromise(conn,
+            "UPDATE reply SET replyContent = ? WHERE bbsID = ? AND replyID = ?",
+            [replyContent, bbsID, replyID],
+            false,
+            res)
+        query1.then(() => {
+            return ReplyPromise(
+                conn,
+                "SELECT * FROM reply WHERE bbsID = ? AND replyID = ?",
+                [bbsID, replyID],
+                true,
+                res
+            )
+        })
+            .catch(error => {
+                console.log("rollback");
+                conn.rollback();
+                res.send(false);
+            }
+            )
+        conn.release();
+    })
+
+})
+
+
+router.post("/rereplyUpdate", async (req, res) => {
+    try {
+        const { bbsID, replyID, rereplyID, rereplyContent } = req.body;
+        getConnection((conn) => {
+            const sql = "UPDATE rereply SET rereplyContent = ? WHERE bbsID = ? AND replyID = ? AND rereplyID = ?";
+            conn.query(sql, [rereplyContent, bbsID, replyID, rereplyID],
+                (err, rows, fields) => {
+                    if (err) { throw err }
+                    else res.send(true);
+                    conn.release();
+                })
+        })
+    } catch (error) {
+        res.send(false);
+    }
+})
+
+router.post("/replyDelete", async (req, res) => {
+    try {
+        const { bbsID, replyID } = req.body;
+        getConnection((conn) => {
+            const sql = "UPDATE reply SET replyAvailable = 0 WHERE bbsID = ? AND replyID = ?";
+            conn.query(sql, [bbsID, replyID],
+                (err, rows, fields) => {
+                    if (err) { throw err }
+                    else res.send(true);
+                    conn.release();
+                })
+        })
+    } catch (error) {
+        res.send(false);
+    }
+})
+
+router.post("/rereplyDelete", async (req, res) => {
+    try {
+        const { bbsID, replyID, rereplyID } = req.body;
+        getConnection((conn) => {
+            const sql = "UPDATE rereply SET rereplyAvailable = 0 WHERE bbsID = ? AND replyID = ? AND rereplyID = ?";
+            conn.query(sql, [bbsID, replyID, rereplyID],
+                (err, rows, fields) => {
+                    if (err) { throw err }
+                    else res.send(true);
+                    conn.release();
+                })
+        })
+    } catch (error) {
+        res.send(false);
+    }
+})
 
 router.post("/bbsUpdate", async (req, res) => {
     try {
@@ -267,7 +367,7 @@ router.post("/selectreReplyData", async (req, res) => {
 router.post("/selectreReply", async (req, res) => {
     const { bbsID, replyID } = req.body;
 
-    let param = [bbsID, replyID ];
+    let param = [bbsID, replyID];
     let sql = "SELECT * FROM rereply WHERE rereplyAvailable = 1 AND bbsID = ? AND replyID= ?";
     getConnection((conn) => {
         conn.query(sql, param,
@@ -317,11 +417,11 @@ async function getMaxReplyID(bbsID) {
 
 }
 
-async function getMaxReReplyID(bbsID,replyID) {
+async function getMaxReReplyID(bbsID, replyID) {
     return new Promise((resolve, reject) => {
         getConnection((conn) => {
             const sql = "SELECT MAX(rereplyID)+1 AS max FROM rereply WHERE bbsID = ? AND replyID = ?";
-            conn.query(sql, [bbsID,replyID], (err, rows, fields) => {
+            conn.query(sql, [bbsID, replyID], (err, rows, fields) => {
                 if (err) {
                     console.log(err);
                     reject(err);
@@ -338,8 +438,8 @@ async function getMaxReReplyID(bbsID,replyID) {
 }
 
 router.post("/insertreReply", async (req, res) => {
-    const { bbsID, replyID,  userID, replyContent } = req.body;
-    const rereplyID = await getMaxReReplyID(bbsID,replyID);
+    const { bbsID, replyID, userID, replyContent } = req.body;
+    const rereplyID = await getMaxReReplyID(bbsID, replyID);
     let param = [bbsID, replyID, rereplyID, userID, replyContent, 1];
     let sql = "INSERT INTO rereply (bbsID, replyID, rereplyID, userID, rereplyContent, rereplyDate, rereplyAvailable) VALUES  (?, ?, ?, ?, ?, NOW(), ?)";
     getConnection((conn) => {
