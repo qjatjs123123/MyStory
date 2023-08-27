@@ -1,13 +1,13 @@
 # React-Node-BBS
-## 패키지 구조
+## 💡 패키지 구조
 <img width="650" alt="image" src="https://github.com/qjatjs123123/Spring_notice_board/assets/74814641/a9a1ed60-1d16-4072-a167-78a4693b821c">
 
-## 프로젝트 소개
+## 💡 프로젝트 소개
 이 프로젝트는 React, Node를 학습하기 위한 게시판 프로젝트입니다.
 
-## 프로젝트 개발 일지(필독!!!)
+## 💡 프로젝트 개발 일지(필독!!!)
 https://velog.io/@qjatjs123123/series/React-Node-%EA%B2%8C%EC%8B%9C%ED%8C%90
-
+<br>
 ## 📋 주요 기능 목록
 
 <br>
@@ -66,3 +66,6 @@ https://velog.io/@qjatjs123123/series/React-Node-%EA%B2%8C%EC%8B%9C%ED%8C%90
 - 댓글 수정, 삭제
 - 답글 수정, 삭제
  ``` 
+
+ ## 💡 시연 영상
+ [![Video Label](http://img.youtube.com/vi/WuhJrxWOWdk/0.jpg)](https://youtu.be/WuhJrxWOWdk?t=0s)
