@@ -67,5 +67,5 @@ https://velog.io/@qjatjs123123/series/React-Node-%EA%B2%8C%EC%8B%9C%ED%8C%90
 - 답글 수정, 삭제
  ``` 
 
- ## 💡 시연 영상
+ ## 💡 시연 영상 (이미지 클릭)
  [![Video Label](http://img.youtube.com/vi/WuhJrxWOWdk/0.jpg)](https://youtu.be/WuhJrxWOWdk?t=0s)
