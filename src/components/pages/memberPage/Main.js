@@ -5,6 +5,7 @@ import { Link} from 'react-router-dom';
 import styled from 'styled-components';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import "../../../style.css";
 
 function Main(props){
     const [ID, setID] = useState('');
@@ -52,31 +53,50 @@ function Main(props){
     }
 
     return (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
-                <Card style={{ width: '25rem', background:'lightgray'}}>
-                    <Card.Body>
-                        <Card.Title style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '30px'}}>게시판</Card.Title>
-                        <div>
-                            <Form style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                <Form.Group className="mb-3" controlId="formGroupEmail">
-                                    <Form.Label>아이디</Form.Label>
-                                    <Form.Control type="text" placeholder="ID" name='ID' onChange={handleValueChange} style={{width: '23rem'}}/>
-                                </Form.Group>
-                                <Form.Group className="mb-3" controlId="formGroupPassword">
-                                    <Form.Label>비밀번호</Form.Label>
-                                    <Form.Control type="password" placeholder="PW" name ='PW' onChange={handleValueChange} style={{width: '23rem'}}/> <br/>        
-                                </Form.Group>
-                                <Button type="submit" className="btn btn-primary" style={{ width: '6rem', marginBottom:'15px'}} onClick={loginSubmit}>로그인</Button>
-                            </Form>
+        <div className='main-container'>
+            <div className='main-cover'>
+                <div className='main-content'>
+                    <div className='left-login'>
+                        <span className='login-text'>Log In</span>
+                    </div>
+                    <div className='right-login'>
+                        <div class="main-header">
+                            <div class="logo-content">
+                                <img className="logo" src={process.env.PUBLIC_URL+'images/logo.png'}></img>
+                                <span className='logo-text'>My Story</span>
+                            </div>
                         </div>
-                        <div style={{display: 'flex', justifyContent: 'center'}}>
-                            <StyledNavLink to="/join">회원가입</StyledNavLink>
-                            <StyledNavLink to="/FindId">아이디찾기</StyledNavLink>
-                            <StyledNavLink to="/FindPw">비밀번호찾기</StyledNavLink>
+                        <div class="login-content">
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                        <Card style={{ width: '25rem', border:'none'}}>
+                                            <Card.Body >
+                                                <Card.Title className='main-title' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '20px'}}>Let's Share My Story</Card.Title>
+                                                <div>
+                                                    <Form style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                                        <Form.Group className="mb-3" controlId="formGroupEmail">
+                                                            <Form.Label>아이디</Form.Label>
+                                                            <Form.Control type="text" placeholder="ID" name='ID' onChange={handleValueChange} style={{width: '23rem'}}/>
+                                                        </Form.Group>
+                                                        <Form.Group className="mb-3" controlId="formGroupPassword">
+                                                            <Form.Label>비밀번호</Form.Label>
+                                                            <Form.Control type="password" placeholder="PW" name ='PW' onChange={handleValueChange} style={{width: '23rem'}}/> <br/>        
+                                                        </Form.Group>
+                                                        <Button type="submit" className="btn btn-primary" style={{ width: '100%', marginBottom:'15px', fontSize:'18px'}} onClick={loginSubmit}>로그인</Button>
+                                                    </Form>
+                                                </div>
+                                                <div style={{display: 'flex', justifyContent: 'center'}}>
+                                                    <StyledNavLink to="/join">회원가입</StyledNavLink>
+                                                    <StyledNavLink to="/FindId">아이디찾기</StyledNavLink>
+                                                    <StyledNavLink to="/FindPw">비밀번호찾기</StyledNavLink>
+                                                </div>
+                                            </Card.Body>
+                                        </Card>
+                            </div>
                         </div>
-                    </Card.Body>
-                </Card>
+                    </div>
+                </div>
             </div>
+        </div>
     )
 }
 

@@ -13,7 +13,7 @@ app.use(cookieParser())
 const CLIENT_ID = '241966183545-i1kij6ck37n9l4so3sra5388tvogb3jf.apps.googleusercontent.com';
 const CLIENT_SECRET = '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';
 const REDIRECT_URI = 'https://developers.google.com/oauthplayground';
-const REFRESH_TOKEN = '1//046ucT9uHX1sCCgYIARAAGAQSNwF-L9Ircxy-UzMkJoqKskGQNB97q2i06PCiGCcoUovcthjth9fhhCcs7-zZ-AqS2UvndVufT_c';
+const REFRESH_TOKEN = '1//04U58fBcTJlFpCgYIARAAGAQSNwF-L9IraYiXlEY__BaqIwSuCTdqPogryxpvHnmeU9i7D8ej3AmkhBnw6GQq93wcxEhFVDmHVjU';
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET);
 oAuth2Client.setCredentials({refresh_token: REFRESH_TOKEN});
 const SECRET_KEY = '1234';
@@ -45,8 +45,8 @@ async function sendMail(userName, email){
             text: '비밀번호 인증입니다.',
             html: `<h1>비밀번호 인증입니다.<h1><br/><h3><a href=http://localhost:3000/changePw?token=${randomBytes}&userID=${userName}>비밀번호 변경하기</a><h3>`
         };
-        await insertEmailCode(randomBytes,userName, email);
         const result = await transport.sendMail(mailOptions);
+        await insertEmailCode(randomBytes,userName, email);
         return result;
     }catch(error){
         console.log(error);
@@ -138,7 +138,7 @@ router.post("/login", (req, res) => {
                             userName: row.userName,
                             userEmail : row.userMail
                           }, SECRET_KEY, {
-                            expiresIn: '30m', // 만료시간 15분
+                            expiresIn: '30m', // 만료시간 30분
                             issuer: 'hong',
                           });
                         res.cookie('jwt', token);

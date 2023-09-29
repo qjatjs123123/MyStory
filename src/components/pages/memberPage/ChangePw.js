@@ -15,7 +15,7 @@ function ChangePw() {
         const userID = urlParams.get('userID');
         setuserID(userID);
         checkTokenSubmit(token, userID);
-    }, [isCorrect]);
+    }, []);
 
     const checkToken = (token, userID) => {
         const url = '/member/checkToken';

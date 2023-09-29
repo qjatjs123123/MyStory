@@ -12,24 +12,35 @@ class Header extends Component {
 
     render() {
         const StyledNavLink = styled(Link)`
-            color: gray;
+            display:inline-block;
+            color: black;
             margin-right: 15px;
             text-decoration: none;
-            transition: color 0.3s;
-
+            transform: translateY(20%);
             &:hover {
-                color: white;
+                font-weight:600;
             }
         `;
         const navLinkHoverStyle = {
             color: 'white', // hover 시 텍스트 색상을 흰색으로 변경
         };
         return (
-            <div>
-                <Navbar bg="dark" data-bs-theme="dark">
+            <div className='header'>
+                <div className='header-left'>
+                    <Link to="/main">
+                    <img className="logo-title" src={process.env.PUBLIC_URL+'images/logo-title.png'}></img>
+                    </Link>
+                    <StyledNavLink to="/FindId">아이디찾기</StyledNavLink>
+                    <StyledNavLink to="/FindPw">비밀번호찾기</StyledNavLink>
+                    <StyledNavLink to="/board">게시판</StyledNavLink>
+                    <StyledNavLink to="/BoardWrite">글쓰기</StyledNavLink>
+                    <Timer count = {this.props.count}/>
+                </div>
+                {/* <Navbar >
                     <Container>
                         <StyledNavLink to="/main" style={{color:'white'}}>메인</StyledNavLink>
-                        <Nav className="me-auto">
+                        <Nav >
+                        <img className="logo-title" src={process.env.PUBLIC_URL+'images/logo-title.png'}></img>
                             <StyledNavLink to="/FindId">아이디찾기</StyledNavLink>
                             <StyledNavLink to="/FindPw">비밀번호찾기</StyledNavLink>
                             <StyledNavLink to="/board">게시판</StyledNavLink>
@@ -37,7 +48,7 @@ class Header extends Component {
                         </Nav>
                         <Timer count = {this.props.count}/>
                     </Container>
-                </Navbar>
+                </Navbar> */}
             </div>
         )
     }

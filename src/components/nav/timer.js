@@ -15,8 +15,7 @@ function Timer(props) {
     const timerId = useRef(null);
     const navigate = useNavigate();
 
-    const getTimer = () => {
-        
+    const getTimer = () => {      
         const url = '/board/getTimer';
         const data = {};
         return axios.post(url, data,{ withCredentials: true });
@@ -32,8 +31,7 @@ function Timer(props) {
                     setSec(time.current%60);
                     time.current -= 1;
                 }, 1000);
-            })
-        
+            }) 
     }
     
     useEffect(() => {      
@@ -84,11 +82,12 @@ function Timer(props) {
     } 
 
     return (
-        <Form className="d-flex">
+        <div className='timer-container'>
             <Navbar.Text> {min}분:{sec}초</Navbar.Text>
             <Button onClick={refreshTokenSubmit} variant="outline-success" style={{ marginLeft: '10px' }}>연장</Button>
             <Button onClick={logoutSubmit} variant="outline-danger" style={{ marginLeft: '10px' }}>로그아웃</Button>{' '}
-        </Form>
+        </div>
+        
     )
 }
 

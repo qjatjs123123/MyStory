@@ -1,0 +1,122 @@
+.body{
+  margin: 0;
+}
+#root{
+  position: relative;
+}
+.header{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  padding: 0 20px;
+
+}
+.main-container{
+  padding: 20px 20px;
+  padding-top: 60px;
+}
+.main-cover{
+  float:left;
+  width: 100%;
+  height: calc(100vh - 80px);
+  background: url(/public/images/background-main.jpg) no-repeat center center;
+  background-size: cover;
+  position: relative;
+}
+.main-cover::before{
+  content: '';
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: #000000ad;
+  position: absolute;
+}
+.login-content{
+  
+
+}
+.main-content{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 840px;
+  height: 60%;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.left-login{
+  width: 33%;
+  height: 100%;
+  background-color: rgb(31, 13, 192);
+  float:left;
+
+}
+.right-login{
+  width: 67%;
+  float: left;
+  height: 100%;
+  background-color: white;
+
+}
+.login-text{
+  font-size: 45px;
+  color: #fff;
+  font-weight: 100;
+  display: inline-block;
+  position: absolute;
+  top:40px;
+  left:40px
+}
+.logo{
+  width: 70px;
+  height: 70px;
+  display: inline-block;
+  margin: 0 auto;
+}
+.right-login .main-header{
+  margin-top: 40px;
+  width: 100%;
+  
+}
+.logo-text{
+  font-size: 45px;
+  font-weight: 600;
+  display: inline-block;
+  margin-left: 30px;
+  transform: translateY(20%);
+}
+.logo-content{
+  display: block;
+  text-align: center;
+  margin: 0 auto;
+  position: relative;
+}
+.main-title{
+  color:#8b8b8b;
+  margin-bottom: 20px;
+}
+.mb-3 input{
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid #000;
+}
+.logo-title{
+  width: 150px;
+  height: 50px;
+  margin-right: 15px;
+  margin-top: 5px;
+}
+.header-left{
+  
+}
+.timer-container{
+  display: inline-block;
+  position: absolute;
+  right: 0;
+  margin-right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}

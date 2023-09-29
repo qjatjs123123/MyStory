@@ -8,6 +8,7 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 
 function BoardPage(props) {
+    console.log("page");
     const [show, setShow] = useState(false);
     let value = 0;
     const handleClose = () => setShow(false);
@@ -21,12 +22,13 @@ function BoardPage(props) {
         else alert("다시 입력해주세요")
 
     }
+    const plusPage = () => { if (props.curpage + 1 <= props.maxpage) { props.setPage(props.curpage + 1); } }
+    const minusPage = () => { if (props.curpage > 1) { props.setPage(props.curpage - 1); } }
 
     const changeValue = (e) => {
         value = parseInt(e.target.value)
     }
-    const plusPage = () => { if (props.curpage + 1 <= props.maxpage) { props.setPage(props.curpage + 1); } }
-    const minusPage = () => { if (props.curpage > 1) { props.setPage(props.curpage - 1); } }
+    
     return (
         <div>
             <ButtonGroup aria-label="Basic example" size="lg">

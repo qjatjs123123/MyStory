@@ -521,6 +521,8 @@ router.post("/bbsConditionList", (req, res) => {
 
 })
 
+
+
 router.post("/selectBbsIDInfo", (req, res) => {
     const { bbsID } = req.body;
     getConnection((conn) => {

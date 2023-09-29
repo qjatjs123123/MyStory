@@ -20,3 +20,4 @@ function getConnection(callback) {
 }
 
 module.exports = getConnection;
+

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -17,22 +17,22 @@ registerLocale('ko', ko);
 function BoardMain() {
     //page,limit
     console.log("main");
-    const [curpage, setPage] = useState(1);
-    const [maxpage, setMaxPage] = useState(1);
-    const [limit, setLimit] = useState(5);
-    const [bbslist, setBbslist] = useState([]);
-    const [isLogin, setLogin] = useState(false);
+    const [curpage, setPage] = useState(1);  //현재 페이지
+    const [maxpage, setMaxPage] = useState(1);  //마지막 페이지
+    const [limit, setLimit] = useState(5);  // 컨텐츠 갯수
+    const [bbslist, setBbslist] = useState([]);  //컨텐츠
+    const [isLogin, setLogin] = useState(false);  //로그인 확인
     const navigate = useNavigate();
 
     // Condition Form
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
-    const [title, setTitle] = useState('');
-    const [userID, setuserID] = useState('');
+    const [startDate, setStartDate] = useState(null);  // 시작일자
+    const [endDate, setEndDate] = useState(null);  // 종료일자
+    const [title, setTitle] = useState('');  //제목
+    const [userID, setuserID] = useState('');  // 유저아이디
 
     // Order Flg
-    const [orderTarget, setorderTarget] = useState('bbsID');
-    const [orderValue, setorderValue] = useState('DESC');
+    const [orderTarget, setorderTarget] = useState('bbsID'); //정렬하고자 하는 컬럼
+    const [orderValue, setorderValue] = useState('DESC');   //오름차순, 내림차순
     const [IsRender, setIsRender] = useState(false);
 
     useEffect(() => {   
