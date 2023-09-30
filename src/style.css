@@ -110,6 +110,11 @@
   border: none;
   border-bottom: 1px solid #000;
 }
+.mb-3 textarea{
+  border-radius: 0;
+
+  border: 2px solid #000;
+}
 .logo-title{
   width: 150px;
   height: 50px;
@@ -160,7 +165,9 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  
 }
+
 .tabs{
   height: 100%;
   width: 300%;
@@ -186,4 +193,12 @@
   width: 100%;
   background: url(/public/images/fun.jpg) no-repeat center center;
   background-size: cover;
+}
+.profilePreview{
+  display: block;
+  height: 200px;
+  margin: 0 auto;
+}
+.profile-content{
+  display: none;
 }

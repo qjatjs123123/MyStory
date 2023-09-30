@@ -66,7 +66,7 @@ return (
                           <span className='logo-text'>My Story</span>
                       </div>
                   </div>
-                  <div class="login-content">
+                  <div className="login-content">
                       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                   <Card style={{ width: '25rem', border:'none'}}>
                                       <Card.Body >

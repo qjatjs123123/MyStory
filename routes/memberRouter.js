@@ -215,10 +215,10 @@ router.post("/logout", (req, res) => {
 })
 
 router.post("/join", (req, res) => {
-    const {userId, userPw, userName, userMail, userNum} = req.body;  
+    const {userId, userPw, userName, userMail, userNum, userNickname, userState, userProfile} = req.body;  
     getConnection((conn) => {
-        const sql = 'INSERT INTO member VALUES (?, ?, ?, ?, ?, ?,?,?)';
-        let params = [userId, encrypt(userPw), userName, userMail, encrypt(userNum),null,null,null];
+        const sql = 'INSERT INTO member VALUES (?, ?, ?, ?, ?, ?,?,?, ?, ?, ?)';
+        let params = [userId, encrypt(userPw), userName, userMail, encrypt(userNum),null,null,null, userNickname, userState, userProfile];
         conn.query(sql,params,
             (err,rows,fields) => {
                 conn.release();
