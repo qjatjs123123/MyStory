@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
@@ -27,7 +27,16 @@ function Join() {
     const [nameResult, setNameResult] = useState('');
     const [emailResult, setEmailResult] = useState('');
     const navigate = useNavigate();
-
+    const tabsref = useRef();
+    const arr = ['0%', '-100%', '-200%']
+    let idx = 0;
+    useEffect(() => {
+        const timer = setInterval(() => {
+            tabsref.current.style.marginLeft = arr[idx%3];
+            idx = (idx + 1) % 3;
+        }, 5000);
+        return () => {clearInterval(timer)}
+    }, [])
     useEffect(() => {
         if (firstcheck && secondcheck) {
             setFirstResult('올바른 주민번호 입니다.');
@@ -155,7 +164,7 @@ function Join() {
     const joinSubmit = (e) => {
         e.preventDefault();
         if (idCheck && pwCheck && pwCheckCheck &&
-            firstcheck && secondcheck && namedcheck && emailcheck) {
+            firstcheck && secondcheck && namedcheck && email != '') {
             join()
                 .then((response) => {
                     if (response.data.length === 0)
@@ -172,46 +181,64 @@ function Join() {
     }
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '30px' }}>
-            <div style={{ fontSize: '3rem', fontWeight: 'bold', color: 'brown' }}>회원가입</div>
-            <Form >
-                <Form.Group className="mb-3" controlId="formGroupEmail">
-                    <Form.Label>아이디</Form.Label>
-                    <Form.Control onBlur={duplicateIdCheck} name='id' type="text" placeholder="Enter ID" style={{ width: '500px', border: '2px solid black' }} />
-                    <div style={{ height: '10px', fontSize: '13px', color: idResult === '중복된 아이디 입니다.' ? 'red' : 'green' }}>{idResult}</div>
-                </Form.Group>
-                <Form.Group className="mb-3" controlId="formGroupPassword">
-                    <Form.Label>비밀번호</Form.Label>
-                    <Form.Control onBlur={passwordCheck} name='pw' type="password" placeholder="Password" style={{ width: '500px', border: '2px solid black' }} />
-                    <div style={{ height: '10px', fontSize: '13px', color: pwResult === '비밀번호 규칙 위반입니다.' ? 'red' : 'green' }}>{pwResult}</div>
-                </Form.Group>
-                <Form.Group className="mb-3" controlId="formGroupPassword">
-                    <Form.Label>비밀번호확인</Form.Label>
-                    <Form.Control onBlur={samePassword} name='pwcheck' type="password" placeholder="Password" style={{ width: '500px', border: '2px solid black' }} />
-                    <div style={{ height: '10px', fontSize: '13px', color: pwCheckResult === '비밀번호 불일치합니다.' ? 'red' : 'green' }}>{pwCheckResult}</div>
-
-                </Form.Group>
-                <Form.Group className="mb-3" controlId="formGroupPassword">
-                    <Form.Label>주민등록번호</Form.Label>
-                    <div style={{ display: 'flex', flexDirection: 'row' }}>
-                        <Form.Control onBlur={numCheck} name='first' type="text" placeholder="First" style={{ width: '237px', border: '2px solid black', marginRight: '10px' }} />
-                        <div>-</div>
-                        <Form.Control onBlur={numCheck} name='second' type="password" placeholder="Second" style={{ width: '237px', border: '2px solid black', marginLeft: '10px' }} />
+        <div className='join-container'>
+            <div className='join-content'>
+                <div className='join-image'>
+                    <div className='tabs' ref = {tabsref}>
+                        <div className='tab'>
+                            <div class="join-image1"></div>
+                        </div>
+                        <div className='tab'>
+                            <div class="join-image2"></div>
+                        </div>
+                        <div className='tab'>
+                            <div class="join-image3"></div>
+                        </div>
                     </div>
-                    <div style={{ height: '10px', fontSize: '13px', color: firstResult === '주민번호 오류입니다.' ? 'red' : 'green' }}>{firstResult}</div>
-                </Form.Group>
-                <Form.Group className="mb-3" controlId="formGroupPassword">
-                    <Form.Label>이름</Form.Label>
-                    <Form.Control onBlur={nameCheck} name='name' type="text" placeholder="Name" style={{ width: '500px', border: '2px solid black' }} />
-                    <div style={{ height: '10px', fontSize: '13px', color: nameResult === '공백이 있습니다.' ? 'red' : 'green' }}>{nameResult}</div>
-                </Form.Group>
-                <Form.Group className="mb-3" controlId="formGroupPassword">
-                    <Form.Label>이메일</Form.Label>
-                    <Form.Control onBlur={emailCheck} name='email' type="email" placeholder="Email" style={{ width: '500px', border: '2px solid black' }} />
-                    <div style={{ height: '10px', fontSize: '13px', color: emailResult === '이메일 형식 오류입니다.' ? 'red' : 'green' }}>{emailResult}</div>
-                </Form.Group>
-                <Button onClick={joinSubmit} type="submit" style={{ width: '500px', marginTop: '30px', height: '45px' }}>가입하기</Button>
-            </Form>
+                </div>
+                <div className='join-right'>
+                    <div style={{fontSize:'40px', fontWeight: 'bold', marginBottom:'10px'}}>회원가입</div>
+                    
+                    <Form >
+                        <Form.Group className="mb-3" controlId="formGroupEmail">
+                            <Form.Label>아이디</Form.Label>
+                            <Form.Control onBlur={duplicateIdCheck} name='id' type="text" placeholder="Enter ID" style={{ width: '500px', border: '2px solid black' }} />
+                            <div style={{ height: '10px', fontSize: '13px', color: idResult === '중복된 아이디 입니다.' ? 'red' : 'green' }}>{idResult}</div>
+                        </Form.Group>
+                        <Form.Group className="mb-3" controlId="formGroupPassword">
+                            <Form.Label>비밀번호</Form.Label>
+                            <Form.Control onBlur={passwordCheck} name='pw' type="password" placeholder="Password" style={{ width: '500px', border: '2px solid black' }} />
+                            <div style={{ height: '10px', fontSize: '13px', color: pwResult === '비밀번호 규칙 위반입니다.' ? 'red' : 'green' }}>{pwResult}</div>
+                        </Form.Group>
+                        <Form.Group className="mb-3" controlId="formGroupPassword">
+                            <Form.Label>비밀번호확인</Form.Label>
+                            <Form.Control onBlur={samePassword} name='pwcheck' type="password" placeholder="Password" style={{ width: '500px', border: '2px solid black' }} />
+                            <div style={{ height: '10px', fontSize: '13px', color: pwCheckResult === '비밀번호 불일치합니다.' ? 'red' : 'green' }}>{pwCheckResult}</div>
+
+                        </Form.Group>
+                        <Form.Group className="mb-3" controlId="formGroupPassword">
+                            <Form.Label>주민등록번호</Form.Label>
+                            <div style={{ display: 'flex', flexDirection: 'row' }}>
+                                <Form.Control onBlur={numCheck} name='first' type="text" placeholder="First" style={{ width: '237px', border: '2px solid black', marginRight: '10px' }} />
+                                <div>-</div>
+                                <Form.Control onBlur={numCheck} name='second' type="password" placeholder="Second" style={{ width: '237px', border: '2px solid black', marginLeft: '10px' }} />
+                            </div>
+                            <div style={{ height: '10px', fontSize: '13px', color: firstResult === '주민번호 오류입니다.' ? 'red' : 'green' }}>{firstResult}</div>
+                        </Form.Group>
+                        <Form.Group className="mb-3" controlId="formGroupPassword">
+                            <Form.Label>이름</Form.Label>
+                            <Form.Control onBlur={nameCheck} name='name' type="text" placeholder="Name" style={{ width: '500px', border: '2px solid black' }} />
+                            <div style={{ height: '10px', fontSize: '13px', color: nameResult === '공백이 있습니다.' ? 'red' : 'green' }}>{nameResult}</div>
+                        </Form.Group>
+                        <Form.Group className="mb-3" controlId="formGroupPassword">
+                            <Form.Label>이메일</Form.Label>
+                            <Form.Control onBlur={emailCheck} name='email' type="email" placeholder="Email" style={{ width: '500px', border: '2px solid black' }} />
+                            <div style={{ height: '10px', fontSize: '13px', color: emailResult === '이메일 형식 오류입니다.' ? 'red' : 'green' }}>{emailResult}</div>
+                        </Form.Group>
+                        <Button onClick={joinSubmit} type="submit" style={{ width: '500px', marginTop: '20px', height: '45px' }}>다음</Button>
+                    </Form>
+                </div>
+            </div>
         </div>
     )
 
