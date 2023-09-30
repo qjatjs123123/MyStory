@@ -60,8 +60,8 @@ return (
                   <span className='login-text'>Log In</span>
               </div>
               <div className='right-login'>
-                  <div class="main-header">
-                      <div class="logo-content">
+                  <div className="main-header">
+                      <div className="logo-content">
                           <img className="logo" src={process.env.PUBLIC_URL+'images/logo.png'}></img>
                           <span className='logo-text'>My Story</span>
                       </div>

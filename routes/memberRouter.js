@@ -236,11 +236,11 @@ router.post("/findId", (req, res) => {
             (err,rows,fields) => {
                 conn.release();
                 let flg = false;
-                rows.forEach((row) => {      
-                    if(bcrypt.compareSync(userNum,row.userNum)){res.send(row); flg=true;}
-                })
-                if (!flg) res.send([]);
-                
+
+                for (let row of rows){
+                    if(bcrypt.compareSync(userNum,row.userNum)){res.send(row); flg=true; break;}
+                }
+                if (!flg) res.send([]);           
             })
     })
 })
