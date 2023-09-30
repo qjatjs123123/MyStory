@@ -136,7 +136,10 @@ router.post("/login", (req, res) => {
                         token = jwt.sign({
                             userID: row.userID,
                             userName: row.userName,
-                            userEmail : row.userMail
+                            userEmail : row.userMail,
+                            userNickname : row.userNickname,
+                            userState : row.userState,
+                            userProfile: row.userProfile
                           }, SECRET_KEY, {
                             expiresIn: '30m', // 만료시간 30분
                             issuer: 'hong',

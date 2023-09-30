@@ -122,30 +122,35 @@ function CorrectForm (props){
         }
     }
     return (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
-                <Card style={{ width: '30rem', background: 'ivory' }}>
-                    <Card.Body>
-                        <Card.Title style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '30px' }}>비밀번호변경</Card.Title><br />
-                        <div>
-                            <Form >
-                                <Form.Group className="mb-3" controlId="formGroupPassword">
-                                    <Form.Label>비밀번호</Form.Label>
-                                    <Form.Control onBlur={passwordCheck} name='pw' type="password" placeholder="Password" style={{ width: '450px', border: '2px solid black' }} />
-                                    <div style={{ height: '10px', fontSize: '13px', color: pwResult === '비밀번호 규칙 위반입니다.' ? 'red' : 'green' }}>{pwResult}</div>
-                                </Form.Group>
-                                <Form.Group className="mb-3" controlId="formGroupPassword">
-                                    <Form.Label>비밀번호확인</Form.Label>
-                                    <Form.Control onBlur={samePassword} name='pwcheck' type="password" placeholder="Password" style={{ width: '450px', border: '2px solid black' }} />
-                                    <div style={{ height: '10px', fontSize: '13px', color: pwCheckResult === '비밀번호 불일치합니다.' ? 'red' : 'green' }}>{pwCheckResult}</div>
+        <div className='cpw-container'>
+            <div className='id-photo'></div>
+            <div className="join-content cpw-content">
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
+                        <Card style={{ width: '30rem', background: 'ivory' }}>
+                            <Card.Body>
+                                <Card.Title style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '30px' }}>비밀번호변경</Card.Title><br />
+                                <div>
+                                    <Form >
+                                        <Form.Group className="mb-3" controlId="formGroupPassword">
+                                            <Form.Label>비밀번호</Form.Label>
+                                            <Form.Control onBlur={passwordCheck} name='pw' type="password" placeholder="Password" style={{ width: '450px', border: '2px solid black' }} />
+                                            <div style={{ height: '10px', fontSize: '13px', color: pwResult === '비밀번호 규칙 위반입니다.' ? 'red' : 'green' }}>{pwResult}</div>
+                                        </Form.Group>
+                                        <Form.Group className="mb-3" controlId="formGroupPassword">
+                                            <Form.Label>비밀번호확인</Form.Label>
+                                            <Form.Control onBlur={samePassword} name='pwcheck' type="password" placeholder="Password" style={{ width: '450px', border: '2px solid black' }} />
+                                            <div style={{ height: '10px', fontSize: '13px', color: pwCheckResult === '비밀번호 불일치합니다.' ? 'red' : 'green' }}>{pwCheckResult}</div>
 
-                                </Form.Group>
-                                <Button onClick={ChnagePwSubmit} type="submit" style={{ width: '450px', marginTop: '30px', height: '45px' }}>비밀번호변경</Button>
-                            </Form>
-                        </div>
+                                        </Form.Group>
+                                        <Button onClick={ChnagePwSubmit} type="submit" style={{ width: '450px', marginTop: '30px', height: '45px' }}>비밀번호변경</Button>
+                                    </Form>
+                                </div>
 
-                    </Card.Body>
-                </Card>
+                            </Card.Body>
+                        </Card>
+                </div>
             </div>
+        </div>
     )
 }
 

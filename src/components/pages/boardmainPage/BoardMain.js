@@ -35,6 +35,18 @@ function BoardMain() {
     const [orderValue, setorderValue] = useState('DESC');   //오름차순, 내림차순
     const [IsRender, setIsRender] = useState(false);
 
+
+    //userInfo
+    const [userNickname, setuserNickname] = useState('');
+    const [userState, setuserState] = useState('');
+    const [userProfile, setuserProfile] = useState('');
+
+    const profileref = useRef('');
+    useEffect(() => {
+        if (profileref.current != '')
+            profileref.current.style.background = `url(${userProfile}) no-repeat center center / 100% 100%`
+            
+    }, [userProfile])
     useEffect(() => {   
         loginCheckSubmit();    
     }, []);
@@ -108,6 +120,10 @@ function BoardMain() {
                     navigate('/Main');
                 }
                 else {
+                    setuserNickname(response.data.userNickname);
+                    setuserState(response.data.userState);
+                    setuserProfile(response.data.userProfile);
+                    
                     setLogin(true);
                 }
             })
@@ -124,17 +140,29 @@ function BoardMain() {
 
     return (
         isLogin ? (
-            <div>
-                <div style={{ width: '80%', textAlign: 'center', marginLeft: '10%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <h3 style={{ marginTop: '50px', fontWeight: 'bolder' }}>게시판</h3>
-                    <BoardConditionForm setPage={setPage} setStartDate={setStartDate} setEndDate={setEndDate} 
-                        setTitle={setTitle} setuserID={setuserID}/>
-                    <BoardLimit setLimit={setLimit}/>
-                    <BoardTable bbslist={bbslist} setorderTarget={setorderTarget} setorderValue={setorderValue}
-                        orderTarget={orderTarget} orderValue={orderValue}/>
-                    <BoardPage curpage={curpage} maxpage={maxpage} setPage={setPage}/>
+            <div className='bbs-container'>
+                <div className='profile-container'>
+                    <div className='profile-content'>
+                        <div className='profile' ref={profileref}></div>
+                        <div className='profile-left'>
+                            <div className='profile-nickname'><span>{userNickname}</span></div>
+                            <div className='profile-state'><span>{userState}</span></div>
+                        </div>
+                    </div>
                 </div>
-            </div>) : (<div></div>)
+                <div>
+                    <div style={{ width: '80%', textAlign: 'center', marginLeft: '10%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <h3 style={{ marginTop: '50px', fontWeight: 'bolder' }}>게시판</h3>
+                        <BoardConditionForm setPage={setPage} setStartDate={setStartDate} setEndDate={setEndDate} 
+                            setTitle={setTitle} setuserID={setuserID}/>
+                        <BoardLimit setLimit={setLimit}/>
+                        <BoardTable bbslist={bbslist} setorderTarget={setorderTarget} setorderValue={setorderValue}
+                            orderTarget={orderTarget} orderValue={orderValue}/>
+                        <BoardPage curpage={curpage} maxpage={maxpage} setPage={setPage}/>
+                    </div>
+                </div>
+            </div>
+            ) : (<div></div>)
     )
 }
 export default BoardMain;

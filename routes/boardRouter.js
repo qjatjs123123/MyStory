@@ -541,7 +541,12 @@ router.post("/selectBbsIDInfo", (req, res) => {
 router.post("/loginCheck", (req, res) => {
     try {
         const verified = jwt.verify(req.cookies.jwt, "1234");
-        res.send(jwt.verify(req.cookies.jwt, "1234").userID);
+        res.send({
+            userID:jwt.verify(req.cookies.jwt, "1234").userID,
+            userNickname:jwt.verify(req.cookies.jwt, "1234").userNickname,
+            userState:jwt.verify(req.cookies.jwt, "1234").userState,
+            userProfile:jwt.verify(req.cookies.jwt, "1234").userProfile
+    });
     } catch (err) {
         res.send(false);
     }

@@ -11,6 +11,7 @@
 
 .header{
   position: fixed;
+  z-index: 100;
   top: 0;
   left: 0;
   width: 100%;
@@ -202,7 +203,10 @@
 .profile-content{
   display: none;
 }
-.id-container{
+.id-container,
+.cpw-container,
+.pw-container,
+.bbs-container{
   margin-top: 40px;
   width: 100%;
   padding: 20px;
@@ -213,11 +217,73 @@
   height: 40%;
   background:url(/public/images/id.jpg) no-repeat center center;
   background-size: cover;
+  background-color: #000;
 }
 
-.id-content{
+.id-content,
+.cpw-content{
   height: 50%;
   top:70%;
   width: 40%;
   min-width: 700px;
+}
+
+.pw-content{
+  height: 51%;
+  top:70%;
+  width: 40%;
+  min-width: 700px;
+}
+
+.profile-container{
+  background: #000;
+  width: 100%;
+  height: 300px;
+  background: url(/public/images/background-main.jpg) no-repeat center center;
+  background-size: cover;
+  position: relative;
+}
+.profile-container::before{
+  content: '';
+  height: 100%;
+  width: 100%;
+  background: #000000c5;
+  position: absolute;
+  
+}
+.profile-content{
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80%;
+  height: 300px;
+  transform: translate(-50%, -50%);
+  flex-direction: column;
+  min-width: 1000px;
+
+}
+.profile{
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.profile-nickname{
+  font-size: 30px;
+  font-weight: bold;
+  color: #fff;
+  
+}
+.profile-state{
+  color: #fff;
+}
+.profile-left{
+  margin-left: 30px;
+  position: absolute;
+  left:200px;
+  top:50%;
+  transform: translateY(0%);
 }

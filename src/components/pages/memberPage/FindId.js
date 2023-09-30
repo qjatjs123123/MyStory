@@ -44,9 +44,7 @@ function FindId(){
 
     return (
         <div className='id-container'>
-            <div className='id-photo'>
-
-            </div>
+            <div className='id-photo'></div>
             <div className="join-content id-content">
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <Card style={{backgroundColor:'transparent', border:'none'}}>
