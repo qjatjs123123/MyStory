@@ -151,8 +151,8 @@ function BoardMain() {
                     </div>
                 </div>
                 <div>
-                    <div style={{ width: '80%', textAlign: 'center', marginLeft: '10%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <h3 style={{ marginTop: '50px', fontWeight: 'bolder' }}>게시판</h3>
+                    <div style={{marginTop:"50px", width: '80%', textAlign: 'center', marginLeft: '10%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        
                         <BoardConditionForm setPage={setPage} setStartDate={setStartDate} setEndDate={setEndDate} 
                             setTitle={setTitle} setuserID={setuserID}/>
                         <BoardLimit setLimit={setLimit}/>

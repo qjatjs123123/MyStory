@@ -27,9 +27,10 @@ function BoardConditionForm(props) {
         props.setPage(1);
     } 
     return (
-        <div style={{ width: '100%', textAlign: 'left'}}>
+        <div className="tc-container" >
+            <div className="tc-content">
             <Form>
-                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start',marginLeft:'40px'}}>
+                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start'}}>
                     <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                         <Form.Label style={{ color: 'black' }}>제목</Form.Label>
                         <Form.Control onChange={valueHandle} name = 'title' type="text" placeholder="제목" style={{ borderColor: 'black', minWidth:'100px'}} />
@@ -53,7 +54,7 @@ function BoardConditionForm(props) {
                     <Button onClick={SelectConditionFormSubmit} type="submit" style={{marginLeft:'50px', width: '200px', marginTop: '30px', height: '40px' }}>찾기</Button>
                 </div>
             </Form>
-            
+            </div>
         </div>
     );
 }

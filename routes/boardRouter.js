@@ -556,7 +556,7 @@ router.post("/getTimer", (req, res) => {
     try {
         const userID = jwt.verify(req.cookies.jwt, "1234").userID;
         getConnection((conn) => {
-            const sql = "SELECT TIMESTAMPDIFF(SECOND, userLoginTime , NOW()) AS TIMER FROM member WHERE userID = ?";
+            const sql = "SELECT TIMESTAMPDIFF(SECOND, userLoginTime , NOW()) AS TIMER, userLoginTime FROM member WHERE userID = ?";
             let params = [userID];
             conn.query(sql, params,
                 (err, rows, fields) => {

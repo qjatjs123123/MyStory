@@ -153,26 +153,30 @@ function BoardWrite(props) {
 
     return (
         isLogin ? (
-            <div style={{ width: '80%', marginLeft: '10%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <h3 style={{ marginTop: '50px', fontWeight: 'bolder', marginBottom: '20px' }}>
-                    {isUpdate === false ? '글쓰기': '글수정'}
-                </h3>
-                <input value={title} onChange={valueHandle} placeholder='제목을 입력해주세요' style={{ width: '100%', height: '40px', marginBottom: '10px' }}></input>
-                <div style={{ background: 'white', width: '100%' }}>
-                    <ReactQuill
-                        ref={quillRef}
-                        onChange={setHtml}
-                        modules={modules}
-                        formats={formats}
-                        value={html}
-                        placeholder={'내용을 입력해주세요 '}
-                        theme="snow"
-                    />
-                </div>
-                <div style={{ marginLeft: 'auto' }}>
-                    {isUpdate === false ? 
-                    <Button onClick={bbsWriteSubmit} variant="dark" style={{ marginTop: '10px' }}>글쓰기</Button> :
-                    <Button onClick={bbsUpdateSubmit} variant="dark" style={{ marginTop: '10px' }}>글수정</Button>}
+            <div className='write-container'>
+                <div className='write-content'>
+                    <div style={{width: '80%', marginLeft: '10%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <h3 style={{ fontWeight: 'bolder', marginBottom: '20px' }}>
+                            {isUpdate === false ? '글쓰기': '글수정'}
+                        </h3>
+                        <input value={title} onChange={valueHandle} placeholder='제목을 입력해주세요' style={{ width: '100%', height: '40px', marginBottom: '10px' }}></input>
+                        <div style={{ background: 'white', width: '100%' }}>
+                            <ReactQuill
+                                ref={quillRef}
+                                onChange={setHtml}
+                                modules={modules}
+                                formats={formats}
+                                value={html}
+                                placeholder={'내용을 입력해주세요 '}
+                                theme="snow"
+                            />
+                        </div>
+                        <div style={{ marginLeft: 'auto' }}>
+                            {isUpdate === false ? 
+                            <Button onClick={bbsWriteSubmit} variant="dark" style={{ marginTop: '10px' }}>글쓰기</Button> :
+                            <Button onClick={bbsUpdateSubmit} variant="dark" style={{ marginTop: '10px' }}>글수정</Button>}
+                        </div>
+                    </div>
                 </div>
             </div>
         ) : <div></div>

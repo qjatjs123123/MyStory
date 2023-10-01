@@ -32,13 +32,13 @@ function BoardTable(props) {
 
     return (
 
-        <Table striped bordered hover variant="dark" style={{ borderColor: 'white' }}>
+        <Table striped bordered hover variant="dark" style={{ borderColor: 'white'}}>
             <thead>
                 <tr>
-                    <th onClick={() => orderValueHandle('bbsID')}>번호{printOrder('bbsID')}</th>
-                    <th onClick={() => orderValueHandle('bbsTitle')}>제목{printOrder('bbsTitle')}</th>
-                    <th onClick={() => orderValueHandle('userID')}>작성자{printOrder('userID')}</th>
-                    <th onClick={() => orderValueHandle('bbsDate')}>작성일{printOrder('bbsDate')}</th>
+                    <th style={{width:'10%'}} onClick={() => orderValueHandle('bbsID')}>번호{printOrder('bbsID')}</th>
+                    <th style={{width:'60%'}} onClick={() => orderValueHandle('bbsTitle')}>제목{printOrder('bbsTitle')}</th>
+                    <th style={{width:'20%'}}   onClick={() => orderValueHandle('userID')}>작성자{printOrder('userID')}</th>
+                    <th  style={{width:'10%'}}  onClick={() => orderValueHandle('bbsDate')}>작성일{printOrder('bbsDate')}</th>
                 </tr>
             </thead>
 

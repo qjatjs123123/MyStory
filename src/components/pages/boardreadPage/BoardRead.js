@@ -34,7 +34,7 @@ function BoardRead(props) {
                 }
                 else {
                     setLogin(true);
-                    setCuruserID(response.data);
+                    setCuruserID(response.data.userID);
                 }
             })
     }
@@ -80,10 +80,12 @@ function BoardRead(props) {
     }
     return (
         isLogin ? (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <BBSContent MoveToBbsUpdate={MoveToBbsUpdate} bbsDeleteSubmit={bbsDeleteSubmit} curuserID={curuserID} bbsID={bbsID}/>  
-                <BBSRecommend curuserID={curuserID} bbsID={bbsID}/>
-                <BBSReply curuserID={curuserID} bbsID={bbsID} loginCheckSubmitProps={loginCheckSubmitProps}/>
+            <div className='read-container'>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <BBSContent MoveToBbsUpdate={MoveToBbsUpdate} bbsDeleteSubmit={bbsDeleteSubmit} curuserID={curuserID} bbsID={bbsID}/>  
+                    <BBSRecommend curuserID={curuserID} bbsID={bbsID}/>
+                    <BBSReply curuserID={curuserID} bbsID={bbsID} loginCheckSubmitProps={loginCheckSubmitProps}/>
+                </div>
             </div>
         ) : <div></div>
 

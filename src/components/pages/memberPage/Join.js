@@ -182,7 +182,7 @@ function Join() {
     };
     const joinSubmit = async (e) => {
         e.preventDefault();
-        let IMG_URL = process.env.PUBLIC_URL+'images/profile.png';
+        let IMG_URL = process.env.PUBLIC_URL+'/images/profile.jpg';
         try {
             if (img != ''){
                 const file = img;
@@ -284,7 +284,7 @@ function Join() {
                             <Button onClick={next} type="submit" style={{ width: '500px', marginTop: '20px', height: '45px' }}>다음</Button>
                         </Form>
                     </div>
-                    <div ref = {profileref} className='profile-content'>
+                    <div ref = {profileref} className='profilesetting-content'>
                         <div style={{fontSize:'40px', fontWeight: 'bold', marginBottom:'10px'}}>프로필 설정</div>
                         <Form >
                                 <Form.Group className="mb-3" controlId="formGroupEmail">

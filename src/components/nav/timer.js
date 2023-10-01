@@ -14,7 +14,10 @@ function Timer(props) {
     const time = useRef(1800);
     const timerId = useRef(null);
     const navigate = useNavigate();
-
+    
+    const cur_hour = useRef(0);
+    const cur_minute = useRef(0);
+    const cur_second = useRef(0);
     const getTimer = () => {      
         const url = '/board/getTimer';
         const data = {};
@@ -24,12 +27,22 @@ function Timer(props) {
     const getTimerSubmit = () => {
         getTimer()
             .then((response) => {
+                const date = new Date(response.data.userLoginTime)
                 if (response.data === 'logout') return;
-                time.current = 1800 - response.data.TIMER;
+                
                 timerId.current = setInterval(() => {
-                    setMin(parseInt(time.current/60));
-                    setSec(time.current%60);
-                    time.current -= 1;
+                    const now = new Date();            
+                    const cur_time = parseInt((now-date) / 1000);
+                    time.current = 1800 - cur_time;
+                    if (time.current >= 0) {
+                        setMin(parseInt(time.current/60));
+                        setSec(time.current%60);
+                        time.current -= 1;
+                    }
+                    else{
+                        setMin(0);
+                        setSec(0);
+                    }
                 }, 1000);
             }) 
     }

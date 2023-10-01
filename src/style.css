@@ -200,17 +200,20 @@
   height: 200px;
   margin: 0 auto;
 }
-.profile-content{
+.profilesetting-content{
   display: none;
 }
 .id-container,
 .cpw-container,
 .pw-container,
-.bbs-container{
+.bbs-container,
+.write-container,
+.read-container{
   margin-top: 40px;
   width: 100%;
   padding: 20px;
   height: calc(100vh - 60px);
+  
 }
 .id-photo{
   width: 100%;
@@ -260,7 +263,7 @@
   height: 300px;
   transform: translate(-50%, -50%);
   flex-direction: column;
-  min-width: 1000px;
+ 
 
 }
 .profile{
@@ -286,4 +289,99 @@
   left:200px;
   top:50%;
   transform: translateY(0%);
+}
+.tc-container{
+  width: 100%;
+  height: 100px;
+  text-align: left;
+  padding: 0 20px;
+}
+.write-content{
+  margin-top: 100px;
+  width: 80%;
+  box-shadow:  0px 0px 5px 10px #ccc;
+  margin: 0 auto;
+  margin-top: 60px;
+  padding: 40px 0;
+  background-color: #eee;
+}
+
+.user-container{
+  display: flex;
+  width: 100%;
+  height: auto;
+  padding: 0 100px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  background-color: #F8F9FA;
+}
+
+.profilebox-outter{
+  width: 320px;
+  height: 400px;
+  padding: 20px 20px;
+  
+}
+
+.profilebox-inner{
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  background-color: #fff;
+  transition: all 0.3s ease-out;
+  cursor: pointer;
+  box-shadow: 0 5px 5px #ddd;
+  overflow: hidden;
+}
+
+.profilebox-inner:hover{
+  transform: translateY(-10px);
+}
+.profilebox-image{
+  width: 100%;
+  height: 50%;
+  background: url(/public/images/background-main.jpg) no-repeat center center / 100% 100%;
+}
+.profilebox-info{
+  width: 100%;
+  margin-top: 2.5%;
+  height: 7.5%;
+  font-size: 13px;
+  padding: 0 10px;
+  color: #807f7f;
+}
+.profilebox-state{
+  width: 100%;
+  height: 30%;
+  padding: 10px 10px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+    word-wrap: break-word;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+}
+.profilebox-nickname{
+  border-top: 1px solid #ccc;
+  padding: 0 10px;
+  height: 100%;
+  line-height: 4;
+  color: #807f7f;
+  line-height: 2em;
+}
+.message-title{
+  font-weight: bold;
+}
+.profilebox-nickname span{
+  color: #000;
+}
+.user-wrapper{
+  width: 100%;
+  height: auto;
+}
+.user-tabs{
+  width: 100%;
+  height: 100px;
+  background-color: #000;
 }
