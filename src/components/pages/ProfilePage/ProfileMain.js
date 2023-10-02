@@ -2,6 +2,7 @@ import React, { useState, useEffect,useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import ProfileBox from './ProfileBox';
+import ProfileTab from './ProfileTab';
 
 function ProfileMain(){
   //userInfo
@@ -9,9 +10,11 @@ function ProfileMain(){
   const [userState, setuserState] = useState('');
   const [userProfile, setuserProfile] = useState('');
   const [isLogin, setLogin] = useState(false);  //로그인 확인
+  const [curtab, setcurtab] = useState('clock')
   const profileref = useRef('');
+  const tabbarref = useRef('');
   const navigate = useNavigate();
-
+  const tabData = ["clock", "heart", "follow"];
   useEffect(() => {
     if (profileref.current != '')
       profileref.current.style.background = `url(${userProfile}) no-repeat center center / 100% 100%`       
@@ -42,6 +45,15 @@ function ProfileMain(){
               }
           })
   }
+
+  const tabBarhandle = (tab) => {
+    if (tab === 'clock') tabbarref.current.style.marginLeft = '0px';
+    else if(tab === 'heart') tabbarref.current.style.marginLeft = '130px';
+    else tabbarref.current.style.marginLeft = '260px';
+
+    setcurtab(tab)
+  }
+
   return (
     isLogin ? (
         <div className='bbs-container'>
@@ -56,10 +68,23 @@ function ProfileMain(){
             </div>
             <div className='user-wrapper'>
               <div className='user-tabs'>
-                <div></div>
+                <div className='tabs'>
+                  {tabData.map((type) => {
+                    return <ProfileTab curtab={curtab} tabBarhandle={tabBarhandle} type={type}/>
+                  })}
+                </div>
+                <div ref={tabbarref} className='tab-bar'></div>
               </div>
               <div className='user-container'>
                 
+                <ProfileBox />
+                <ProfileBox />
+                <ProfileBox />
+                <ProfileBox />
+                <ProfileBox />
+                <ProfileBox />
+                <ProfileBox />
+                <ProfileBox />
                 <ProfileBox />
               </div>
             </div>

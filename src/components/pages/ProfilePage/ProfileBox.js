@@ -9,7 +9,17 @@ function ProfileBox(){
           <div>asdasdasdasdasdasdasdasdasdasdasqweqweasasdasdasdasdasdasdasdasdasdasdasqweqweasasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasqweqweasasdasdasdasdasdasdasdasdasdasdasqweqweasasdasdasdasdasdasdasdasd</div>    
         </div>
         <div className='profilebox-info'>8개의 댓글</div>
-        <div className='profilebox-nickname'>by <span>hong</span></div>
+        <div className='profilebox-nickname'>
+          by <span>hong</span>
+          </div>
+        <div className="like-info">
+          <span>
+            <i className="fa fa-heart"></i>
+          </span>
+          <span>
+            30
+          </span>
+        </div>
       </div>
     </div>
   )
