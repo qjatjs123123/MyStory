@@ -169,23 +169,25 @@
   
 }
 
-.tabs{
+.join-image > .tabs{
   height: 100%;
   width: 300%;
   transition: 0.5s;
 }
-.tab{
+.join-image > .tabs> .tab{
   height: 100%;
   float: left;
   width: 33.33333%;
 }
 .join-image1{
   height: 100%;
+  width: 100%;
   background: url(/public/images/story.jpg) no-repeat center center;
   background-size: cover;
 }
 .join-image2{
   height: 100%;
+  width: 100%;
   background: url(/public/images/talk.jpg) no-repeat left center;
   background-size: cover;
 }
@@ -213,7 +215,10 @@
   width: 100%;
   padding: 20px;
   height: calc(100vh - 60px);
-  
+}
+.write-container{
+  margin-top: 0px;
+  padding: 0px;
 }
 .id-photo{
   width: 100%;
@@ -388,7 +393,8 @@
 .user-tabs{
   width: 100%;
   height: 70px;
-  
+  margin-top: 20px;
+  margin-bottom: 10px;
   padding: 10px 20px;
 }
 .like-info{
@@ -402,14 +408,14 @@
 .like-info span:nth-child(1){
   margin-right: 10px;
 }
-.tabs{
-  display: inline-block;
+.user-tabs > .tabs{
+  display:flex;
   height: 100%;
   width: auto;
-  min-width: 400px;
-  
+  min-width: 1000px;
+  position: relative;
 }
-.tab{
+.user-tabs > .tabs > .tab{
   width: 120px;
   height: 100%;
   display: flex;
@@ -421,11 +427,11 @@
   justify-content: center;
   cursor: pointer;
 }
-.tab.active{
+.user-tabs > .tabs > .tab.active{
   color:#000;
   font-weight: bold;
 }
-.tab .fa{
+.user-tabs > .tabs > .tab > .fa{
   margin-right: 10px;
   transform: translateY(5px);
 }
@@ -434,4 +440,283 @@
   height: 2px;
   background-color: #000;
   transition: 0.3s;
+}
+.tab-search-container{
+  width: 200px;
+  height: 100%;
+  position: absolute;
+  right: 0;
+  display: flex;
+  border: 2px solid #adb5bd;
+  padding: 10px 10px;
+  color: #adb5bd;
+  transition: 0.3s;
+}
+.tab-search-container .fa{
+  font-size: 22px;
+  transform: translateY(2px);
+  margin-right: 10px;
+  transition: 0.3s;
+}
+.tab-search-container input{
+  border: none;
+  width: 100%;
+  background: transparent;
+}
+.tab-search-container input:focus{
+  outline: none;
+}
+.tab-search-container input:focus .tab-search-container{
+  border: 1px solid #000;
+}
+.modal-container{
+  visibility: hidden;
+  width: 100%;
+  height: 100%;
+  background-color: #00000093;
+  position: fixed;
+  left: 0;
+  top: 0;
+  transform: translateY(100%);
+  transition: 0.5s;
+  
+}
+.modal-container.active{
+  visibility: visible;
+  width: 100%;
+  height: 100%;
+  background-color: #00000093;
+  position: fixed;
+  left: 0;
+  top: 0;
+  transform: translateY(0);
+}
+.modal-content{
+  width: 800px;
+  height: 400px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) ;
+  background-color: #F8F9FA;
+  padding: 30px 30px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: row;
+}
+
+.modal-image-box{
+  width: calc(50% - 25px);
+  height: 100%;
+  border-right: 1px solid #ddd;
+  margin-right: 25px;
+}
+.modal-image-box-input{
+  margin-bottom: 30px;
+}
+h3{
+  font-size: 21px;
+}
+.modal-hashtag-box{
+  width: 50%;
+  height: 100%;
+  position: relative;
+  
+}
+
+.modal-hashtag-box-content{
+  width: 100%;
+  height: 180px;
+  border: 1px solid #bbb;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start
+}
+.modal-hashtag-box-content > div{
+  color: #14B886;
+  font-size: 16px;
+  background: #eee;
+  border-radius: 10px;
+  padding: 5px 10px;
+  margin: 5px;
+  cursor: pointer;
+}
+.modal-hashtag-box-content > div:hover::after{
+  display: block;
+  content: '클릭하면 삭제됩니다.';
+  color: white;
+  position: absolute;
+  width: auto;
+  height: auto;
+  background-color: #000;
+  font-size: 10px;
+  padding: 5px 10px;
+  margin-top: 5px;
+}
+.modal-hashtag-box input{
+  width: 100%;
+  height: 30px;
+  border: none;
+  margin-top: 5px;
+  background: transparent;
+  border-bottom: 1px solid #aaa;
+}
+.modal-hashtag-box input:focus{
+  outline: none;
+  border-bottom: 1px solid black;
+}
+.modal-hashtag-box-buttongroup{
+  position: absolute;
+  bottom: 0px;
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+.cancel,
+.submit{
+  padding: 5px 15px;
+  font-size: 18px;
+  font-weight: 700;
+  border: none ;
+  border-radius: 5px;
+  margin-left: 10px;
+}
+
+.cancel{
+  color: #14B886;
+  background-color: transparent;
+}
+.cancel:hover{
+  
+  background-color: #eee;
+}
+.submit{
+  color: #fff;
+  background-color: #14B886;
+}
+.table-data-container{
+  width: 100%;
+  height: 100%;
+}
+.table-data{
+  width: 100%;
+  height: 200px;
+  min-width: 1000px;
+  display: flex;
+  border-bottom: 1px solid #ddd;
+  padding :25px 0px;
+  cursor: pointer;
+}
+.table-data-image{
+  height: 150px;
+  width: 150px;
+  margin-right: 50px;
+}
+.table-data-image > img{
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+.table-data-content{
+  width: 65%;
+  height: 100%;
+  margin-right: 50px;
+}
+.table-data-info{
+  width: calc(100% - 65% - 200px - 50px);
+  height: 100%;
+}
+
+.table-data-info-hashtag > div{
+  color: #14B886;
+  font-size: 13px;
+  background: #eee;
+  border-radius: 10px;
+  padding: 5px 10px;
+  margin: 5px;
+  cursor: pointer;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.table-data-info-hashtag{
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  overflow: hidden;
+  max-height: 100px;
+  margin-bottom: 10px;
+}
+.table-data-content-title{
+  font-size: 25px;
+  width: 100%;
+
+  white-space: nowrap; 		
+  word-break:break-all;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  text-align: left;
+}
+.table-data-content-title > h3{
+  font-size: 25px;
+  width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.table-data-content-content{
+  text-align: left;
+  color: #5a5a5a;
+  height: 70px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+    word-wrap: break-word;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+  margin-bottom: 10px;
+}
+.table-data-content-profile{
+  width: 100%;
+  height: 40px;
+  text-align: left;
+  display: flex;
+  flex-direction: row;
+}
+.table-data-content-profile div{
+  margin-left: 20px;
+  line-height: 40px;
+}
+.table-data-content-profile div span:nth-child(2){
+  font-size: 13px;
+  color: #7a7a7a;
+}
+.table-data-content-profile img{
+  width: 40px;
+  height: 40px;
+  
+  text-align: left;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.table-data-info-date{
+  color: #5a5a5a;
+  margin-bottom: 5px;
+}
+.table-data-info-like .fa{
+  margin-right: 3px;
+}
+.table-data-info-like span{
+  margin-right: 5px;
+}
+@media (max-width: 800px) {
+  .tab-search-container{
+      
+      position:static;
+
+  }
+  .timer-container{
+    display: inline-block;
+    min-width: 500px;
+    left :500px
+  }
 }

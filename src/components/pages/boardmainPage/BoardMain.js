@@ -41,12 +41,12 @@ function BoardMain() {
     const [userState, setuserState] = useState('');
     const [userProfile, setuserProfile] = useState('');
 
-    const profileref = useRef('');
-    useEffect(() => {
-        if (profileref.current != '')
-            profileref.current.style.background = `url(${userProfile}) no-repeat center center / 100% 100%`
+    // const profileref = useRef('');
+    // useEffect(() => {
+    //     if (profileref.current != '')
+    //         profileref.current.style.background = `url(${userProfile}) no-repeat center center / 100% 100%`
             
-    }, [userProfile])
+    // }, [userProfile])
     useEffect(() => {   
         loginCheckSubmit();    
     }, []);
@@ -140,28 +140,19 @@ function BoardMain() {
 
     return (
         isLogin ? (
-            <div className='bbs-container'>
-                <div className='profile-container'>
-                    <div className='profile-content'>
-                        <div className='profile' ref={profileref}></div>
-                        <div className='profile-left'>
-                            <div className='profile-nickname'><span>{userNickname}</span></div>
-                            <div className='profile-state'><span>{userState}</span></div>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <div style={{marginTop:"50px", width: '80%', textAlign: 'center', marginLeft: '10%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            
+                <div style={{width:'100%'}}>
+                    <div style={{margin:"50px auto", width: '70%', textAlign: 'center',  display: 'flex', flexDirection: 'column', alignItems: 'center',marginTop:"50px" }}>
                         
-                        <BoardConditionForm setPage={setPage} setStartDate={setStartDate} setEndDate={setEndDate} 
-                            setTitle={setTitle} setuserID={setuserID}/>
+                        {/* <BoardConditionForm setPage={setPage} setStartDate={setStartDate} setEndDate={setEndDate} 
+                            setTitle={setTitle} setuserID={setuserID}/> */}
                         <BoardLimit setLimit={setLimit}/>
                         <BoardTable bbslist={bbslist} setorderTarget={setorderTarget} setorderValue={setorderValue}
                             orderTarget={orderTarget} orderValue={orderValue}/>
                         <BoardPage curpage={curpage} maxpage={maxpage} setPage={setPage}/>
                     </div>
                 </div>
-            </div>
+           
             ) : (<div></div>)
     )
 }

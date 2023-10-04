@@ -30,7 +30,7 @@ function BoardPage(props) {
     }
     
     return (
-        <div>
+        <div style={{marginTop:'20px'}}>
             <ButtonGroup aria-label="Basic example" size="lg">
                 <Button onClick={minusPage} variant="secondary" disabled={props.curpage === 1 ? true : false}>이전</Button>
                 <Button onClick={handleShow} variant="secondary">{props.curpage}</Button>

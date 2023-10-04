@@ -21,5 +21,6 @@ const mysql = require('mysql');
 
 app.use("/member", require("./routes/memberRouter"));
 app.use("/board", require("./routes/boardRouter"));
+app.use("/profile", require("./routes/profileRouter"));
 
 app.listen(port, () => console.log(`Listening on port ${port}`));

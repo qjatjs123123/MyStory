@@ -65,10 +65,11 @@ function bbsPromise(conn, sql, param, isFinish, res) {
         conn.query(sql, param,
             (err, rows, fields) => {
                 if (err) {
-                    console.log("reject");
+                    console.log(err);
                     reject(err);
                 } else {
                     if (isFinish) {
+                        console.log("commit")
                         res.send(true);
                         conn.commit();
                     }
@@ -138,38 +139,103 @@ router.post("/insertRecommend", async (req, res) => {
         conn.release();
     })
 })
+
 router.post("/bbsListInsert", async (req, res) => {
-    const { bbsTitle, bbsContent } = req.body;
+    const { bbsTitle, bbsContent,bbsImage, hashTag} = req.body;
     let bbsID = await getMaxbbsID();
     bbsID === null ? bbsID = 1 : null;
     getConnection(async (conn) => {
 
-        conn.beginTransaction();
-        const query1 = bbsPromise(conn,
-            "INSERT INTO bbs(bbsID, bbsTitle, userID, bbsDate, bbsContent, bbsAvailable) VALUES (?, ?, ?, NOW(), ?, ?)",
-            [bbsID, bbsTitle, jwt.verify(req.cookies.jwt, "1234").userID, bbsContent, 1],
-            false,
-            res)
-
-        query1.then(() => {
-            return bbsPromise(
-                conn,
-                "INSERT INTO recommend(bbsID, bbsGood, bbsBad) VALUES (?, ?, ?)",
-                [bbsID, 0, 0],
-                true,
-                res
-            )
-        }
-        )
-            .catch(error => {
-                console.log("rollback");
-                conn.rollback();
-                res.send(false);
-            }
-            )
+        conn.beginTransaction((err)=>{
+            if (err) throw err;
+            const query1 = bbsPromise(conn,
+                "INSERT INTO bbs(bbsID, bbsTitle, userID, bbsDate, bbsContent, bbsAvailable,bbsImage) VALUES (?, ?, ?, NOW(), ?, ?, ?)",
+                [bbsID, bbsTitle, jwt.verify(req.cookies.jwt, "1234").userID, bbsContent, 1, bbsImage],
+                false,
+                res)
+                query1.then(() => {
+                    return bbsPromise(
+                        conn,
+                        "INSERT INTO recommend(bbsID, bbsGood, bbsBad) VALUES (?, ?, ?)",
+                        [bbsID, 0, 0],
+                        false,
+                        res
+                    )
+                })
+                .then(()=>{
+                    return bbsPromise(
+                        conn,
+                        "INSERT INTO hashtagpost(userID, bbsID) VALUES (?, ?)",
+                        [jwt.verify(req.cookies.jwt, "1234").userID, bbsID],
+                        false,
+                        res
+                    )
+                })
+                .then((rows) => {
+                    const promises = hashTag.map((tag) => {
+                        return bbsPromise(
+                            conn,
+                            "INSERT INTO hashtag(hashTagID, hashTag) VALUES (?, ?)",
+                            [rows.insertId, tag],
+                            false,
+                            res
+                        )
+                    })
+                    Promise.all(promises)
+                        .then(
+                            () => {
+                                res.send(true);
+                                conn.commit();
+                            })
+                        .catch(
+                            (err) => {
+                                reject(err);
+                                //return conn.rollback();      
+                            })
+                })
+                .catch(error => {
+                    console.log("rollback");
+                    conn.rollback();
+                    res.send(false);
+                })
+        })
+        
         conn.release();
     })
 })
+
+// router.post("/bbsListInsert", async (req, res) => {
+//     const { bbsTitle, bbsContent } = req.body;
+//     let bbsID = await getMaxbbsID();
+//     bbsID === null ? bbsID = 1 : null;
+//     getConnection(async (conn) => {
+
+//         conn.beginTransaction();
+//         const query1 = bbsPromise(conn,
+//             "INSERT INTO bbs(bbsID, bbsTitle, userID, bbsDate, bbsContent, bbsAvailable) VALUES (?, ?, ?, NOW(), ?, ?)",
+//             [bbsID, bbsTitle, jwt.verify(req.cookies.jwt, "1234").userID, bbsContent, 1],
+//             false,
+//             res)
+
+//         query1.then(() => {
+//             return bbsPromise(
+//                 conn,
+//                 "INSERT INTO recommend(bbsID, bbsGood, bbsBad) VALUES (?, ?, ?)",
+//                 [bbsID, 0, 0],
+//                 true,
+//                 res
+//             )
+//         }
+//         )
+//             .catch(error => {
+//                 console.log("rollback");
+//                 conn.rollback();
+//                 res.send(false);
+//             }
+//             )
+//         conn.release();
+//     })
+// })
 
 //콜백지옥
 // router.post("/bbsListInsert", async (req, res) => {
@@ -209,8 +275,24 @@ router.post("/bbsListInsert", async (req, res) => {
 //     })
 // })
 
+router.post("/getTags", async (req, res) => {
+    try {
+        const { bbsID } = req.body;
 
+        getConnection((conn) => {
+            const sql = "SELECT hashTag FROM hashtagpost, hashtag WHERE hashtagpost.bbsID = ? AND hashtagpost.hashTagID = hashtag.hashTagID";
+            conn.query(sql, [bbsID],
+                (err, rows, fields) => {
+                    if (err) { throw err }
+                    else res.send(rows);
+                    conn.release();
+                })
+        })
 
+    } catch (error) {
+        res.send(false);
+    }
+})
 router.post("/bbsDelete", async (req, res) => {
     try {
         const { bbsID } = req.body;
@@ -502,12 +584,12 @@ router.post("/selectrecommend", (req, res) => {
 router.post("/bbsConditionList", (req, res) => {
     const { title, userID, startDate, endDate, limit, page, orderTarget, orderValue } = req.body;
     let param = [];
-    let sql = "SELECT bbsID, bbsTitle, userID, bbsDate, bbsContent FROM bbs WHERE bbsAvailable = 1 ";
+    let sql = "SELECT * FROM bbs,member,recommend WHERE bbs.userID = member.userID AND bbs.bbsID = recommend.bbsID  AND bbsAvailable = 1 ";
     if (title !== '') { sql += 'AND bbsTitle LIKE ?'; param.push(`%${title}%`) }
     if (userID !== '') { sql += 'AND userID = ?'; param.push(userID) }
     if (startDate !== null) { sql += 'AND bbsDate >= ?'; param.push(startDate) }
     if (endDate !== null) { sql += 'AND bbsDate <= ?'; param.push(endDate) }
-    sql += `ORDER BY ${orderTarget} ${orderValue} LIMIT ?, ?`;
+    sql += `ORDER BY bbs.${orderTarget} ${orderValue} LIMIT ?, ?`;
     param.push(limit * (page - 1));
     param.push(limit);
     getConnection((conn) => {

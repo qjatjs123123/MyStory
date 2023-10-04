@@ -31,23 +31,32 @@ function BoardTable(props) {
     }
 
     return (
+        <div className='table-data-container'>
+            {props.bbslist.map((c) => {
+                return <BoardData key={c.bbsID} data={c} num={c.bbsID} title={c.bbsTitle} name={c.userID} date={c.bbsDate} content={c.bbsContent} readClick={() => { navigate(`/BoardRead/?bbsID=${c.bbsID}`) }} />
+            })}
+        </div>
+        // <Table striped bordered hover variant="dark" style={{ borderColor: 'white'}}>
+        //     {/* <thead>
+        //         <tr style={{height:'0px'}}>
+        //             <th style={{width:'10%'}} onClick={() => orderValueHandle('bbsID')}>번호{printOrder('bbsID')}</th>
+        //             <th style={{width:'60%'}} onClick={() => orderValueHandle('bbsTitle')}>제목{printOrder('bbsTitle')}</th>
+        //             <th style={{width:'20%'}}   onClick={() => orderValueHandle('userID')}>작성자{printOrder('userID')}</th>
+        //             <th  style={{width:'10%'}}  onClick={() => orderValueHandle('bbsDate')}>작성일{printOrder('bbsDate')}</th>
 
-        <Table striped bordered hover variant="dark" style={{ borderColor: 'white'}}>
-            <thead>
-                <tr>
-                    <th style={{width:'10%'}} onClick={() => orderValueHandle('bbsID')}>번호{printOrder('bbsID')}</th>
-                    <th style={{width:'60%'}} onClick={() => orderValueHandle('bbsTitle')}>제목{printOrder('bbsTitle')}</th>
-                    <th style={{width:'20%'}}   onClick={() => orderValueHandle('userID')}>작성자{printOrder('userID')}</th>
-                    <th  style={{width:'10%'}}  onClick={() => orderValueHandle('bbsDate')}>작성일{printOrder('bbsDate')}</th>
-                </tr>
-            </thead>
+        //             <th style={{width:'10%', height:'0px'}}></th>
+        //             <th style={{width:'60%'}}></th>
+        //             <th style={{width:'20%'}}></th>
+        //             <th  style={{width:'10%'}}></th>
+        //         </tr>
+        //     </thead> */}
 
-            <tbody>
-                {props.bbslist.map((c) => {
-                    return <BoardData key={c.bbsID} num={c.bbsID} title={c.bbsTitle} name={c.userID} date={c.bbsDate} readClick={() => { navigate(`/BoardRead/?bbsID=${c.bbsID}`) }} />
-                })}
-            </tbody>
-        </Table>
+        //     <tbody>
+        //         {props.bbslist.map((c) => {
+        //             return <BoardData key={c.bbsID} data={c} num={c.bbsID} title={c.bbsTitle} name={c.userID} date={c.bbsDate} content={c.bbsContent} readClick={() => { navigate(`/BoardRead/?bbsID=${c.bbsID}`) }} />
+        //         })}
+        //     </tbody>
+        // </Table>
 
     )
 }

@@ -195,8 +195,8 @@ function Join() {
             if (nickname != '' && statemessage != '') {
                 join(e, IMG_URL)
                     .then((response) => {
-                        if (response.data.length === 0)
-                            alert("회원가입 실패");
+                        e.preventDefault();
+                        if (response.data === false) alert("너무 긴 글입니다.")
                         else {
                             alert("회원가입 성공");
                             navigate('/main');

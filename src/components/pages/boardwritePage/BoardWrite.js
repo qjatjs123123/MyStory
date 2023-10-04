@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import BoardWriteModal from './BoardWriteModal';
 
 function BoardWrite(props) {
     const [isUpdate, setisUpdate] = useState(props.update);
@@ -12,9 +13,12 @@ function BoardWrite(props) {
     const [html, setHtml] = useState(props.bbsContent);
     const [title, setTitle] = useState(props.bbsTitle);
     const quillRef = useRef(null);
+    const titleref = useRef(null);
     const navigate = useNavigate();
     const [isLogin, setLogin] = useState(false);
-
+    const [active, setactive] = useState(false);
+    const [img, setimg] = useState('');
+    const [tag, settag] = useState([]);
     useEffect(() => {
         loginCheckSubmit();
         console.log(props.update, props.bbsID, props.bbsContent, props.bbsTitle);
@@ -41,27 +45,28 @@ function BoardWrite(props) {
         setTitle(e.target.value);
     }
 
-    const bbsListInsert = () => {
+    const bbsListInsert = (img, tag) => {
         const url = '/board/bbsListInsert';
         const data = {
             bbsTitle: title,
-            bbsContent: html
+            bbsContent: html,
+            bbsImage: img,
+            hashTag : tag
         };
         return axios.post(url, data, { withCredentials: true });
     }
 
-    const bbsWriteSubmit = () => {
-        bbsListInsert()
+    const bbsWriteSubmit = (img, tag) => {     
+        bbsListInsert(img, tag)
             .then((response) => {
                 console.log(response.data);
                 if (response.data === true) {
                     alert("글쓰기 성공");
-                    navigate('/board');
                 }
                 else {
                     alert("글쓰기 실패");
-                    navigate('/board');
                 }
+                props.tabBarhandle("board")
             })
     }
 
@@ -81,13 +86,20 @@ function BoardWrite(props) {
                 console.log(response.data);
                 if (response.data !== false) {
                     alert("글수정 성공");
-                    navigate('/board');
+                    
                 }
                 else {
                     alert("글수정 실패");
-                    navigate('/board');
+
                 }
+                props.tabBarhandle("board")
             })
+    }
+
+    const nextstep = () => {
+        if (title == '') titleref.current.focus();
+        else if(html == '') quillRef.current.focus();
+        else setactive(true);
     }
 
     const imageHandler = () => {
@@ -159,7 +171,7 @@ function BoardWrite(props) {
                         <h3 style={{ fontWeight: 'bolder', marginBottom: '20px' }}>
                             {isUpdate === false ? '글쓰기': '글수정'}
                         </h3>
-                        <input value={title} onChange={valueHandle} placeholder='제목을 입력해주세요' style={{ width: '100%', height: '40px', marginBottom: '10px' }}></input>
+                        <input ref={titleref} value={title} onChange={valueHandle} placeholder='제목을 입력해주세요' style={{ width: '100%', height: '40px', marginBottom: '10px' }}></input>
                         <div style={{ background: 'white', width: '100%' }}>
                             <ReactQuill
                                 ref={quillRef}
@@ -173,11 +185,17 @@ function BoardWrite(props) {
                         </div>
                         <div style={{ marginLeft: 'auto' }}>
                             {isUpdate === false ? 
-                            <Button onClick={bbsWriteSubmit} variant="dark" style={{ marginTop: '10px' }}>글쓰기</Button> :
+                            <Button onClick={nextstep} variant="dark" style={{ marginTop: '10px' }}>글쓰기</Button> :
                             <Button onClick={bbsUpdateSubmit} variant="dark" style={{ marginTop: '10px' }}>글수정</Button>}
                         </div>
                     </div>
                 </div>
+                <BoardWriteModal
+                    setactive={setactive}
+                    active = {active}
+                    setimg = {setimg}
+                    settag = {settag}
+                    bbsWriteSubmit={bbsWriteSubmit}/>
             </div>
         ) : <div></div>
     );

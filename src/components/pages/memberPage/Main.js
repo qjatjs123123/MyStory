@@ -30,7 +30,7 @@ const loginSubmit = (e) =>{
           if (response.data.length === 0)
               alert("로그인 실패");
           else
-              navigate('/Board');
+              navigate('/Profile');
               props.setlogin();
       })
 
