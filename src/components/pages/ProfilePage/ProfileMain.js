@@ -24,6 +24,9 @@ function ProfileMain(){
   const tabData = ["clock", "heart","board","myboard", "follow","write"];
   const [curdropbox, setcurdropbox] = useState('아이디');
   const [input, setinput] = useState('')
+  const [flg, setflg] = useState(false)
+  const firstRender = useRef(true);
+  const count = useRef(0);
   //board render
   
   let event = null;
@@ -42,11 +45,36 @@ function ProfileMain(){
   }, []);
 
   useEffect(() => {  
-
-    if (curpage >= 15){document.removeEventListener('scroll', infiniteScrollRef.current); }
+    if (curpage >= 15){
+     // document.removeEventListener('scroll', infiniteScrollRef.current); 
+     return;
+    }
     profileSubmit();
-    
   }, [curpage]);
+
+  useEffect(() => {
+    if (firstRender.current) {
+      return;
+  }
+
+    setuserProfileList([])
+  }, [input])
+
+  useEffect(() => {
+    if (firstRender.current) {
+      return;
+  }
+
+    if (userProfileList.length == 0){
+      if (curpage != 0){
+        setPage(0);
+      }
+      else{
+        profileSubmit();
+      }
+    }
+  }, [userProfileList])
+
 
   const infiniteScroll = () => {
     event = this;
@@ -56,20 +84,35 @@ function ProfileMain(){
     if (scrollTop === 0) return
     let y = Math.ceil(scrollTop);
     if ((scrollHeight - clientHeight) - y <= 150){
-      setPage((curpage) => curpage + 1);
+      setPage((curpage) => {
+        if (curpage < Math.min(count.current-1,14)) {
+          return curpage + 1; // 업데이트된 값을 반환하여 setPage로 전달
+        } else {
+          return curpage; // 아무런 변경 없이 현재 값을 반환
+        }
+      });
+      
     }
 }
 
   const profileSubmit = () => {
     const url = '/profile/getProfile';
-    const data = {curpage: curpage}
+    const data = {
+      curpage: curpage,
+      input:input
+    }
     axios.post(url, data, { withCredentials: true })
       .then((resp) => {
+        count.current =  Math.ceil(resp.data.count / 12);
         let newContents = Array.from(userProfileList);
-        resp.data.forEach((e) => {
+        resp.data.rows.forEach((e) => {
             newContents.push(e);
-        })      
+        })
+        if (resp.data.rows.length == 0 && userProfileList.length == 0) return;   
         setuserProfileList(newContents);
+        // 초기 마운트 시에는 실행하지 않음
+        firstRender.current = false;
+        console.log("1");
       })
   }
 
@@ -107,6 +150,7 @@ function ProfileMain(){
 
   
   const tabhandler = () => {
+    
     if (curtab === 'clock') return userProfileList.map((info, idx) => (
       <ProfileBox key={idx} info={info} />));
     else if(curtab === 'heart') return
