@@ -6,6 +6,7 @@ import ProfileTab from './ProfileTab';
 import BoardMain from '../boardmainPage/BoardMain';
 import BoardWrite from '../boardwritePage/BoardWrite';
 import BoardWriteModal from '../boardwritePage/BoardWriteModal';
+import ProfileDropBox from './ProfileDropBox';
 
 function ProfileMain(){
   //userInfo
@@ -21,6 +22,10 @@ function ProfileMain(){
   const navigate = useNavigate();
   const infiniteScrollRef = useRef(null);
   const tabData = ["clock", "heart","board","myboard", "follow","write"];
+  const [curdropbox, setcurdropbox] = useState('아이디');
+  const [input, setinput] = useState('')
+  //board render
+  
   let event = null;
   useEffect(() => {
     if (profileref.current != '')
@@ -100,24 +105,29 @@ function ProfileMain(){
     setcurtab(tab)
   }
 
-  const focushandler = (e) => {
-    e.target.parentElement.querySelector('.fa').style.color="black";
-    e.target.parentElement.style.border="2px solid black"
-  }
-  const blurhandler = (e) => {
-    e.target.parentElement.querySelector('.fa').style.color="#adb5bd";
-    e.target.parentElement.style.border="2px solid #adb5bd"
-  }
   
   const tabhandler = () => {
     if (curtab === 'clock') return userProfileList.map((info, idx) => (
       <ProfileBox key={idx} info={info} />));
     else if(curtab === 'heart') return
-    else if(curtab === 'board') return <BoardMain/>
-    else if(curtab === 'myboard') return 
-    else if(curtab === 'myfollow') return
+    else if(curtab === 'board') return <BoardMain option={curdropbox} input={input} curtab={curtab} />
+    else if(curtab === 'myboard') return <BoardMain option={curdropbox} input={input} curtab={curtab} />
+    else if(curtab === 'follow') return
     else if(curtab === 'write') return <BoardWrite tabBarhandle={tabBarhandle}  update={false} bbsID={''} bbsTitle={''} bbsContent={''}/>
 
+  }
+  const dropboxhandler = () => {
+    if (curtab === 'clock') return <ProfileDropBox arr={['아이디']} curtab={curtab} condselectSubmit={condselectSubmit}/>
+    else if(curtab === 'heart') return <ProfileDropBox arr={['아이디']} curtab={curtab} condselectSubmit={condselectSubmit}/>
+    else if(curtab === 'board') return <ProfileDropBox arr={['아이디', '제목', '해시태그']} curtab={curtab} condselectSubmit={condselectSubmit} />
+    else if(curtab === 'myboard') return <ProfileDropBox arr={[ '제목', '해시태그']} curtab={curtab}  condselectSubmit={condselectSubmit}/> 
+    else if(curtab === 'follow') return <ProfileDropBox arr={['아이디']} curtab={curtab} condselectSubmit={condselectSubmit}/>
+  }
+  
+  const condselectSubmit = (e,option) => {
+    setcurdropbox(option);
+    setinput(e.target.value);
+    
   }
 
   return (
@@ -138,10 +148,8 @@ function ProfileMain(){
                   {tabData.map((type, idx) => {
                     return <ProfileTab key={idx} curtab={curtab} tabBarhandle={tabBarhandle} type={type}/>
                   })}
-                  <div className='tab-search-container'>
-                  <i className="fa fa-search"></i>
-                  <input onFocus={focushandler} onBlur={blurhandler} placeholder='아이디를 입력하세요' className='search-input'></input>
-                  </div>
+                  {dropboxhandler()}
+                  
                 </div>
                 <div ref={tabbarref} className='tab-bar'></div>
               </div>

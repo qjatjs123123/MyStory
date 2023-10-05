@@ -34,7 +34,7 @@ function BoardData(props) {
     }
 
     return (
-        <div onClick = {props.readClick}className='table-data'>
+        <div onClick = {props.readClick} className='table-data'>
             <div className='table-data-image'>
                 <img src={props.data.bbsImage}/>
             </div>

@@ -16,7 +16,11 @@ function BoardRead(props) {
     const navigate = useNavigate();
 
     useEffect(() => {   
-        loginCheckSubmit();    
+        loginCheckSubmit(); 
+        window.onpopstate = function(event) {
+            alert('QWe');
+            navigate('/Profile');
+        }  
     }, []);
 
     const loginCheck = () => {

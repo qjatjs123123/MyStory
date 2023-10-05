@@ -14,13 +14,13 @@ import BoardPage from './BoardPage';
 
 registerLocale('ko', ko);
 
-function BoardMain() {
+function BoardMain(props) {
     //page,limit
     console.log("main");
     const [curpage, setPage] = useState(1);  //현재 페이지
     const [maxpage, setMaxPage] = useState(1);  //마지막 페이지
     const [limit, setLimit] = useState(5);  // 컨텐츠 갯수
-    const [bbslist, setBbslist] = useState([]);  //컨텐츠
+    const [bbslist, setBbslist] = useState('');  //컨텐츠
     const [isLogin, setLogin] = useState(false);  //로그인 확인
     const navigate = useNavigate();
 
@@ -52,24 +52,78 @@ function BoardMain() {
     }, []);
 
     useEffect(() => {
-        selectBbsListCountSubmit();
-        selectBbsListSubmit();
-    }, [startDate, endDate, title, userID,limit,orderTarget,orderValue,curpage])
-
-    const selectBbsList = () => {
-        const url = '/board/bbsConditionList';
+        
+        if (props.input != '' && props.option == '해시태그'){
+            bbsConditionInput()
+            bbsConditionInputCount();}
+        else{
+            selectBbsListCountSubmit();
+            selectBbsListSubmit();
+        }
+    }, [startDate, endDate, title, userID,limit,orderTarget,orderValue,curpage,props.input,props.curtab])
+    const bbsConditionInputCount = () => {
+        const url = '/board/bbsConditionInputCount';
         const data = {
-            title: title,
-            userID: userID,
-            startDate: startDate !== null ? `${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate()} 00:00:00` : null,
-            endDate: endDate !== null ? `${endDate.getFullYear()}-${endDate.getMonth() + 1}-${endDate.getDate()} 23:59:59` : null,
+            curtab:props.curtab,
+            option:props.option,
+            input:props.input,
             limit: limit,
             page: curpage,
             orderTarget: orderTarget,
             orderValue: orderValue
-        };
+            }
+        axios.post(url, data, { withCredentials: true })
+        .then((response) => {
+            let maxvalue = 1
+            if (Math.ceil(response.data[0].COUNT / limit) === 0) setMaxPage(maxvalue);
+            else {setMaxPage(Math.ceil(response.data[0].COUNT / limit)); maxvalue=Math.ceil(response.data[0].COUNT / limit)}
+            
+            if (curpage > maxvalue) setPage(maxvalue);
+    })
+    }
+    const bbsConditionInput = () => {
+        const url = '/board/bbsConditionInput';
+        const data = {
+            curtab:props.curtab,
+            option:props.option,
+            input:props.input,
+            limit: limit,
+            page: curpage,
+            orderTarget: orderTarget,
+            orderValue: orderValue
+            }
+        axios.post(url, data, { withCredentials: true })
+          .then((resp) => {
+            setBbslist(resp.data);
+          })
+      }
+      const selectBbsList = () => {
+        const url = '/board/bbsConditionList';
+        const data = {
+            curtab:props.curtab,
+            option:props.option,
+            input:props.input,
+            limit: limit,
+            page: curpage,
+            orderTarget: orderTarget,
+            orderValue: orderValue
+          };
         return axios.post(url, data, { withCredentials: true });
     }
+    // const selectBbsList = () => {
+    //     const url = '/board/bbsConditionList';
+    //     const data = {
+    //         title: title,
+    //         userID: userID,
+    //         startDate: startDate !== null ? `${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate()} 00:00:00` : null,
+    //         endDate: endDate !== null ? `${endDate.getFullYear()}-${endDate.getMonth() + 1}-${endDate.getDate()} 23:59:59` : null,
+    //         limit: limit,
+    //         page: curpage,
+    //         orderTarget: orderTarget,
+    //         orderValue: orderValue
+    //     };
+    //     return axios.post(url, data, { withCredentials: true });
+    // }
 
     const selectBbsListSubmit = () => {
         selectBbsList()
@@ -84,10 +138,15 @@ function BoardMain() {
 
     const selectBbsListCount = () => {
         const url = '/board/bbsListCount';
-        const data = { title: title,
-                        userID: userID,
-                        startDate: startDate !== null ?`${startDate.getFullYear()}-${startDate.getMonth()+1}-${startDate.getDate()} 00:00:00` : null,
-                        endDate: endDate !== null ?`${endDate.getFullYear()}-${endDate.getMonth()+1}-${endDate.getDate()} 23:59:59` : null}
+        const data = {
+            curtab:props.curtab,
+            option:props.option,
+            input:props.input,
+            limit: limit,
+            page: curpage,
+            orderTarget: orderTarget,
+            orderValue: orderValue
+          };
         return axios.post(url, data, { withCredentials: true });
     }
 

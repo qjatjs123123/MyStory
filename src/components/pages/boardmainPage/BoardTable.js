@@ -30,11 +30,21 @@ function BoardTable(props) {
         } else return
     }
 
+    const handler = () => {
+        if (props.bbslist != '' && props.bbslist.length > 0){
+            return props.bbslist.map((c,idx) => {
+                return <BoardData key={idx} data={c} num={c.bbsID} title={c.bbsTitle} name={c.userID} date={c.bbsDate} content={c.bbsContent} readClick={() => { navigate(`/BoardRead/?bbsID=${c.bbsID}`) }} />
+            })
+        }else if(props.bbslist != '' && props.bbslist.length == 0)
+        {
+            return <div style={{fontSize:'25px', color:'gray'}}>검색 결과가 없습니다.</div>
+        }
+        return <div></div>
+    }
     return (
         <div className='table-data-container'>
-            {props.bbslist.map((c) => {
-                return <BoardData key={c.bbsID} data={c} num={c.bbsID} title={c.bbsTitle} name={c.userID} date={c.bbsDate} content={c.bbsContent} readClick={() => { navigate(`/BoardRead/?bbsID=${c.bbsID}`) }} />
-            })}
+            {handler()}
+            
         </div>
         // <Table striped bordered hover variant="dark" style={{ borderColor: 'white'}}>
         //     {/* <thead>

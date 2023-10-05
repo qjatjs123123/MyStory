@@ -412,7 +412,7 @@
   display:flex;
   height: 100%;
   width: auto;
-  min-width: 1000px;
+  min-width: 1100px;
   position: relative;
 }
 .user-tabs > .tabs > .tab{
@@ -441,11 +441,73 @@
   background-color: #000;
   transition: 0.3s;
 }
-.tab-search-container{
-  width: 200px;
+.tab-search-container-main{
+  width: 320px;
   height: 100%;
   position: absolute;
   right: 0;
+  display: flex;
+}
+.tab-search-container-dropbox{
+  width: 90px;
+  height: 100%;
+  display: flex;
+  cursor: pointer;
+  margin-right: 10px;
+  padding: 10px 0px;
+  font-size: 15px;
+  font-weight: 600;
+  color: rgb(73, 80, 87);
+  background-color: #fff;
+  border-radius: 5px;
+  position: relative;
+}
+.tab-dropbox-drop{
+  position: absolute;
+  right: 0;
+  width: 150px;
+
+  background-color: #fff;
+  margin-top: 50px;
+  transform: scale(0.5, 0.5);
+  transform-origin: 100% 0;
+  transition: 0.3s;
+  opacity: 0;
+  border-radius: 5px;
+  box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+.tab-dropbox-drop.active{
+  transform: scale(1, 1);
+  opacity: 1;
+  
+}
+.tab-dropbox-drop > div{
+  padding: 10px 20px;
+  border-bottom: 1px solid #eee;
+}
+.tab-dropbox-drop > div.target{
+  color:  rgb(18, 184, 134);
+}
+.tab-search-container-inner{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.tab-search-container-dropbox span{
+  margin-right: 10px;
+}
+.tab-search-container-dropbox .fa{
+  font-size: 20px;
+}
+.tab-search-container-inner:hover{
+  color: gray
+}
+.tab-search-container{
+  width: 220px;
+  height: 100%;
   display: flex;
   border: 2px solid #adb5bd;
   padding: 10px 10px;
@@ -708,6 +770,7 @@ h3{
 .table-data-info-like span{
   margin-right: 5px;
 }
+
 @media (max-width: 800px) {
   .tab-search-container{
       
