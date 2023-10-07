@@ -31,7 +31,7 @@ const loginSubmit = (e) =>{
               alert("로그인 실패");
           else
               navigate('/Profile');
-              props.setlogin();
+              props.setlogin(response.data.userID);
       })
 
 }

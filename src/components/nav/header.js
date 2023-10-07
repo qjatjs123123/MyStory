@@ -27,14 +27,14 @@ class Header extends Component {
         return (
             <div className='header'>
                 <div className='header-left'>
-                    <Link to="/main">
-                    <img className="logo-title" src={process.env.PUBLIC_URL+'images/logo-title.png'}></img>
+                    <Link to="/profile">
+                    <img className="logo-title" src={process.env.PUBLIC_URL+'/images/logo-title.png'}></img>
                     </Link>
-                    <StyledNavLink to="/FindId">아이디찾기</StyledNavLink>
+                    {/* <StyledNavLink to="/FindId">아이디찾기</StyledNavLink>
                     <StyledNavLink to="/FindPw">비밀번호찾기</StyledNavLink>
                     <StyledNavLink to="/board">게시판</StyledNavLink>
-                    <StyledNavLink to="/BoardWrite">글쓰기</StyledNavLink>
-                    <Timer count = {this.props.count}/>
+                    <StyledNavLink to="/BoardWrite">글쓰기</StyledNavLink> */}
+                    <Timer count = {this.props.count} userID={this.props.userID}/>
                 </div>
                 {/* <Navbar >
                     <Container>

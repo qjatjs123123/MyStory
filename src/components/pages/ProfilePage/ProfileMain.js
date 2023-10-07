@@ -7,48 +7,59 @@ import BoardMain from '../boardmainPage/BoardMain';
 import BoardWrite from '../boardwritePage/BoardWrite';
 import BoardWriteModal from '../boardwritePage/BoardWriteModal';
 import ProfileDropBox from './ProfileDropBox';
+import e from 'cors';
+import BoardFlex from '../boardmainPage/BoardFlex';
 
-function ProfileMain(){
+function ProfileMain(props){
   //userInfo
   const [userNickname, setuserNickname] = useState('');
   const [userState, setuserState] = useState('');
   const [userProfile, setuserProfile] = useState('');
   const [isLogin, setLogin] = useState(false);  //로그인 확인
-  const [curtab, setcurtab] = useState('clock')
+  const [curtab, setcurtab] = useState(props.curtab)
   const [userProfileList, setuserProfileList]  = useState([]);
   const [curpage, setPage] = useState(0);  //현재 페이지
+  const [userID, setUserID] = useState(false);
   const profileref = useRef('');
   const tabbarref = useRef('');
   const navigate = useNavigate();
   const infiniteScrollRef = useRef(null);
-  const tabData = ["clock", "heart","board","myboard", "follow","write"];
-  const [curdropbox, setcurdropbox] = useState('아이디');
+  const tabData = props.tabData;
+  // const tabData = ["clock", "heart","board","myboard", "follow","write"];
+  const [curdropbox, setcurdropbox] = useState(props.ishome ? '제목' : '아이디');
   const [input, setinput] = useState('')
-  const [flg, setflg] = useState(false)
   const firstRender = useRef(true);
+  const flg  = useRef(false);
   const count = useRef(0);
+  
+  let tmparr = useRef([]);
   //board render
   
   let event = null;
   useEffect(() => {
-    if (profileref.current != '')
-      profileref.current.style.background = `url(${userProfile}) no-repeat center center / cover`       
+    // if (profileref.current != '')
+    //   profileref.current.style.background = `url(${userProfile}) no-repeat center center / cover`       
   }, [userProfile])
 
-  useEffect(() => {   
-      loginCheckSubmit();    
-      infiniteScrollRef.current = infiniteScroll
-      document.addEventListener('scroll', infiniteScrollRef.current);   
-
-      infiniteScroll();
-      return () => document.removeEventListener('scroll', infiniteScrollRef.current) ;
+  useEffect(() => {
+      
+        loginCheckSubmit();  
+        if(props.ishome) return 
+        infiniteScrollRef.current = infiniteScroll
+        document.addEventListener('scroll', infiniteScrollRef.current);   
+        infiniteScroll();
+        return () => document.removeEventListener('scroll', infiniteScrollRef.current) ;
+      
   }, []);
 
-  useEffect(() => {  
+
+  useEffect(() => { 
+    
     if (curpage >= 15){
      // document.removeEventListener('scroll', infiniteScrollRef.current); 
      return;
     }
+    
     profileSubmit();
   }, [curpage]);
 
@@ -57,6 +68,8 @@ function ProfileMain(){
       return;
   }
 
+    flg.current = false;
+    tmparr.current = new Array();
     setuserProfileList([])
   }, [input])
 
@@ -64,8 +77,8 @@ function ProfileMain(){
     if (firstRender.current) {
       return;
   }
-
     if (userProfileList.length == 0){
+      
       if (curpage != 0){
         setPage(0);
       }
@@ -73,6 +86,7 @@ function ProfileMain(){
         profileSubmit();
       }
     }
+    
   }, [userProfileList])
 
 
@@ -104,15 +118,21 @@ function ProfileMain(){
     axios.post(url, data, { withCredentials: true })
       .then((resp) => {
         count.current =  Math.ceil(resp.data.count / 12);
-        let newContents = Array.from(userProfileList);
+        let newContents = Array.from(tmparr.current);
         resp.data.rows.forEach((e) => {
             newContents.push(e);
+            tmparr.current.push(e)
         })
-        if (resp.data.rows.length == 0 && userProfileList.length == 0) return;   
+
+        flg.current = true;
+        if (resp.data.rows.length == 0 && userProfileList.length == 0){
+          return;
+        }  
         setuserProfileList(newContents);
+
         // 초기 마운트 시에는 실행하지 않음
         firstRender.current = false;
-        console.log("1");
+        
       })
   }
 
@@ -139,45 +159,51 @@ function ProfileMain(){
   }
   
   const tabBarhandle = (tab) => {
-    if (tab === 'clock') tabbarref.current.style.marginLeft = '0px';
-    else if(tab === 'heart') tabbarref.current.style.marginLeft = '130px';
-    else if(tab === "board") tabbarref.current.style.marginLeft = '260px';
-    else if(tab === "myboard") tabbarref.current.style.marginLeft = '390px';
-    else if(tab === "follow") tabbarref.current.style.marginLeft = '520px';
-    else  tabbarref.current.style.marginLeft = '650px';
+
+    tabData.forEach((item, idx)=>{
+      if (item === tab){
+        tabbarref.current.style.marginLeft = `${idx*130}px`;
+      }
+      if (tab === 'myboard' || tab === 'home') setcurdropbox('제목');
+      else setcurdropbox('아이디');
+    })
+
+  
+    if (tab !== "write") document.querySelector(".search-input").value = '';
+    setinput('');
     setcurtab(tab)
   }
 
   
   const tabhandler = () => {
-    
-    if (curtab === 'clock') return userProfileList.map((info, idx) => (
-      <ProfileBox key={idx} info={info} />));
-    else if(curtab === 'heart') return
-    else if(curtab === 'board') return <BoardMain option={curdropbox} input={input} curtab={curtab} />
-    else if(curtab === 'myboard') return <BoardMain option={curdropbox} input={input} curtab={curtab} />
+    if (curtab === 'clock') return userProfileList.length > 0  ? userProfileList.map((info, idx) => (
+      <ProfileBox key={idx} info={info} />)) : flg.current ? <div style={{fontSize:'25px', color:'gray'}}>검색 결과가 없습니다.</div> : <div></div>;
+    else if(curtab === 'home') return <BoardFlex  curtag={'전체보기'} setinput={setinput} userProfileList={userProfileList} userID={props.userID} option={curdropbox} input={input} curtab={"myboard"}/>
+    else if(curtab === 'board') return <BoardMain userID={props.userID} option={curdropbox} input={input} curtab={curtab} />
+    else if(curtab === 'myboard') return <BoardMain userID={props.userID} option={curdropbox} input={input} curtab={curtab} />
     else if(curtab === 'follow') return
     else if(curtab === 'write') return <BoardWrite tabBarhandle={tabBarhandle}  update={false} bbsID={''} bbsTitle={''} bbsContent={''}/>
 
   }
   const dropboxhandler = () => {
-    if (curtab === 'clock') return <ProfileDropBox arr={['아이디']} curtab={curtab} condselectSubmit={condselectSubmit}/>
-    else if(curtab === 'heart') return <ProfileDropBox arr={['아이디']} curtab={curtab} condselectSubmit={condselectSubmit}/>
-    else if(curtab === 'board') return <ProfileDropBox arr={['아이디', '제목', '해시태그']} curtab={curtab} condselectSubmit={condselectSubmit} />
-    else if(curtab === 'myboard') return <ProfileDropBox arr={[ '제목', '해시태그']} curtab={curtab}  condselectSubmit={condselectSubmit}/> 
-    else if(curtab === 'follow') return <ProfileDropBox arr={['아이디']} curtab={curtab} condselectSubmit={condselectSubmit}/>
+    if (curtab === 'clock') return <ProfileDropBox curdropbox={curdropbox} arr={['아이디']} curtab={curtab} condselectSubmit={condselectSubmit}/>
+    else if(curtab === 'heart') return <ProfileDropBox curdropbox={curdropbox} arr={['아이디']} curtab={curtab} condselectSubmit={condselectSubmit}/>
+    else if(curtab === 'board' ) return <ProfileDropBox curdropbox={curdropbox} arr={['아이디', '제목', '해시태그']} curtab={curtab} condselectSubmit={condselectSubmit} />
+    else if(curtab === 'myboard') return <ProfileDropBox curdropbox={curdropbox} arr={[ '제목', '해시태그']} curtab={curtab}  condselectSubmit={condselectSubmit}/> 
+    else if(curtab === 'follow') return <ProfileDropBox curdropbox={curdropbox} arr={['아이디']} curtab={curtab} condselectSubmit={condselectSubmit}/>
+    else if(curtab === 'home') return <ProfileDropBox curdropbox={curdropbox} arr={['제목']} curtab={curtab} condselectSubmit={condselectSubmit}/>
+    else  return <ProfileDropBox curdropbox={curdropbox} arr={['아이디']} curtab={curtab} condselectSubmit={condselectSubmit}/>
   }
   
-  const condselectSubmit = (e,option) => {
+  const condselectSubmit = (val,option) => {
     setcurdropbox(option);
-    setinput(e.target.value);
-    
+    setinput(val);
   }
 
   return (
     isLogin ? (
-        <div className='bbs-container'>
-            <div className='profile-container'>
+        <div style={{marginTop : props.ishome ? '0px' : null}} className='bbs-container'>
+            {/* <div className='profile-container'>
                 <div className='profile-content'>
                     <div className='profile' ref={profileref}></div>
                     <div className='profile-left'>
@@ -185,7 +211,7 @@ function ProfileMain(){
                         <div className='profile-state'><span>{userState}</span></div>
                     </div>
                 </div>
-            </div>
+            </div> */}
             <div className='user-wrapper'>
               <div className='user-tabs'>
                 <div className='tabs'>

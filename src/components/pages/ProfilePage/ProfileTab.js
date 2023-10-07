@@ -52,6 +52,22 @@ function ProfileTab(props){
         <span>글쓰기</span>
       </div>
     )
+  }else if (props.type == 'home'){
+    return (
+      <div onClick = {() => {props.tabBarhandle('home')}} 
+      className={"tab" + (props.curtab == 'home' ? " active" : "")}>
+        <i className="fa fa-home"></i>
+        <span>홈</span>
+      </div>
+    )
+  }else if (props.type == 'history'){
+    return (
+      <div onClick = {() => {props.tabBarhandle('history')}} 
+      className={"tab" + (props.curtab == 'history' ? " active" : "")}>
+        <i className="fa fa-history"></i>
+        <span style={{fontSize:'18px'}}>팔로우 활동</span>
+      </div>
+    )
   }
 
 }

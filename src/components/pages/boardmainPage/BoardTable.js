@@ -31,15 +31,18 @@ function BoardTable(props) {
     }
 
     const handler = () => {
+        console.log(props.bbslist);
         if (props.bbslist != '' && props.bbslist.length > 0){
             return props.bbslist.map((c,idx) => {
-                return <BoardData key={idx} data={c} num={c.bbsID} title={c.bbsTitle} name={c.userID} date={c.bbsDate} content={c.bbsContent} readClick={() => { navigate(`/BoardRead/?bbsID=${c.bbsID}`) }} />
+                return <BoardData setInput={props.setInput} key={idx} data={c} num={c.bbsID} title={c.bbsTitle} name={c.userID} date={c.bbsDate} content={c.bbsContent} readClick={() => { navigate(`/BoardRead/?bbsID=${c.bbsID}`) }} />
             })
-        }else if(props.bbslist != '' && props.bbslist.length == 0)
-        {
+        }else if (props.bbslist === ''){
+        
+            return <div style={{fontSize:'25px', color:'gray'}}></div>
+        }else{
             return <div style={{fontSize:'25px', color:'gray'}}>검색 결과가 없습니다.</div>
         }
-        return <div></div>
+            
     }
     return (
         <div className='table-data-container'>

@@ -10,6 +10,8 @@ import BoardWrite from './components/pages/boardwritePage/BoardWrite';
 import BoardRead from './components/pages/boardreadPage/BoardRead';
 import BoardMain from './components/pages/boardmainPage/BoardMain';
 import ProfileMain from './components/pages/ProfilePage/ProfileMain'
+import HomePage from './components/pages/homePage/HomePage';
+import HashtagPage from './components/pages/hashtagPage/HashtagPage';
 class Routing extends Component{
     constructor(props){
         super(props);
@@ -17,12 +19,14 @@ class Routing extends Component{
                 count : 1,
                 bbsID : 0,
                 bbsTitle: 0,
-                bbsContent:0
+                bbsContent:0,
+                userID:''
             };
     }
-
-    setlogin = () => {
+    
+    setlogin = (userID) => {
         this.setState({count:this.state.count+1});
+        this.setState({userID:userID});
     }
     setbbsID = (param) => {this.setState({bbsID: param})}
     setbbsTitle = (param) => {this.setState({bbsTitle: param})}
@@ -31,7 +35,7 @@ class Routing extends Component{
     render(){
         return(
             <BrowserRouter>
-                <Header count={this.state.count}/>
+                <Header userID={this.state.userID} count={this.state.count}/>
                 <Routes>
                     <Route path='/' element={<Main setlogin={this.setlogin}/>} />  
                     <Route path='/join' element={<Join />} /> 
@@ -40,7 +44,9 @@ class Routing extends Component{
                     <Route path='/FindPw' element={<FindPw />} />
                     <Route path='/ChangePw' element={<ChangePw />} />
                     <Route path='/Board' element={ <BoardMain />} />
-                    <Route path='/Profile' element={ <ProfileMain />} />
+                    <Route path='/Profile/:userID' element={ <HomePage/>} />                 
+                    <Route path='/tags/:hashTag' element={ <HashtagPage/>} />
+                    <Route path='/Profile' element={ <ProfileMain ishome={false} curtab={"clock"} tabData={["clock", "board"]}/>} />
                     <Route path='/BoardWrite' element={ <BoardWrite update={false} bbsID={''} bbsTitle={''} bbsContent={''}/>} />
                     <Route path='/BoardRead' element={ <BoardRead setbbsID={this.setbbsID} setbbsTitle={this.setbbsTitle} setbbsContent={this.setbbsContent}/>} />
                     <Route  path='/BoardWrite/Update' element={ <BoardWrite update={true} bbsID={this.state.bbsID} bbsTitle={this.state.bbsTitle} bbsContent={this.state.bbsContent}/> } />

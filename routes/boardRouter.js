@@ -20,7 +20,7 @@ router.post('/bbsContentImage', upload.single('img'), (req, res) => {
 
 router.post("/bbsListCount", (req, res) => {
     getConnection((conn) => {
-        const {curtab, option, input,limit, page, orderTarget, orderValue } = req.body;
+        const {userID, curtab, option, input,limit, page, orderTarget, orderValue } = req.body;
         let param = [] 
         if (input != '')
             param.push(`${input}%`);
@@ -29,7 +29,7 @@ router.post("/bbsListCount", (req, res) => {
         else if(option =='제목' && input != '') sql += "AND bbs.bbsTitle LIKE ? "
         if(curtab=='myboard'){sql += "AND bbs.userID = ? ";
         
-        param.push(jwt.verify(req.cookies.jwt, "1234").userID);}
+        param.push(userID);}
         conn.query(sql, param,
             (err, rows, fields) => {
                 console.log(err);
@@ -582,8 +582,8 @@ router.post("/selectrecommend", (req, res) => {
 
 })
 router.post("/bbsConditionList", (req, res) => {
-    const {curtab, option, input,limit, page, orderTarget, orderValue } = req.body;
-    console.log("QWe",curtab);
+    const {userID, curtab, option, input,limit, page, orderTarget, orderValue } = req.body;
+    console.log(userID, curtab, option, input,limit, page, orderTarget, orderValue );
     let param = [] 
     if (input != '')
         param.push(`${input}%`);
@@ -591,7 +591,8 @@ router.post("/bbsConditionList", (req, res) => {
     if (option == '아이디' && input != '') sql += "AND bbs.userID LIKE ? "
     else if(option =='제목' && input != '') sql += "AND bbs.bbsTitle LIKE ? "
     if (curtab == 'myboard') {sql += "AND bbs.userID = ? ";
-    param.push(jwt.verify(req.cookies.jwt, "1234").userID);}
+    param.push(userID);
+    }
     sql += `ORDER BY bbs.${orderTarget} ${orderValue} LIMIT ?, ?`;
     
     param.push(limit * (page - 1));
@@ -629,11 +630,13 @@ router.post("/bbsConditionList", (req, res) => {
 // })
 
 router.post("/bbsConditionInput", (req, res) => {
-    const { option, input,limit, page, orderTarget, orderValue } = req.body;
+    const { userID,curtab,option, input,limit, page, orderTarget, orderValue } = req.body;
+    console.log(userID,curtab,option, input, "qw")
     let param = [];
     param.push(`${input}`);
     let sql = "SELECT  * FROM bbs,member,recommend, hashtagpost, hashtag WHERE bbs.userID = member.userID AND bbs.bbsID = recommend.bbsID AND bbs.bbsID = hashtagpost.bbsID AND hashtag.hashTagID = hashtagpost.hashTagID AND bbsAvailable = 1 ";
     sql += "AND hashtag.hashTag = ?"
+    if(curtab=='myboard'){sql += "AND bbs.userID = ? "; param.push(userID);}
     sql += `ORDER BY bbs.${orderTarget} ${orderValue} LIMIT ?, ?`;
     param.push(limit * (page - 1));
     param.push(limit);
@@ -648,11 +651,11 @@ router.post("/bbsConditionInput", (req, res) => {
 })
 
 router.post("/bbsConditionInputCount", (req, res) => {
-    const { option, input,limit, page, orderTarget, orderValue } = req.body;
+    const { userID,curtab,option, input,limit, page, orderTarget, orderValue } = req.body;
     let param = [`${input}`];
     let sql = "SELECT COUNT(*) AS COUNT FROM bbs,member,recommend, hashtagpost, hashtag WHERE bbs.userID = member.userID AND bbs.bbsID = recommend.bbsID AND bbs.bbsID = hashtagpost.bbsID AND hashtag.hashTagID = hashtagpost.hashTagID AND bbsAvailable = 1 ";
     sql += "AND hashtag.hashTag = ?"
-    
+    if(curtab=='myboard'){sql += "AND bbs.userID = ? "; param.push(userID);}
     param.push(limit * (page - 1));
     param.push(limit);
     getConnection((conn) => {

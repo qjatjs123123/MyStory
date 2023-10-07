@@ -17,10 +17,7 @@ function BoardRead(props) {
 
     useEffect(() => {   
         loginCheckSubmit(); 
-        window.onpopstate = function(event) {
-            alert('QWe');
-            navigate('/Profile');
-        }  
+        
     }, []);
 
     const loginCheck = () => {

@@ -148,7 +148,8 @@ router.post("/login", (req, res) => {
                         res.status(200).json({
                             code: 200,
                             message: '토큰이 발급되었습니다.',
-                            jwt: token
+                            jwt: token,
+                            userID:row.userID
                           });
                     }
                 })

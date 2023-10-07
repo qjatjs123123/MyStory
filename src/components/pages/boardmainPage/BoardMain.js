@@ -23,6 +23,7 @@ function BoardMain(props) {
     const [bbslist, setBbslist] = useState('');  //컨텐츠
     const [isLogin, setLogin] = useState(false);  //로그인 확인
     const navigate = useNavigate();
+    const [input, setInput] = useState('');
 
     // Condition Form
     const [startDate, setStartDate] = useState(null);  // 시작일자
@@ -50,23 +51,27 @@ function BoardMain(props) {
     useEffect(() => {   
         loginCheckSubmit();    
     }, []);
-
+    useEffect(() => {
+        bbsConditionInput(input)
+        bbsConditionInputCount(input);
+    }, [input])
     useEffect(() => {
         
         if (props.input != '' && props.option == '해시태그'){
-            bbsConditionInput()
-            bbsConditionInputCount();}
+            bbsConditionInput(props.input)
+            bbsConditionInputCount(props.input);}
         else{
             selectBbsListCountSubmit();
             selectBbsListSubmit();
         }
-    }, [startDate, endDate, title, userID,limit,orderTarget,orderValue,curpage,props.input,props.curtab])
-    const bbsConditionInputCount = () => {
+    }, [startDate, endDate, title, userID,limit,orderTarget,orderValue,curpage,props.curtab,props.input])
+    const bbsConditionInputCount = (val) => {
         const url = '/board/bbsConditionInputCount';
         const data = {
+            userID: props.userID,
             curtab:props.curtab,
             option:props.option,
-            input:props.input,
+            input:val,
             limit: limit,
             page: curpage,
             orderTarget: orderTarget,
@@ -81,12 +86,13 @@ function BoardMain(props) {
             if (curpage > maxvalue) setPage(maxvalue);
     })
     }
-    const bbsConditionInput = () => {
+    const bbsConditionInput = (val) => {
         const url = '/board/bbsConditionInput';
         const data = {
+            userID: props.userID,
             curtab:props.curtab,
             option:props.option,
-            input:props.input,
+            input:val,
             limit: limit,
             page: curpage,
             orderTarget: orderTarget,
@@ -100,6 +106,7 @@ function BoardMain(props) {
       const selectBbsList = () => {
         const url = '/board/bbsConditionList';
         const data = {
+            userID: props.userID,
             curtab:props.curtab,
             option:props.option,
             input:props.input,
@@ -139,6 +146,7 @@ function BoardMain(props) {
     const selectBbsListCount = () => {
         const url = '/board/bbsListCount';
         const data = {
+            userID: props.userID,
             curtab:props.curtab,
             option:props.option,
             input:props.input,
@@ -206,7 +214,7 @@ function BoardMain(props) {
                         {/* <BoardConditionForm setPage={setPage} setStartDate={setStartDate} setEndDate={setEndDate} 
                             setTitle={setTitle} setuserID={setuserID}/> */}
                         <BoardLimit setLimit={setLimit}/>
-                        <BoardTable bbslist={bbslist} setorderTarget={setorderTarget} setorderValue={setorderValue}
+                        <BoardTable setInput={setInput} bbslist={bbslist} setorderTarget={setorderTarget} setorderValue={setorderValue}
                             orderTarget={orderTarget} orderValue={orderValue}/>
                         <BoardPage curpage={curpage} maxpage={maxpage} setPage={setPage}/>
                     </div>

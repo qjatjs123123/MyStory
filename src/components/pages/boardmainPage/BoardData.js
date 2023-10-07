@@ -1,12 +1,12 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-
+import { useNavigate } from 'react-router-dom';
 function BoardData(props) {
     const [tags, settags] = useState([]);
-
+    const navigate = useNavigate();
     useEffect(() => {
         getTags();
-    }, [])
+    }, [props])
 
     const getTags = () => {
         const url = '/board/getTags';
@@ -34,22 +34,20 @@ function BoardData(props) {
     }
 
     return (
-        <div onClick = {props.readClick} className='table-data'>
-            <div className='table-data-image'>
+        <div className='table-data'>
+            <div onClick = {props.readClick} className='table-data-image'>
                 <img src={props.data.bbsImage}/>
             </div>
-            <div className='table-data-content'>
-                <div className='table-data-content-title'>
+            <div  className='table-data-content'>
+                <div onClick = {props.readClick} className='table-data-content-title'>
                     <h3>{props.title}</h3>
-                        
-                    
                 </div>
-                <div className='table-data-content-content'>
+                <div onClick = {props.readClick} className='table-data-content-content'>
                     <span>
                         {replaceHTML()}
                     </span>
                 </div>
-                <div className='table-data-content-profile'>
+                <div onClick={() => navigate(`/Profile/${props.data.userID}`)} className='table-data-content-profile'>
                     
                     <img src={props.data.userProfile}/>
                     <div>
@@ -65,7 +63,7 @@ function BoardData(props) {
             <div className='table-data-info'>
                 <div className='table-data-info-hashtag'>
                     {tags.map((tag,idx)=>{
-                        return <div key ={idx}>{tag.hashTag} </div>
+                        return <div onClick={() => navigate(`/tags/${tag.hashTag}`)} key ={idx}>{tag.hashTag} </div>
                     })}
                 </div>
                 <div className='table-data-info-date'>
