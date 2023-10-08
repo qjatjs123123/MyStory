@@ -151,21 +151,48 @@ router.post("/getreplyCount", async (req, res) => {
 router.post("/follow", async (req, res) => {
   try {
     const {userID} = req.body; 
-      getConnection((conn) => {
-        let param = [userID,jwt.verify(req.cookies.jwt, "1234").userID]
-          let sql = "INSERT INTO follow(touserID, fromuserID, followDate) VALUES (?, ?, NOW())";
-          conn.query(sql, param,
-              (err, rows, fields) => {
-                  if (err) { throw err }    
-                  else {res.send(true);}
-                  conn.release();
-              })
-      })
-
+    const followcount = await insertfollow(userID,jwt.verify(req.cookies.jwt, "1234").userID)
+    const follow = await insertfollowhistory(userID,jwt.verify(req.cookies.jwt, "1234").userID);
+    res.send(true);
   } catch (error) {
       res.send(false);
   }
 })
+
+async function insertfollow(touserID, fromuserID) {
+  return new Promise((resolve, reject) => {
+      getConnection((conn) => {
+          let param = [touserID, fromuserID]
+          let sql = "INSERT INTO follow(touserID, fromuserID, followDate) VALUES (?, ?, NOW())"
+          conn.query(sql, param, (err, rows, fields) => {
+              if (err) {
+                  reject(err);
+                  return;
+              }
+              conn.release();
+              resolve(true);
+          });
+      });
+  });
+}
+
+async function insertfollowhistory(touserID, fromuserID) {
+  return new Promise((resolve, reject) => {
+      getConnection((conn) => {
+          let param = [fromuserID,touserID]
+          let sql = "INSERT INTO history(userID, touserID, historyDate) VALUES (?, ?, NOW())"
+          conn.query(sql, param, (err, rows, fields) => {
+              if (err) {
+                  reject(err);
+                  return;
+              }
+              conn.release();
+              resolve(true);
+          });
+      });
+  });
+}
+
 router.post("/unfollow", async (req, res) => {
   try {
     const {userID} = req.body; 

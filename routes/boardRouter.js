@@ -162,6 +162,14 @@ router.post("/bbsListInsert", async (req, res) => {
                         false,
                         res
                     )
+                }).then(()=>{
+                    return bbsPromise(
+                        conn,
+                        "INSERT INTO history(bbsID,bbsTitle, bbsContent, userID,historyDate) VALUES (?,?,? ?, NOW())",
+                        [bbsID,bbsTitle, bbsContent, jwt.verify(req.cookies.jwt, "1234").userID],
+                        false,
+                        res
+                    )
                 })
                 .then(()=>{
                     return bbsPromise(
@@ -204,7 +212,6 @@ router.post("/bbsListInsert", async (req, res) => {
         conn.release();
     })
 })
-
 // router.post("/bbsListInsert", async (req, res) => {
 //     const { bbsTitle, bbsContent } = req.body;
 //     let bbsID = await getMaxbbsID();
