@@ -38,7 +38,7 @@ function HomePage(){
           setuserState(response.data.rows[0].userState);
           setuserProfile(response.data.rows[0].userProfile);  
           if (response.data.rows[0].userID == response.data.userID)
-            settabData(["home", "myboard","follow","write","history"]);
+            settabData(["home", "myboard","follow","write"]);
           else
             settabData(["home", "myboard"]);
         } 

@@ -6,7 +6,12 @@ function BoardWriteModal(props){
   const [img, setimg] = useState("");
   const [mainImg,setMainImg] = useState(process.env.PUBLIC_URL+'/images/noimage.png');
   const [tags, settags] = useState([]);
+  const inputref = useRef();
+  const previewimgbtn = useRef();
+  const inputfile = useRef();
+
   const taginput = (e) => {
+    if (tags.length >= 10) return;
     if(window.event.keyCode == 13){
       let newContents = new Set(tags);
       newContents.add(e.target.value)  
@@ -23,6 +28,10 @@ function BoardWriteModal(props){
   }
 
   const writesubmit = async() => {
+    if (tags.length === 0){
+      inputref.current.focus();
+      return;
+    }
     let IMG_URL = process.env.PUBLIC_URL+'/images/noimage.png';
       try {
         if (img != ''){
@@ -40,6 +49,12 @@ function BoardWriteModal(props){
     props.bbsWriteSubmit(IMG_URL, tags)
   }
 
+  const imgPreviewDelete = () => {
+    setMainImg(process.env.PUBLIC_URL+'/images/noimage.png');
+    setimg(process.env.PUBLIC_URL+'/images/noimage.png');
+    inputfile.current.value = '';
+  }
+
   const imageHandler = (event) => {
     event.preventDefault();
     var reader = new FileReader();
@@ -47,6 +62,7 @@ function BoardWriteModal(props){
     reader.onload = function(event) {
         setMainImg(event.target.result);
     };
+    if (event.target.files[0] == null ) return
     setimg(event.target.files[0]);
     reader.readAsDataURL(event.target.files[0]);
 };
@@ -58,10 +74,11 @@ function BoardWriteModal(props){
             <h3>썸네일 업로드</h3>
           </div>
           <div className='modal-image-box-input'>
-            <input onChange={imageHandler}  type="file"></input>
+            <input ref={inputfile} onChange={imageHandler}  type="file"></input>
           </div>
           <div className='modal-image-box-title'>
             <h3>썸네일 미리보기</h3>
+            <div ref={previewimgbtn} onClick={imgPreviewDelete}>제거</div>
           </div>
           <img className='profilePreview' src={mainImg} alt=""  style={{maxWidth:"300px"}}></img>
         </div>
@@ -75,7 +92,7 @@ function BoardWriteModal(props){
             })}
             
           </div>
-          <input onKeyUp={taginput} type="text" placeholder='태그를 입력하세요'></input>
+          <input ref={inputref} onKeyUp={taginput} type="text" placeholder='태그를 입력하세요'></input>
           <div className='modal-hashtag-box-buttongroup'>
             <button onClick={() => {props.setactive(false)}} className='cancel'>취소</button>
             <button onClick={writesubmit} className='submit'>출간하기</button>

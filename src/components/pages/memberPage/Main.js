@@ -43,7 +43,7 @@ const login = () => {
       userPw: PW,
   };
 
-  return axios.post(url, data);
+  return axios.post(url, data, { withCredentials: true });
 }
 
 const handleValueChange = (e) => {

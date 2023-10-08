@@ -6,7 +6,7 @@ import React, {  useState ,useRef, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 function Timer(props) {
     const [count, setCount] = useState(0);
     const [min, setMin] = useState(0);
@@ -33,14 +33,16 @@ function Timer(props) {
 
     const getProfileImage = () => {
         const url = '/profile/getProfileImage';
+
         const data = {
             userID : props.userID
         }
         axios.post(url, data,{ withCredentials: true })
             .then((resp)=>{
-                if (resp.data.length > 0)
+                if (resp.data.length > 0){
                     setimg(resp.data[0].userProfile);
                     userID.current = resp.data[0].userID
+                }
             })
     }
 

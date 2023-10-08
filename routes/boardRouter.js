@@ -3,9 +3,9 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const getConnection = require('../db');
 const multer = require('multer');
-const upload = multer({ dest: 'public/upload' })
+const upload = multer({ dest: './upload' })
 
-router.use('/image', express.static('public/upload'));
+
 router.post('/bbsContentImage', upload.single('img'), (req, res) => {
     // 해당 라우터가 정상적으로 작동하면 public/uploads에 이미지가 업로드된다.
     // 업로드된 이미지의 URL 경로를 프론트엔드로 반환한다.
@@ -13,7 +13,7 @@ router.post('/bbsContentImage', upload.single('img'), (req, res) => {
     console.log('저장된 파일의 이름', req.file.filename);
 
     // 파일이 저장된 경로를 클라이언트에게 반환해준다.
-    const IMG_URL = '/upload/' + req.file.filename;;
+    const IMG_URL = process.env.REAL_URL + '/upload/' + req.file.filename;;
     console.log(IMG_URL);
     res.send({ url: IMG_URL });
 });
@@ -686,6 +686,8 @@ router.post("/selectBbsIDInfo", (req, res) => {
 
 router.post("/loginCheck", (req, res) => {
     try {
+        console.log("qweqweqw");
+        console.log(jwt.verify(req.cookies.jwt, "1234"));
         const verified = jwt.verify(req.cookies.jwt, "1234");
         res.send({
             userID:jwt.verify(req.cookies.jwt, "1234").userID,

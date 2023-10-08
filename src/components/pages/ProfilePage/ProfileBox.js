@@ -40,6 +40,17 @@ function ProfileBox(props){
     })
   }
 
+  const followbuttonhandler = () => {
+
+    if (isfollow === true){
+      return  <div onClick={unfollowSubmit} style={{transform:'translateY(-8px)'}} className='unfollow-button'>언팔로우</div>
+    }else if(isfollow === false){
+      return <div onClick={followSubmit} style={{transform:'translateY(-8px)'}} className='follow-button'>팔로우</div>
+    }else{
+      return <div></div>
+    }
+  }
+
   return(
     <div className='profilebox-outter'>
       <div className='profilebox-inner' >
@@ -53,15 +64,7 @@ function ProfileBox(props){
         </div>
         <div className='profilebox-info-container'>
           <div className='profilebox-info'>{bbsCount}개의 글</div>
-          {isfollow ? 
-          <div onClick={unfollowSubmit} style={{transform:'translateY(-8px)'}} className='unfollow-button'>
-            언팔로우
-          </div> :
-          <div onClick={followSubmit} style={{transform:'translateY(-8px)'}} className='follow-button'>
-            팔로우
-          </div>
-          }
-          
+          {followbuttonhandler()}     
         </div>
         <div className='profilebox-nickname'>
           <span>by</span> {props.info.userID}({props.info.userNickname})

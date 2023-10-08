@@ -66,7 +66,7 @@ function BoardWrite(props) {
                 else {
                     alert("글쓰기 실패");
                 }
-                props.tabBarhandle("board")
+                props.tabBarhandle("myboard")
             })
     }
 

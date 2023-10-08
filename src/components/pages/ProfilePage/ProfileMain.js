@@ -117,6 +117,7 @@ function ProfileMain(props){
     }
     axios.post(url, data, { withCredentials: true })
       .then((resp) => {
+        console.log(resp.data);
         count.current =  Math.ceil(resp.data.count / 12);
         let newContents = Array.from(tmparr.current);
         resp.data.rows.forEach((e) => {

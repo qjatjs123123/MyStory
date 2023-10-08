@@ -22,7 +22,10 @@ router.post("/getProfile", async (req, res) => {
           conn.query(sql, param,
               (err, rows, fields) => {
                   if (err) { throw err }    
-                  else {let data = {count:count,rows:rows}; res.send(data);}
+                  else {let data = {count:count,rows:rows};
+                  console.log(data);
+                  res.send(data);
+                }
                   conn.release();
               })
       })
@@ -33,9 +36,9 @@ router.post("/getProfile", async (req, res) => {
 })
 router.post("/getProfileImage", async (req, res) => {
   try {
-
+      let param = [jwt.verify(req.cookies.jwt, "1234").userID]
       getConnection((conn) => {
-        let param = [jwt.verify(req.cookies.jwt, "1234").userID]
+        
           let sql = "SELECT userID, userProfile FROM member WHERE userID = ?";
           conn.query(sql, param,
               (err, rows, fields) => {
@@ -221,6 +224,10 @@ async function getfollowCount(userID) {
 }
 async function isfollow(userID,curuserID) {
   return new Promise((resolve, reject) => {
+      if (userID === curuserID){
+        resolve("me");
+        return;
+      }
       getConnection((conn) => {
           let param = [curuserID,userID]
           let sql = "SELECT  * FROM follow WHERE fromuserID = ? AND touserID = ?";

@@ -386,7 +386,6 @@ body{
   padding: 0 10px;
   color: #807f7f;
   overflow: hidden;
-  border-bottom: 1px solid #eee;
 }
 .follow-button{
   cursor: pointer;
@@ -420,11 +419,22 @@ body{
   color: #fff;
   border: none;
 }
+.modal-image-box-title h3{
+  display: inline-block;
+}
+.modal-image-box-title div{
+  margin-left: 10px;
+  display: inline-block;
+  color: rgb(134, 142, 150);
+  cursor: pointer;
+  text-decoration: underline;
+}
 .profilebox-info-container{
   width: 100%;
   margin-top: 2.5%;
   height: 7.5%;
   font-size: 13px;
+  border-bottom: 1px solid #eee;
 }
 .profilebox-state{
   width: 100%;

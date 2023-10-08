@@ -145,6 +145,7 @@ router.post("/login", (req, res) => {
                             issuer: 'hong',
                           });
                         res.cookie('jwt', token);
+
                         res.status(200).json({
                             code: 200,
                             message: '토큰이 발급되었습니다.',
