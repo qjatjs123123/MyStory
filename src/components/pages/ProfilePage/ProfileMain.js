@@ -9,6 +9,7 @@ import BoardWriteModal from '../boardwritePage/BoardWriteModal';
 import ProfileDropBox from './ProfileDropBox';
 import e from 'cors';
 import BoardFlex from '../boardmainPage/BoardFlex';
+import HistoryPage from '../historyPage/HistoryPage';
 
 function ProfileMain(props){
   //userInfo
@@ -52,6 +53,14 @@ function ProfileMain(props){
       
   }, []);
 
+  useEffect(() =>{
+    if (props.userID == null) return
+    setcurtab("home")
+    setPage(0);
+    tabBarhandle("home");
+  }, [props.userID])
+
+
 
   useEffect(() => { 
     
@@ -74,11 +83,11 @@ function ProfileMain(props){
   }, [input])
 
   useEffect(() => {
+    
     if (firstRender.current) {
       return;
   }
-    if (userProfileList.length == 0){
-      
+    if (userProfileList.length == 0){    
       if (curpage != 0){
         setPage(0);
       }
@@ -87,7 +96,7 @@ function ProfileMain(props){
       }
     }
     
-  }, [userProfileList])
+  }, [userProfileList,props.userID])
 
 
   const infiniteScroll = () => {
@@ -169,8 +178,8 @@ function ProfileMain(props){
       else setcurdropbox('아이디');
     })
 
-  
-    if (tab !== "write") document.querySelector(".search-input").value = '';
+    const searchinput = document.querySelector(".search-input")
+    if (tab !== "write" && searchinput != null ) document.querySelector(".search-input").value = '';
     setinput('');
     setcurtab(tab)
   }
@@ -182,7 +191,7 @@ function ProfileMain(props){
     else if(curtab === 'home') return <BoardFlex  curtag={'전체보기'} setinput={setinput} userProfileList={userProfileList} userID={props.userID} option={curdropbox} input={input} curtab={"myboard"}/>
     else if(curtab === 'board') return <BoardMain userID={props.userID} option={curdropbox} input={input} curtab={curtab} />
     else if(curtab === 'myboard') return <BoardMain userID={props.userID} option={curdropbox} input={input} curtab={curtab} />
-    else if(curtab === 'follow') return
+    else if(curtab === 'follow') return <HistoryPage userID={props.userID} />
     else if(curtab === 'write') return <BoardWrite tabBarhandle={tabBarhandle}  update={false} bbsID={''} bbsTitle={''} bbsContent={''}/>
 
   }

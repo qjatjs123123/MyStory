@@ -15,7 +15,7 @@ function HomePage(){
   const [tabData, settabData] = useState([]);
   useEffect(()=>{
     loginCheckSubmit();
-  },[])
+  },[userID])
   useEffect(() => {
     if (profileref.current != '')
       profileref.current.style.background = `url(${userProfile}) no-repeat center center / cover`   ;

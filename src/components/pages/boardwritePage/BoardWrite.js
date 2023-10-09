@@ -2,10 +2,10 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import BoardWriteModal from './BoardWriteModal';
+import { useParams, useNavigate } from 'react-router-dom';
 
 function BoardWrite(props) {
     const [isUpdate, setisUpdate] = useState(props.update);
@@ -19,10 +19,29 @@ function BoardWrite(props) {
     const [active, setactive] = useState(false);
     const [img, setimg] = useState('');
     const [tag, settag] = useState([]);
+    const { bbsWriteID } = useParams();
+
     useEffect(() => {
         loginCheckSubmit();
-        console.log(props.update, props.bbsID, props.bbsContent, props.bbsTitle);
+        selectbbsInfo()
     }, []);
+
+    const selectbbsInfo = () => {
+        const url = "/board/selectBbsIDInfo";
+        const data = {bbsID:bbsWriteID};
+        axios.post(url, data, { withCredentials: true })
+            .then((response)=>{
+                let newContents = Array.from(tag);
+                response.data.forEach((e) => {
+                    newContents.push(e.hashTag);
+                    setTitle(e.bbsTitle);
+                    setHtml(e.bbsContent);
+                    setimg(e.bbsImage);
+                    setbbsID(bbsWriteID)
+                })
+                settag(newContents)
+            })
+    }
 
     const loginCheck = () => {
         const url = '/board/loginCheck';
@@ -66,22 +85,24 @@ function BoardWrite(props) {
                 else {
                     alert("글쓰기 실패");
                 }
-                props.tabBarhandle("myboard")
+                props.tabBarhandle("home")
             })
     }
 
-    const bbsUpdate = () => {
+    const bbsUpdate = (img, tag) => {
         const url = '/board/bbsUpdate';
         const data = {
             bbsTitle: title,
             bbsContent: html,
-            bbsID:bbsID
+            bbsID:bbsID,
+            bbsImage: img,
+            hashTag : tag
         };
         return axios.post(url, data, { withCredentials: true });
     }
 
-    const bbsUpdateSubmit = () =>{
-        bbsUpdate()
+    const bbsUpdateSubmit = (img, tag) =>{
+        bbsUpdate(img, tag)
             .then((response) => {
                 console.log(response.data);
                 if (response.data !== false) {
@@ -92,7 +113,7 @@ function BoardWrite(props) {
                     alert("글수정 실패");
 
                 }
-                props.tabBarhandle("board")
+                navigate(-1);
             })
     }
 
@@ -118,7 +139,7 @@ function BoardWrite(props) {
             formData.append('img', file); // formData는 키-밸류 구조
             // 백엔드 multer라우터에 이미지를 보낸다.
             try {
-                const result = await axios.post('/board/bbsContentImage', formData);
+                const result = await axios.post('/board/bbsContentImage', formData , { withCredentials: true });
                 const IMG_URL = result.data.url;
                 
                 const editor = quillRef.current.getEditor(); // 에디터 객체 가져오기
@@ -165,7 +186,7 @@ function BoardWrite(props) {
 
     return (
         isLogin ? (
-            <div className='write-container'>
+            <div className='write-container' style={{marginTop: isUpdate ? '150px' : null}}>
                 <div className='write-content'>
                     <div style={{width: '80%', marginLeft: '10%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                         <h3 style={{ fontWeight: 'bolder', marginBottom: '20px' }}>
@@ -186,16 +207,20 @@ function BoardWrite(props) {
                         <div style={{ marginLeft: 'auto' }}>
                             {isUpdate === false ? 
                             <Button onClick={nextstep} variant="dark" style={{ marginTop: '10px' }}>글쓰기</Button> :
-                            <Button onClick={bbsUpdateSubmit} variant="dark" style={{ marginTop: '10px' }}>글수정</Button>}
+                            <Button onClick={nextstep} variant="dark" style={{ marginTop: '10px' }}>글수정</Button>}
                         </div>
                     </div>
                 </div>
                 <BoardWriteModal
+                    img={img}
+                    tag={tag}
                     setactive={setactive}
                     active = {active}
                     setimg = {setimg}
                     settag = {settag}
-                    bbsWriteSubmit={bbsWriteSubmit}/>
+                    bbsWriteSubmit={bbsWriteSubmit}
+                    isUpdate={isUpdate}
+                    bbsUpdateSubmit={bbsUpdateSubmit}/>
             </div>
         ) : <div></div>
     );

@@ -49,7 +49,7 @@ class Routing extends Component{
                     <Route path='/Profile' element={ <ProfileMain ishome={false} curtab={"clock"} tabData={["clock", "board"]}/>} />
                     <Route path='/BoardWrite' element={ <BoardWrite update={false} bbsID={''} bbsTitle={''} bbsContent={''}/>} />
                     <Route path='/BoardRead' element={ <BoardRead setbbsID={this.setbbsID} setbbsTitle={this.setbbsTitle} setbbsContent={this.setbbsContent}/>} />
-                    <Route  path='/BoardWrite/Update' element={ <BoardWrite update={true} bbsID={this.state.bbsID} bbsTitle={this.state.bbsTitle} bbsContent={this.state.bbsContent}/> } />
+                    <Route  path='/BoardWrite/Update/:bbsWriteID' element={ <BoardWrite update={true} bbsID={this.state.bbsID} bbsTitle={this.state.bbsTitle} bbsContent={this.state.bbsContent}/> } />
                 </Routes>
             </BrowserRouter>
         )

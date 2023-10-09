@@ -33,7 +33,6 @@ function BBSContent(props) {
                     alert("삭제된 게시물 입니다.");
                     navigate('/board');
                 } else {
-                    console.log( props.curuserID.userID);
                     setbbsTitle(response.data[0].bbsTitle);
                     setbbsContent(response.data[0].bbsContent);
                     setuserID(response.data[0].userID);

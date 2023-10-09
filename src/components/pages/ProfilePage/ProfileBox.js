@@ -12,7 +12,7 @@ function ProfileBox(props){
     getProfileinfoSubmit()
     if (profileref.current != '')
       profileref.current.style.background = `url(${props.info.userProfile}) no-repeat center center / contain`       
-  }, [])
+  }, [isfollow])
   const getProfileinfoSubmit = () => {
     const url = "/profile/getProfileinfo";
     axios.post(url, {userID:props.info.userID}, { withCredentials: true })

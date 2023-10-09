@@ -148,7 +148,7 @@ router.post("/bbsListInsert", async (req, res) => {
     getConnection(async (conn) => {
 
         conn.beginTransaction((err)=>{
-            if (err) throw err;
+            if (err) res.send(false);;
             const query1 = bbsPromise(conn,
                 "INSERT INTO bbs(bbsID, bbsTitle, userID, bbsDate, bbsContent, bbsAvailable,bbsImage) VALUES (?, ?, ?, NOW(), ?, ?, ?)",
                 [bbsID, bbsTitle, jwt.verify(req.cookies.jwt, "1234").userID, bbsContent, 1, bbsImage],
@@ -165,8 +165,8 @@ router.post("/bbsListInsert", async (req, res) => {
                 }).then(()=>{
                     return bbsPromise(
                         conn,
-                        "INSERT INTO history(bbsID,bbsTitle, bbsContent, userID,historyDate) VALUES (?,?,? ?, NOW())",
-                        [bbsID,bbsTitle, bbsContent, jwt.verify(req.cookies.jwt, "1234").userID],
+                        "INSERT INTO history(bbsID, userID,historyDate) VALUES (?, ?, NOW())",
+                        [bbsID, jwt.verify(req.cookies.jwt, "1234").userID],
                         false,
                         res
                     )
@@ -291,7 +291,7 @@ router.post("/getTags", async (req, res) => {
             const sql = "SELECT hashTag FROM hashtagpost, hashtag WHERE hashtagpost.bbsID = ? AND hashtagpost.hashTagID = hashtag.hashTagID";
             conn.query(sql, [bbsID],
                 (err, rows, fields) => {
-                    if (err) { throw err }
+                    if (err) { res.send(false); }
                     else res.send(rows);
                     conn.release();
                 })
@@ -309,7 +309,7 @@ router.post("/bbsDelete", async (req, res) => {
             const sql = "UPDATE bbs SET bbsAvailable = 0 WHERE bbsID = ?";
             conn.query(sql, [bbsID],
                 (err, rows, fields) => {
-                    if (err) { throw err }
+                    if (err) { res.send(false);}
                     else res.send(true);
                     conn.release();
                 })
@@ -374,7 +374,7 @@ router.post("/rereplyUpdate", async (req, res) => {
             const sql = "UPDATE rereply SET rereplyContent = ? WHERE bbsID = ? AND replyID = ? AND rereplyID = ?";
             conn.query(sql, [rereplyContent, bbsID, replyID, rereplyID],
                 (err, rows, fields) => {
-                    if (err) { throw err }
+                    if (err) { res.send(false); }
                     else res.send(true);
                     conn.release();
                 })
@@ -391,7 +391,7 @@ router.post("/replyDelete", async (req, res) => {
             const sql = "UPDATE reply SET replyAvailable = 0 WHERE bbsID = ? AND replyID = ?";
             conn.query(sql, [bbsID, replyID],
                 (err, rows, fields) => {
-                    if (err) { throw err }
+                    if (err) { res.send(false);}
                     else res.send(true);
                     conn.release();
                 })
@@ -408,7 +408,7 @@ router.post("/rereplyDelete", async (req, res) => {
             const sql = "UPDATE rereply SET rereplyAvailable = 0 WHERE bbsID = ? AND replyID = ? AND rereplyID = ?";
             conn.query(sql, [bbsID, replyID, rereplyID],
                 (err, rows, fields) => {
-                    if (err) { throw err }
+                    if (err) { res.send(false); }
                     else res.send(true);
                     conn.release();
                 })
@@ -418,15 +418,80 @@ router.post("/rereplyDelete", async (req, res) => {
     }
 })
 
+
+router.post("/bbsUpdate", async (req, res) => {
+    const { bbsID, bbsTitle, bbsContent,bbsImage, hashTag } = req.body;
+
+    getConnection(async (conn) => {
+        conn.beginTransaction((err)=>{
+            if (err) res.send(false);;
+            const query1 = bbsPromise(conn,
+                `DELETE FROM hashtag WHERE hashTagID = 
+                (SELECT hashTagID FROM hashtagpost WHERE bbsID = ?)`,
+                [bbsID],
+                false,
+                res)
+                query1.then(() => {
+                    return bbsPromise(
+                        conn,
+                        "UPDATE bbs SET bbsTitle = ?, bbsContent = ?, bbsImage = ? WHERE bbsID = ? ",
+                        [bbsTitle, bbsContent, bbsImage, bbsID],
+                        false,
+                        res
+                    )
+                }).then(()=>{
+                    return bbsPromise(
+                        conn,
+                        "SELECT hashTagID FROM hashtagpost WHERE bbsID = ?",
+                        [bbsID],
+                        false,
+                        res
+                    )
+                })
+                .then((rows) => {
+
+                    const promises = hashTag.map((tag) => {
+                        return bbsPromise(
+                            conn,
+                            "INSERT INTO hashtag(hashTagID, hashTag) VALUES (?, ?)",
+                            [rows[0].hashTagID, tag],
+                            false,
+                            res
+                        )
+                    })
+                    Promise.all(promises)
+                        .then(
+                            () => {
+                                res.send(true);
+                                conn.commit();
+                            })
+                        .catch(
+                            (err) => {
+                                reject(err);
+                                //return conn.rollback();      
+                            })
+                })
+                .catch(error => {
+                    console.log("rollback");
+                    conn.rollback();
+                    res.send(false);
+                })
+        })
+        
+        conn.release();
+    })
+})
+
+
 router.post("/bbsUpdate", async (req, res) => {
     try {
-        const { bbsID, bbsTitle, bbsContent } = req.body;
-
+        const { bbsID, bbsTitle, bbsContent,bbsImage, hashTag} = req.body;
+        console.log(bbsID, bbsTitle, bbsContent,bbsImage, hashTag);
         getConnection((conn) => {
-            const sql = "UPDATE bbs SET bbsTitle = ?, bbsContent = ? WHERE bbsID = ?";
-            conn.query(sql, [bbsTitle, bbsContent, bbsID],
+            const sql = "UPDATE bbs SET bbsTitle = ?, bbsContent = ?, bbsImage = ? WHERE bbsID = ? ";
+            conn.query(sql, [bbsTitle, bbsContent, bbsImage, hashTag,bbsID],
                 (err, rows, fields) => {
-                    if (err) { throw err }
+                    if (err) { res.send(false);  console.log(err)}
                     else res.send(rows);
                     conn.release();
                 })
@@ -439,6 +504,7 @@ router.post("/bbsUpdate", async (req, res) => {
 
 })
 router.post("/selectreReplyData", async (req, res) => {
+    try{
     const { bbsID, page } = req.body;
     const replyID = await getMaxReplyID(bbsID) - 1;
     let param = [bbsID, replyID - ((page + 1) * 5), replyID - (page * 5)];
@@ -446,44 +512,53 @@ router.post("/selectreReplyData", async (req, res) => {
     getConnection((conn) => {
         conn.query(sql, param,
             (err, rows, fields) => {
-                console.log(rows);
-                if (err) { res.send(false); console.log(err); }
+                if (err) { res.send(false);; console.log(err); }
                 else res.send(rows);
                 conn.release();
             })
-    })
+    })}catch(err){
+        res.send(false)
+    }
 
 })
 router.post("/selectreReply", async (req, res) => {
-    const { bbsID, replyID } = req.body;
+    try{
+        const { bbsID, replyID } = req.body;
 
-    let param = [bbsID, replyID];
-    let sql = "SELECT * FROM rereply WHERE rereplyAvailable = 1 AND bbsID = ? AND replyID= ?";
-    getConnection((conn) => {
-        conn.query(sql, param,
-            (err, rows, fields) => {
-                console.log(rows);
-                if (err) { res.send(false); console.log(err); }
-                else res.send(rows);
-                conn.release();
-            })
-    })
+        let param = [bbsID, replyID];
+        let sql = "SELECT * FROM rereply WHERE rereplyAvailable = 1 AND bbsID = ? AND replyID= ?";
+        getConnection((conn) => {
+            conn.query(sql, param,
+                (err, rows, fields) => {
+                    console.log(rows);
+                    if (err) { res.send(false);; console.log(err); }
+                    else res.send(rows);
+                    conn.release();
+                })
+        })
+    }catch(err){
+        res.send(false)
+    }
 
 })
 
 
 router.post("/selectreplyTotal", (req, res) => {
+    try{
     const { bbsID } = req.body;
     let param = [bbsID];
     let sql = "SELECT count(*) AS TOTAL FROM reply WHERE replyAvailable = 1 AND bbsID = ?";
     getConnection((conn) => {
         conn.query(sql, param,
             (err, rows, fields) => {
-                if (err) { res.send(false); console.log(err); }
+                if (err) { res.send(false);; console.log(err); }
                 else res.send(rows);
                 conn.release();
             })
     })
+}catch(err){
+    res.send(false)
+}
 
 })
 
@@ -528,6 +603,7 @@ async function getMaxReReplyID(bbsID, replyID) {
 }
 
 router.post("/insertreReply", async (req, res) => {
+    try{
     const { bbsID, replyID, userID, replyContent } = req.body;
     const rereplyID = await getMaxReReplyID(bbsID, replyID);
     let param = [bbsID, replyID, rereplyID, userID, replyContent, 1];
@@ -535,15 +611,18 @@ router.post("/insertreReply", async (req, res) => {
     getConnection((conn) => {
         conn.query(sql, param,
             (err, rows, fields) => {
-                if (err) { res.send(false); console.log(err); }
+                if (err) { res.send(false);; console.log(err); }
                 else res.send(rows);
                 conn.release();
             })
-    })
+    })}catch(err) {
+        res.send(false)
+    }
 
 })
 
 router.post("/insertReply", async (req, res) => {
+    try{
     const { bbsID, userID, replyContent } = req.body;
     const replyID = await getMaxReplyID(bbsID);
     let param = [bbsID, replyID, userID, replyContent, 1];
@@ -551,68 +630,82 @@ router.post("/insertReply", async (req, res) => {
     getConnection((conn) => {
         conn.query(sql, param,
             (err, rows, fields) => {
-                if (err) { res.send(false); console.log(err); }
+                if (err) { res.send(false);; console.log(err); }
                 else res.send(rows);
                 conn.release();
             })
-    })
+    })}catch(err){
+        res.send(false)
+    }
 
 })
 
 router.post("/selectReplyData", (req, res) => {
-    const { bbsID, page } = req.body;
-    let param = [bbsID, 5 * (page), 5];
-    let sql = "SELECT replyID, userID, replyContent, replyDate FROM reply WHERE replyAvailable = 1 AND bbsID = ?  ORDER BY replyID DESC limit ?, ?";
-    getConnection((conn) => {
-        conn.query(sql, param,
-            (err, rows, fields) => {
-                if (err) { res.send(false); console.log(err); }
-                else res.send(rows);
-                conn.release();
-            })
-    })
-
+    try{
+        const { bbsID, page } = req.body;
+        let param = [bbsID, 5 * (page), 5];
+        let sql = "SELECT replyID, userID, replyContent, replyDate FROM reply WHERE replyAvailable = 1 AND bbsID = ?  ORDER BY replyID DESC limit ?, ?";
+        getConnection((conn) => {
+            conn.query(sql, param,
+                (err, rows, fields) => {
+                    if (err) { res.send(false);; console.log(err); }
+                    else res.send(rows);
+                    conn.release();
+                    
+                })
+        })
+    }catch(err) {
+        res.send(false)
+    }
+    
 })
 
 router.post("/selectrecommend", (req, res) => {
+    try{
     const { bbsID } = req.body;
     let param = [bbsID];
     let sql = "SELECT * FROM recommend WHERE bbsID = ?";
     getConnection((conn) => {
         conn.query(sql, param,
             (err, rows, fields) => {
-                if (err) { res.send(false); console.log(err); }
+                if (err) { res.send(false);; console.log(err); }
                 else res.send(rows);
                 conn.release();
             })
     })
-
+    }catch(err){
+        res.send(false);      
+    }
+    
 })
 router.post("/bbsConditionList", (req, res) => {
-    const {userID, curtab, option, input,limit, page, orderTarget, orderValue } = req.body;
-    console.log(userID, curtab, option, input,limit, page, orderTarget, orderValue );
-    let param = [] 
-    if (input != '')
-        param.push(`${input}%`);
-    let sql = "SELECT * FROM bbs,member,recommend WHERE bbs.userID = member.userID AND bbs.bbsID = recommend.bbsID  AND bbsAvailable = 1 "; 
-    if (option == '아이디' && input != '') sql += "AND bbs.userID LIKE ? "
-    else if(option =='제목' && input != '') sql += "AND bbs.bbsTitle LIKE ? "
-    if (curtab == 'myboard') {sql += "AND bbs.userID = ? ";
-    param.push(userID);
+    try{
+        const {userID, curtab, option, input,limit, page, orderTarget, orderValue } = req.body;
+        let param = [] 
+        if (input != '')
+            param.push(`${input}%`);
+        let sql = "SELECT * FROM bbs,member,recommend WHERE bbs.userID = member.userID AND bbs.bbsID = recommend.bbsID  AND bbsAvailable = 1 "; 
+        if (option == '아이디' && input != '') sql += "AND bbs.userID LIKE ? "
+        else if(option =='제목' && input != '') sql += "AND bbs.bbsTitle LIKE ? "
+        if (curtab == 'myboard') {sql += "AND bbs.userID = ? ";
+        param.push(userID);
+        }
+        sql += `ORDER BY bbs.${orderTarget} ${orderValue} LIMIT ?, ?`;
+        
+        param.push(limit * (page - 1));
+        param.push(limit);
+        getConnection((conn) => {
+            conn.query(sql, param,
+                (err, rows, fields) => {
+                    if (err) { res.send(false); console.log(err); }
+                    else res.send(rows);
+                    conn.release();
+                })
+        })
+    }catch(err){
+        res.send(false)
     }
-    sql += `ORDER BY bbs.${orderTarget} ${orderValue} LIMIT ?, ?`;
     
-    param.push(limit * (page - 1));
-    param.push(limit);
-    getConnection((conn) => {
-        conn.query(sql, param,
-            (err, rows, fields) => {
-                if (err) { res.send(false); console.log(err); }
-                else res.send(rows);
-                conn.release();
-            })
-    })
-
 })
 // router.post("/bbsConditionList", (req, res) => {
 //     const { title, userID, startDate, endDate, limit, page, orderTarget, orderValue } = req.body;
@@ -637,49 +730,58 @@ router.post("/bbsConditionList", (req, res) => {
 // })
 
 router.post("/bbsConditionInput", (req, res) => {
-    const { userID,curtab,option, input,limit, page, orderTarget, orderValue } = req.body;
-    console.log(userID,curtab,option, input, "qw")
-    let param = [];
-    param.push(`${input}`);
-    let sql = "SELECT  * FROM bbs,member,recommend, hashtagpost, hashtag WHERE bbs.userID = member.userID AND bbs.bbsID = recommend.bbsID AND bbs.bbsID = hashtagpost.bbsID AND hashtag.hashTagID = hashtagpost.hashTagID AND bbsAvailable = 1 ";
-    sql += "AND hashtag.hashTag = ?"
-    if(curtab=='myboard'){sql += "AND bbs.userID = ? "; param.push(userID);}
-    sql += `ORDER BY bbs.${orderTarget} ${orderValue} LIMIT ?, ?`;
-    param.push(limit * (page - 1));
-    param.push(limit);
-    getConnection((conn) => {
-        conn.query(sql, param,
-            (err, rows, fields) => {
-                if (err) { res.send(false); console.log(err); }
-                else res.send(rows);
-                conn.release();
-            })
-    })
+    try{
+        const { userID,curtab,option, input,limit, page, orderTarget, orderValue } = req.body;
+        console.log(userID,curtab,option, input, "qw")
+        let param = [];
+        param.push(`${input}`);
+        let sql = "SELECT  * FROM bbs,member,recommend, hashtagpost, hashtag WHERE bbs.userID = member.userID AND bbs.bbsID = recommend.bbsID AND bbs.bbsID = hashtagpost.bbsID AND hashtag.hashTagID = hashtagpost.hashTagID AND bbsAvailable = 1 ";
+        sql += "AND hashtag.hashTag = ?"
+        if(curtab=='myboard'){sql += "AND bbs.userID = ? "; param.push(userID);}
+        sql += `ORDER BY bbs.${orderTarget} ${orderValue} LIMIT ?, ?`;
+        param.push(limit * (page - 1));
+        param.push(limit);
+        getConnection((conn) => {
+            conn.query(sql, param,
+                (err, rows, fields) => {
+                    if (err) { res.send(false); }
+                    else res.send(rows);
+                    conn.release();
+                })
+        })
+    }catch(e){
+        res.send(false);
+    }
 })
 
 router.post("/bbsConditionInputCount", (req, res) => {
-    const { userID,curtab,option, input,limit, page, orderTarget, orderValue } = req.body;
-    let param = [`${input}`];
-    let sql = "SELECT COUNT(*) AS COUNT FROM bbs,member,recommend, hashtagpost, hashtag WHERE bbs.userID = member.userID AND bbs.bbsID = recommend.bbsID AND bbs.bbsID = hashtagpost.bbsID AND hashtag.hashTagID = hashtagpost.hashTagID AND bbsAvailable = 1 ";
-    sql += "AND hashtag.hashTag = ?"
-    if(curtab=='myboard'){sql += "AND bbs.userID = ? "; param.push(userID);}
-    param.push(limit * (page - 1));
-    param.push(limit);
-    getConnection((conn) => {
-        conn.query(sql, param,
-            (err, rows, fields) => {
-                if (err) { res.send(false); console.log(err); }
-                else res.send(rows);
-                conn.release();
-            })
-    })
-
+    try{
+        const { userID,curtab,option, input,limit, page, orderTarget, orderValue } = req.body;
+        let param = [`${input}`];
+        let sql = "SELECT COUNT(*) AS COUNT FROM bbs,member,recommend, hashtagpost, hashtag WHERE bbs.userID = member.userID AND bbs.bbsID = recommend.bbsID AND bbs.bbsID = hashtagpost.bbsID AND hashtag.hashTagID = hashtagpost.hashTagID AND bbsAvailable = 1 ";
+        sql += "AND hashtag.hashTag = ?"
+        if(curtab=='myboard'){sql += "AND bbs.userID = ? "; param.push(userID);}
+        param.push(limit * (page - 1));
+        param.push(limit);
+        getConnection((conn) => {
+            conn.query(sql, param,
+                (err, rows, fields) => {
+                    if (err) { res.send(false);; console.log(err); }
+                    else res.send(rows);  
+                    conn.release();               
+                })
+        })
+    }catch(e) {
+        res.send(false);
+    }
+    
 })
 
 router.post("/selectBbsIDInfo", (req, res) => {
+    try{
     const { bbsID } = req.body;
     getConnection((conn) => {
-        const sql = "SELECT * FROM bbs WHERE bbsAvailable = 1 AND bbsID = ?";
+        const sql = `SELECT bbs.bbsID, bbsTitle, bbs.userID, bbsDate, bbsContent, bbsImage, hashTag FROM bbs, hashtag, hashtagpost WHERE bbs.bbsID = hashtagpost.bbsID AND hashtagpost.hashTagID = hashtag.hashTagID AND bbs.bbsID = ?`;
         conn.query(sql, [bbsID],
             (err, rows, fields) => {
                 if (err) { res.send(false); console.log(err); }
@@ -687,13 +789,15 @@ router.post("/selectBbsIDInfo", (req, res) => {
                 conn.release();
             })
     })
+    }catch(e){
+        res.send(false);
+    }
 
 })
 
 
 router.post("/loginCheck", (req, res) => {
     try {
-        console.log("qweqweqw");
         console.log(jwt.verify(req.cookies.jwt, "1234"));
         const verified = jwt.verify(req.cookies.jwt, "1234");
         res.send({

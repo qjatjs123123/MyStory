@@ -152,7 +152,7 @@ router.post("/follow", async (req, res) => {
   try {
     const {userID} = req.body; 
     const followcount = await insertfollow(userID,jwt.verify(req.cookies.jwt, "1234").userID)
-    const follow = await insertfollowhistory(userID,jwt.verify(req.cookies.jwt, "1234").userID);
+    //const follow = await insertfollowhistory(userID,jwt.verify(req.cookies.jwt, "1234").userID);
     res.send(true);
   } catch (error) {
       res.send(false);

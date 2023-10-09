@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Card, Form, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -14,10 +14,18 @@ function BBSReplyData(props) {
     const [inputReplyUpdate, setinputReplyUpdate] = useState(props.content);
     const [inputReplyChange, setinputReplyChange] = useState(props.content);
     const [isFirst , setisFirst] = useState(true);
+    const [active , setactive] = useState(false);
+    const inputref = useRef();
     useEffect (() =>{
         selectreReplySubmit();
     },[deleteflg])
+    const focushandler = () => {
+        setactive(true)
 
+    }
+    const blurhandler = () => {
+        setactive(false)
+    }
     const valueChange = (e) => {
         e.preventDefault();
         setinputReply(e.target.value);
@@ -85,7 +93,10 @@ function BBSReplyData(props) {
         if (result) {
             replyDelete()
                 .then((response) => {
-                    if (response.data === true) setdeletereflyflg(true);
+                    if (response.data === true) {
+                        setdeletereflyflg(true);
+                        props.minusreplyTotal();
+                    }
                     else alert("삭제 오류");
                 })
         }
@@ -122,7 +133,7 @@ function BBSReplyData(props) {
     }
     return (
         deletereflyflg  ? <div></div> :
-        <div style={{ borderBottom: '1px solid #999', marginBottom: '10px' }}>
+        <div style={{ borderBottom: '1px solid #999', marginBottom: '10px'}}>
             <div style={{ display: 'flex', flexDirection: 'row', fontSize: '1.2em' }}>
                 <div>
                     {props.id}
@@ -133,8 +144,8 @@ function BBSReplyData(props) {
             </div>
             {props.curuserID === props.id ?
                 <div style={{ marginTop: '10px', display: 'flex', flexDirection: 'row' }}>
-                    <Button onClick={showClick} style={{ borderColor:'ivory', fontSize: '12px', height: '30px', width: '5%', }}size="sm" variant="outline-success"  >수정</Button>
-                    <Button onClick={replyDeleteSubmit} style={{ borderColor:'ivory', fontSize: '12px', height: '30px', width: '5%' }} variant="outline-danger" size="sm">삭제</Button>
+                    <Button onClick={showClick} style={{ borderColor:'transparent', fontSize: '12px', height: '30px', width: '5%', }}size="sm" variant="outline-success"  >수정</Button>
+                    <Button onClick={replyDeleteSubmit} style={{ borderColor:'transparent', fontSize: '12px', height: '30px', width: '5%' }} variant="outline-danger" size="sm">삭제</Button>
                     {
                         showForm ?
                             <div style={{ width: '90%', display: 'flex', flexDirection: 'row' }}>
@@ -145,7 +156,7 @@ function BBSReplyData(props) {
                 </div> : <div></div>
             }
             <div style={{ marginLeft: "30px", marginTop: "10px" }}>
-                <Card style={{ width: '100%',backgroundColor: 'rgb(240, 240, 230)', border: '1px solid black' }}>
+                <Card style={{ width: '100%',backgroundColor: '#eee', border: '1px solid black' }}>
                     <Card.Body>
                         
                     {rereplyData != null ? rereplyData.map((c) => {
@@ -163,7 +174,19 @@ function BBSReplyData(props) {
                 <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'row' }}>
                     <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1" style={{ width: '90%' }}>
                         <Form.Label style={{ color: 'black' }}>답글 작성</Form.Label><br />
-                        <Form.Control onChange={valueChange} name='id' type="text" placeholder="답글 추가..." style={{ borderColor: 'black', width: '100%' }} value={inputReply}/>
+                        {/* <Form.Control onChange={valueChange} name='id' type="text" placeholder="답글 추가..." style={{ borderColor: 'black', width: '100%' }} value={inputReply}/> */}
+
+                        <input onBlur={blurhandler} onFocus={focushandler} onChange={valueChange} name='id' type="text" placeholder="답글 추가..." style={{ borderColor: 'black', width: '100%' }} className='replyinput' value={inputReply} ref={inputref}/>
+                        <div className='inputbarbox'>
+                            <div className='inputbarleft-inner'>                       
+                                <div className={'inputbarleft' + (active ? ' active':'' )}></div>                            
+                            </div>
+                            <div className='inputbarright-inner'>
+                            <div className={'inputbarright' + (active ? ' active':'' )}></div>  
+                            </div>
+                        </div>
+
+
                     </Form.Group>
                     <Button onClick={insertReReplySubmit} type="submit" style={{ height: '38px', width: '10%', marginTop: '32px' }}>작성</Button>
                 </div> : <div></div>}

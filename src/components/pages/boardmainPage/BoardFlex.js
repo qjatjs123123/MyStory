@@ -36,6 +36,7 @@ function BoardFlex(props){
       setPage(1);
       return;
     }
+    
     if (curtag == '전체보기' || props.input != ''){
       selectBbsListCountSubmit();
       selectBbsListSubmit();
@@ -47,6 +48,7 @@ function BoardFlex(props){
   }, [curpage])
 
   useEffect(() => {
+
     if (firstRender.current) {
       return;
   }
@@ -55,8 +57,11 @@ function BoardFlex(props){
       return
     }
     setPage(0);
-  }, [props.input,curtag])
+  }, [props.input,curtag,props.userID])
 
+  useEffect(() => {
+    setcurtag(props.curtag);
+  }, [props.curtag])
 
   const bbsConditionInputCount = () => {
     const url = '/board/bbsConditionInputCount';
@@ -95,8 +100,8 @@ function BoardFlex(props){
             newContents.push(e);
             tmparr.current.push(e)
         })
+        console.log(newContents, props.curtag);
         setBbslist(newContents);
-        console.log("QWeqw",newContents);
         firstRender.current = false;
       })
   }

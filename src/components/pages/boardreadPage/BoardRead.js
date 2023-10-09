@@ -52,7 +52,7 @@ function BoardRead(props) {
         props.setbbsID(bbsID);
         props.setbbsTitle(bbsTitle);
         props.setbbsContent(bbsContent);
-        navigate('/BoardWrite/Update');
+        navigate(`/BoardWrite/Update/`+bbsID);
     }
 
     const bbsDelete = () => {

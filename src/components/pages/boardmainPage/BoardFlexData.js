@@ -56,7 +56,7 @@ const replaceHTML = (param) => {
       <div className='BoardFlexData-hash'>
         <div className='table-data-info-hashtag'>
           {tags.map((tag,idx)=>{
-                return <div key ={idx}>{tag.hashTag} </div>
+                return <div onClick={() => navigate(`/tags/${tag.hashTag}`)} key ={idx}>{tag.hashTag} </div>
             })}
         </div>
       </div>

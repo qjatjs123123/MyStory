@@ -2,14 +2,17 @@ import axios from 'axios';
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 
 function BoardWriteModal(props){
-  
-  const [img, setimg] = useState("");
-  const [mainImg,setMainImg] = useState(process.env.PUBLIC_URL+'/images/noimage.png');
+  const [img, setimg] = useState();
+  const [mainImg,setMainImg] = useState();
   const [tags, settags] = useState([]);
   const inputref = useRef();
   const previewimgbtn = useRef();
   const inputfile = useRef();
-
+  useEffect(()=>{
+    setMainImg(props.img == '' ? process.env.PUBLIC_URL+'/images/noimage.png' : props.img);
+    setimg(props.img);
+    settags(props.tag);
+  }, [props.img ])
   const taginput = (e) => {
     if (tags.length >= 10) return;
     if(window.event.keyCode == 13){
@@ -32,21 +35,27 @@ function BoardWriteModal(props){
       inputref.current.focus();
       return;
     }
-    let IMG_URL = process.env.PUBLIC_URL+'/images/noimage.png';
+    let IMG_URL = ''
+    if(img != '') IMG_URL = img;
+    else IMG_URL = process.env.PUBLIC_URL+'/images/noimage.png';
       try {
         if (img != ''){
           const file = img;
           // multer에 맞는 형식으로 데이터 만들어준다.
           const formData = new FormData();
           formData.append('img', file); // formData는 키-밸류 구조
-          const result = await axios.post('/board/bbsContentImage', formData);
+          const result = await axios.post('/board/bbsContentImage', formData , { withCredentials: true });
           IMG_URL = result.data.url;
         }
         } catch (error) {
             console.log('실패했어요ㅠ');
         }
         setMainImg('');
-    props.bbsWriteSubmit(IMG_URL, tags)
+    if (props.isUpdate){
+      props.bbsUpdateSubmit(IMG_URL, tags)
+    }
+    else
+      props.bbsWriteSubmit(IMG_URL, tags)
   }
 
   const imgPreviewDelete = () => {
@@ -68,7 +77,7 @@ function BoardWriteModal(props){
 };
   return (
     <div onClick={() => {props.setactive(false)}} className={'modal-container' + (props.active == true ? " active" : "")}>
-      <div onClick={(e)=>{e.stopPropagation()}} className='modal-content'>
+      <div onClick={(e)=>{e.stopPropagation()}} className='modal-content_write'>
         <div className='modal-image-box'>
           <div className='modal-image-box-title'>
             <h3>썸네일 업로드</h3>

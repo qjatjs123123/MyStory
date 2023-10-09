@@ -73,7 +73,7 @@ function Join() {
             userId: id,
         };
 
-        return axios.post(url, data);
+        return axios.post(url, data, { withCredentials: true });
     }
 
     const passwordCheck = (e) => {
@@ -168,7 +168,7 @@ function Join() {
             userState : statemessage,
             userProfile : IMG_URL
         };
-        return axios.post(url, data);
+        return axios.post(url, data, { withCredentials: true });
     }
     const imageHandler = (event) => {
         event.preventDefault();
@@ -189,7 +189,7 @@ function Join() {
                 // multer에 맞는 형식으로 데이터 만들어준다.
                 const formData = new FormData();
                 formData.append('img', file); // formData는 키-밸류 구조
-                const result = await axios.post('/board/bbsContentImage', formData);
+                const result = await axios.post('/board/bbsContentImage', formData , { withCredentials: true });
                 IMG_URL = result.data.url;
             }
             if (nickname != '' && statemessage != '') {

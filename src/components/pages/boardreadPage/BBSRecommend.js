@@ -46,7 +46,7 @@ function BBSRecommend(props) {
     }
     return (
         <div style={{ marginTop: '20px' }}>
-            <Card style={{ width: '18rem', background: 'ivory', border: '1px solid black' }}>
+            <Card style={{ width: '18rem', background: 'transparent', border: '1px solid black' }}>
                 <Card.Body style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                     <div style={{ color: "red" }}>{good}</div>
                     <Button name='good' onClick = {insertRecommendSubmit} style={{ borderRadius: '50%', padding: '15px 15px', lineHeight: '1', marginRight: '5px', marginLeft: '15px' }} variant="primary">♥<br />추천</Button>

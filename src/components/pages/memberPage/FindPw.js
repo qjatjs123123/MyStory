@@ -41,7 +41,7 @@ function FindPw(){
             userEmail: email
         };
 
-        return axios.post(url, data);
+        return axios.post(url, data, { withCredentials: true });
     }
 
     return (

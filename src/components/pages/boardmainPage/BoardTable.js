@@ -1,7 +1,5 @@
 
-import Table from 'react-bootstrap/Table';
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import BoardData from './BoardData';
 
@@ -31,7 +29,6 @@ function BoardTable(props) {
     }
 
     const handler = () => {
-        console.log(props.bbslist);
         if (props.bbslist != '' && props.bbslist.length > 0){
             return props.bbslist.map((c,idx) => {
                 return <BoardData setInput={props.setInput} key={idx} data={c} num={c.bbsID} title={c.bbsTitle} name={c.userID} date={c.bbsDate} content={c.bbsContent} readClick={() => { navigate(`/BoardRead/?bbsID=${c.bbsID}`) }} />

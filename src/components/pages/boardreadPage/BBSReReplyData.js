@@ -48,7 +48,10 @@ function BBSReReplyData(props) {
         if (result) {
             rereplyDelete()
                 .then((response) => {
-                    if (response.data === true) props.setdeleteflg(!props.deleteflg);
+                    if (response.data === true) {
+                        props.setdeleteflg(!props.deleteflg);
+                        
+                    }
                     else alert("삭제 오류");
                 })
         }
@@ -60,7 +63,7 @@ function BBSReReplyData(props) {
     }
 
     return (
-        <div style={{ borderBottom: '1px solid #999', marginBottom: '10px' }}>
+        <div style={{ borderBottom: '1px solid #999', marginBottom: '10px', backgroundColor:"transparent"}}>
             <div style={{ display: 'flex', flexDirection: 'row', fontSize: '1.2em' }}>
                 <div>
                     {props.id}

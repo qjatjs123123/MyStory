@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Form, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -13,6 +13,8 @@ function BBSReply(props) {
     const [replyData, setReplyData] = useState([]);
     const [page , setpage] = useState(0);
     const [replyTotal , setreplyTotal] = useState(0);
+    const [active , setactive] = useState(false);
+    const inputref = useRef();
 
     useEffect (() =>{
         document.addEventListener('scroll', infiniteScroll);   
@@ -36,6 +38,16 @@ function BBSReply(props) {
         setpage(-1);
     }
 
+    const focushandler = () => {
+        setactive(true)
+
+    }
+    const blurhandler = () => {
+        setactive(false)
+    }
+    const minusreplyTotal = () => {
+        setreplyTotal(replyTotal-1);
+    }
     const infiniteScroll = () => {
         
          const { scrollHeight } = document.documentElement;
@@ -122,13 +134,21 @@ function BBSReply(props) {
                 <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'row' }}>
                     <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1" style={{ width: '90%' }}>
                         <Form.Label style={{ color: 'black' }}>댓글 작성</Form.Label><br />
-                        <Form.Control onChange={valueChange} name='id' type="text" placeholder="댓글 추가..." style={{ borderColor: 'black', width: '100%' }} value={inputReply} />
+                        <input onBlur={blurhandler} onFocus={focushandler} onChange={valueChange} name='id' type="text" placeholder="댓글 추가..." style={{ borderColor: 'black', width: '100%' }} className='replyinput' value={inputReply} ref={inputref}/>
+                        <div className='inputbarbox'>
+                            <div className='inputbarleft-inner'>                       
+                                <div className={'inputbarleft' + (active ? ' active':'' )}></div>                            
+                            </div>
+                            <div className='inputbarright-inner'>
+                            <div className={'inputbarright' + (active ? ' active':'' )}></div>  
+                            </div>
+                        </div>
                     </Form.Group>
                     <Button onClick={insertReplySubmit} type="submit" style={{ height: '38px', width: '10%', marginTop: '32px' }}>작성</Button>
                 </div>
             </div>
             {replyData.map((c) => {
-                return <BBSReplyData replyID = {c.replyID} bbsID={props.bbsID} curuserID={props.curuserID} key={c.replyID} id ={c.userID} content= {c.replyContent} />
+                return <BBSReplyData minusreplyTotal={minusreplyTotal} replyID = {c.replyID} bbsID={props.bbsID} curuserID={props.curuserID} key={c.replyID} id ={c.userID} content= {c.replyContent} />
             })}
         </div>
     )

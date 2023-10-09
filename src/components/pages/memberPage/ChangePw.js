@@ -24,7 +24,7 @@ function ChangePw() {
             userID: userID
         };
 
-        return axios.post(url, data);
+        return axios.post(url, data, { withCredentials: true });
     }
 
     const checkTokenSubmit = (token, userID) => {
@@ -100,7 +100,7 @@ function CorrectForm (props){
             userID: props.userID
         };
 
-        return axios.post(url, data);
+        return axios.post(url, data, { withCredentials: true });
     }
 
     const ChnagePwSubmit = (e) => {
