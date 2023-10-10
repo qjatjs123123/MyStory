@@ -9,6 +9,7 @@ function BBSContent(props) {
     const [bbsContent, setbbsContent] = useState('');
     const [userID, setuserID] = useState('');
     const [bbsDate, setbbsDate] = useState('');
+    const [tag, settag] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {      
@@ -37,6 +38,11 @@ function BBSContent(props) {
                     setbbsContent(response.data[0].bbsContent);
                     setuserID(response.data[0].userID);
                     setbbsDate(dateFormat(new Date(response.data[0].bbsDate)));
+                    let newContents = Array.from(tag);
+                    response.data.forEach((e) => {
+                        newContents.push(e.hashTag);
+                    })
+                    settag(newContents)
                 }
             })
     }
@@ -67,6 +73,11 @@ function BBSContent(props) {
                         {props.curuserID === userID ? <Button onClick={props.bbsDeleteSubmit} size="sm" style={{ marginLeft: '10px' }} variant="danger">글삭제</Button> : null}
                     </h5>
                     <div style={{ marginBottom: '20px' }}>{userID} | {bbsDate}</div>
+                    <div className='table-data-info-hashtag'>
+                        {tag.map((tag,idx)=>{
+                            return <div onClick={() => navigate(`/tags/${tag}`)} key ={idx}>{tag} </div>
+                        })}
+                    </div>
                 </div>
                 <div style={{ marginTop: '20px' }} dangerouslySetInnerHTML={{ __html: bbsContent }} />
             </div>

@@ -29,6 +29,7 @@ function BoardTable(props) {
     }
 
     const handler = () => {
+        console.log(props.bbslist, "QWeqwqeqwe");
         if (props.bbslist != '' && props.bbslist.length > 0){
             return props.bbslist.map((c,idx) => {
                 return <BoardData setInput={props.setInput} key={idx} data={c} num={c.bbsID} title={c.bbsTitle} name={c.userID} date={c.bbsDate} content={c.bbsContent} readClick={() => { navigate(`/BoardRead/?bbsID=${c.bbsID}`) }} />
@@ -37,6 +38,7 @@ function BoardTable(props) {
         
             return <div style={{fontSize:'25px', color:'gray'}}></div>
         }else{
+
             return <div style={{fontSize:'25px', color:'gray'}}>검색 결과가 없습니다.</div>
         }
             

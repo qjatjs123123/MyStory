@@ -681,6 +681,7 @@ router.post("/selectrecommend", (req, res) => {
 router.post("/bbsConditionList", (req, res) => {
     try{
         const {userID, curtab, option, input,limit, page, orderTarget, orderValue } = req.body;
+        
         let param = [] 
         if (input != '')
             param.push(`${input}%`);

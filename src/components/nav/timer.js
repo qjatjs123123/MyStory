@@ -21,6 +21,9 @@ function Timer(props) {
     const cur_minute = useRef(0);
     const cur_second = useRef(0);
     const userID = useRef('')
+    useEffect(()=>{
+        getProfileImage();
+    },[props.count])
     useEffect(() => {
         // 컴포넌트가 마운트될 때 이벤트 리스너를 추가합니다.
         document.body.addEventListener('click', handleBodyClick);
@@ -89,6 +92,7 @@ function Timer(props) {
     useEffect(() => {
         if(time.current+1 <= 0){
             alert("다시 로그인 해주세요");
+            setimg('');
             clearInterval(timerId.current);
             navigate('/Main');
         }
@@ -135,6 +139,7 @@ function Timer(props) {
         if (data === '로그아웃') logoutSubmit();
         else if(data === '연장') refreshTokenSubmit();
         else if(data ==='내 스토리') navigate(`/Profile/${userID.current}`)
+        else if(data ==='마이페이지') navigate(`/mypage`)
     }
 
     return (

@@ -5,7 +5,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 
-function Join() {
+function Join(props) {
     const [id, setId] = useState('');
     const [idCheck, setIdCheck] = useState(false);
     const [pw, setPw] = useState('');
@@ -27,7 +27,7 @@ function Join() {
     const [firstResult, setFirstResult] = useState('');
     const [nameResult, setNameResult] = useState('');
     const [emailResult, setEmailResult] = useState('');
-
+    const [userID, setuserID] = useState('');
     const [nickname, setnickname] = useState('');
     const [statemessage, setstatemessage] = useState('');
     const navigate = useNavigate();
@@ -49,10 +49,40 @@ function Join() {
             setFirstResult('올바른 주민번호 입니다.');
         }
     }, [firstcheck, secondcheck]);
+    useEffect(() => {
+
+        if(props.mypage){
+            profileref.current.style.display='block';
+            loginCheckSubmit();
+        }
+
+    }, [props.mypage])
+
+    const loginCheck = () => {
+        const url = '/member/loginInfo';
+        const data = {};
+        return axios.post(url, data, { withCredentials: true });
+    }
+    const loginCheckSubmit = () => {
+        loginCheck()
+            .then((response) => {
+                if (response.data === false) {
+                    alert("다시 로그인 해주세요");
+                    navigate('/Main');
+                }
+                else {
+                    setnickname(response.data[0].userNickname);
+                    setstatemessage(response.data[0].userState);
+                    setMainImg(response.data[0].userProfile);
+                    setuserID(response.data[0].userID)
+                    
+                }
+            })
+    }
+
     const duplicateIdCheck = (e) => {
         
         setId(e.target.value);
-        console.log(e.target.value);
         if (e.target.value === '') return;
         IdCheck(e.target.value)
             .then((response) => {
@@ -170,6 +200,20 @@ function Join() {
         };
         return axios.post(url, data, { withCredentials: true });
     }
+
+    const update = (e, IMG_URL) => {
+        e.preventDefault();
+        const url = '/member/update';
+        const data = {
+            userId: userID,
+            userNickname : nickname,
+            userState : statemessage,
+            userProfile : IMG_URL
+        };
+        return axios.post(url, data, { withCredentials: true });
+    }
+
+
     const imageHandler = (event) => {
         event.preventDefault();
         var reader = new FileReader();
@@ -182,7 +226,9 @@ function Join() {
     };
     const joinSubmit = async (e) => {
         e.preventDefault();
-        let IMG_URL = process.env.PUBLIC_URL+'/images/profile.jpg';
+        let IMG_URL = '';
+        if (props.mypage == false) IMG_URL = process.env.PUBLIC_URL+'/images/profile.jpg';
+        else IMG_URL = mainImg;
         try {
             if (img != ''){
                 const file = img;
@@ -193,15 +239,27 @@ function Join() {
                 IMG_URL = result.data.url;
             }
             if (nickname != '' && statemessage != '') {
-                join(e, IMG_URL)
-                    .then((response) => {
-                        e.preventDefault();
-                        if (response.data === false) alert("너무 긴 글입니다.")
-                        else {
-                            alert("회원가입 성공");
-                            navigate('/main');
-                        }
-                    })
+                if(props.mypage === false){
+                    join(e, IMG_URL)
+                        .then((response) => {
+                            e.preventDefault();
+                            if (response.data === false) alert("너무 긴 글입니다.")
+                            else {
+                                alert("회원가입 성공");
+                                navigate('/main');
+                            }
+                        })
+                }else{
+                    update(e, IMG_URL)
+                        .then((response) => {
+                            e.preventDefault();
+                            if (response.data === false) alert("너무 긴 글입니다.")
+                            else {
+                                props.setcount()
+                                navigate(-1);
+                            }
+                        })
+                }
             }
             else {
                 alert("제대로 입력하세요");
@@ -242,60 +300,65 @@ function Join() {
                     </div>
                 </div>
                 <div className='join-right'>
-                    <div ref={joinref} className='join'>
-                        <div style={{fontSize:'40px', fontWeight: 'bold', marginBottom:'10px'}}>회원가입</div>
-                        
-                        <Form >
-                            <Form.Group className="mb-3" controlId="formGroupEmail">
-                                <Form.Label>아이디</Form.Label>
-                                <Form.Control onBlur={duplicateIdCheck} name='id' type="text" placeholder="Enter ID" style={{ width: '500px', border: '2px solid black' }} />
-                                <div style={{ height: '10px', fontSize: '13px', color: idResult === '중복된 아이디 입니다.' ? 'red' : 'green' }}>{idResult}</div>
-                            </Form.Group>
-                            <Form.Group className="mb-3" controlId="formGroupPassword">
-                                <Form.Label>비밀번호</Form.Label>
-                                <Form.Control onBlur={passwordCheck} name='pw' type="password" placeholder="Password" style={{ width: '500px', border: '2px solid black' }} />
-                                <div style={{ height: '10px', fontSize: '13px', color: pwResult === '비밀번호 규칙 위반입니다.' ? 'red' : 'green' }}>{pwResult}</div>
-                            </Form.Group>
-                            <Form.Group className="mb-3" controlId="formGroupPassword">
-                                <Form.Label>비밀번호확인</Form.Label>
-                                <Form.Control onBlur={samePassword} name='pwcheck' type="password" placeholder="Password" style={{ width: '500px', border: '2px solid black' }} />
-                                <div style={{ height: '10px', fontSize: '13px', color: pwCheckResult === '비밀번호 불일치합니다.' ? 'red' : 'green' }}>{pwCheckResult}</div>
+                    {props.mypage !== true ?
+                        <div ref={joinref} className='join'>
+                            <div style={{fontSize:'40px', fontWeight: 'bold', marginBottom:'10px'}}>회원가입</div>
+                            
+                            <Form >
+                                <Form.Group className="mb-3" controlId="formGroupEmail">
+                                    <Form.Label>아이디</Form.Label>
+                                    <Form.Control onBlur={duplicateIdCheck} name='id' type="text" placeholder="Enter ID" style={{ width: '500px', border: '2px solid black' }} />
+                                    <div style={{ height: '10px', fontSize: '13px', color: idResult === '중복된 아이디 입니다.' ? 'red' : 'green' }}>{idResult}</div>
+                                </Form.Group>
+                                <Form.Group className="mb-3" controlId="formGroupPassword">
+                                    <Form.Label>비밀번호</Form.Label>
+                                    <Form.Control onBlur={passwordCheck} name='pw' type="password" placeholder="Password" style={{ width: '500px', border: '2px solid black' }} />
+                                    <div style={{ height: '10px', fontSize: '13px', color: pwResult === '비밀번호 규칙 위반입니다.' ? 'red' : 'green' }}>{pwResult}</div>
+                                </Form.Group>
+                                <Form.Group className="mb-3" controlId="formGroupPassword">
+                                    <Form.Label>비밀번호확인</Form.Label>
+                                    <Form.Control onBlur={samePassword} name='pwcheck' type="password" placeholder="Password" style={{ width: '500px', border: '2px solid black' }} />
+                                    <div style={{ height: '10px', fontSize: '13px', color: pwCheckResult === '비밀번호 불일치합니다.' ? 'red' : 'green' }}>{pwCheckResult}</div>
 
-                            </Form.Group>
-                            <Form.Group className="mb-3" controlId="formGroupPassword">
-                                <Form.Label>주민등록번호</Form.Label>
-                                <div style={{ display: 'flex', flexDirection: 'row' }}>
-                                    <Form.Control onBlur={numCheck} name='first' type="text" placeholder="First" style={{ width: '237px', border: '2px solid black', marginRight: '10px' }} />
-                                    <div>-</div>
-                                    <Form.Control onBlur={numCheck} name='second' type="password" placeholder="Second" style={{ width: '237px', border: '2px solid black', marginLeft: '10px' }} />
-                                </div>
-                                <div style={{ height: '10px', fontSize: '13px', color: firstResult === '주민번호 오류입니다.' ? 'red' : 'green' }}>{firstResult}</div>
-                            </Form.Group>
-                            <Form.Group className="mb-3" controlId="formGroupPassword">
-                                <Form.Label>이름</Form.Label>
-                                <Form.Control onBlur={nameCheck} name='name' type="text" placeholder="Name" style={{ width: '500px', border: '2px solid black' }} />
-                                <div style={{ height: '10px', fontSize: '13px', color: nameResult === '공백이 있습니다.' ? 'red' : 'green' }}>{nameResult}</div>
-                            </Form.Group>
-                            <Form.Group className="mb-3" controlId="formGroupPassword">
-                                <Form.Label>이메일</Form.Label>
-                                <Form.Control onBlur={emailCheck} name='email' type="email" placeholder="Email" style={{ width: '500px', border: '2px solid black' }} />
-                                <div style={{ height: '10px', fontSize: '13px', color: emailResult === '이메일 형식 오류입니다.' ? 'red' : 'green' }}>{emailResult}</div>
-                            </Form.Group>
-                            <Button onClick={next} type="submit" style={{ width: '500px', marginTop: '20px', height: '45px' }}>다음</Button>
-                        </Form>
-                    </div>
+                                </Form.Group>
+                                <Form.Group className="mb-3" controlId="formGroupPassword">
+                                    <Form.Label>주민등록번호</Form.Label>
+                                    <div style={{ display: 'flex', flexDirection: 'row' }}>
+                                        <Form.Control onBlur={numCheck} name='first' type="text" placeholder="First" style={{ width: '237px', border: '2px solid black', marginRight: '10px' }} />
+                                        <div>-</div>
+                                        <Form.Control onBlur={numCheck} name='second' type="password" placeholder="Second" style={{ width: '237px', border: '2px solid black', marginLeft: '10px' }} />
+                                    </div>
+                                    <div style={{ height: '10px', fontSize: '13px', color: firstResult === '주민번호 오류입니다.' ? 'red' : 'green' }}>{firstResult}</div>
+                                </Form.Group>
+                                <Form.Group className="mb-3" controlId="formGroupPassword">
+                                    <Form.Label>이름</Form.Label>
+                                    <Form.Control onBlur={nameCheck} name='name' type="text" placeholder="Name" style={{ width: '500px', border: '2px solid black' }} />
+                                    <div style={{ height: '10px', fontSize: '13px', color: nameResult === '공백이 있습니다.' ? 'red' : 'green' }}>{nameResult}</div>
+                                </Form.Group>
+                                <Form.Group className="mb-3" controlId="formGroupPassword">
+                                    <Form.Label>이메일</Form.Label>
+                                    <Form.Control onBlur={emailCheck} name='email' type="email" placeholder="Email" style={{ width: '500px', border: '2px solid black' }} />
+                                    <div style={{ height: '10px', fontSize: '13px', color: emailResult === '이메일 형식 오류입니다.' ? 'red' : 'green' }}>{emailResult}</div>
+                                </Form.Group>
+                                <Button onClick={next} type="submit" style={{ width: '500px', marginTop: '20px', height: '45px' }}>다음</Button>
+                            </Form>
+                        </div>
+                    :<></>
+                    }
                     <div ref = {profileref} className='profilesetting-content'>
-                        <div style={{fontSize:'40px', fontWeight: 'bold', marginBottom:'10px'}}>프로필 설정</div>
+                        <div style={{fontSize:'40px', fontWeight: 'bold', marginBottom:'10px'}}>
+                            {props.mypage === true ? '마이 페이지' : '프로필 설정'}
+                        </div>
                         <Form >
                                 <Form.Group className="mb-3" controlId="formGroupEmail">
                                     <Form.Label>닉네임</Form.Label>
-                                    <Form.Control onChange={(e) => {setnickname(e.target.value)}} name='nickname' type="text" placeholder="Enter NickName" style={{ width: '500px', border: '2px solid black' }} />
+                                    <Form.Control value={nickname} onChange={(e) => {setnickname(e.target.value)}} name='nickname' type="text" placeholder="Enter NickName" style={{ width: '500px', border: '2px solid black' }} />
                                     
                                 </Form.Group>
 
                                <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
                                     <Form.Label>상태 메시지</Form.Label>
-                                    <Form.Control onChange={(e) => {setstatemessage(e.target.value)}} name="state" as="textarea" rows={3} />
+                                    <Form.Control value={statemessage} onChange={(e) => {setstatemessage(e.target.value)}} name="state" as="textarea" rows={3} />
                                 </Form.Group>
 
                                 <Form.Group className="mb-3" controlId="formGroupEmail">
@@ -309,8 +372,11 @@ function Join() {
                                     <img className='profilePreview' alt="" src={mainImg} style={{maxWidth:"300px"}}></img>
                                     
                                 </Form.Group>
-
-                                <Button onClick={joinSubmit} type="submit" style={{ width: '500px', marginTop: '20px', height: '45px' }}>가입하기</Button>
+                                {props.mypage !== true ?  <Button onClick={joinSubmit} type="submit" style={{ width: '500px', marginTop: '20px', height: '45px' }}>가입하기</Button>:
+                                <Button onClick={joinSubmit} type="submit" style={{ width: '500px', marginTop: '20px', height: '45px' }}>수정하기</Button>
+                                }
+                                
+                                
                         </Form>
                     </div>
                 </div>

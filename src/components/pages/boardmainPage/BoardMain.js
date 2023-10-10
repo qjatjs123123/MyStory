@@ -48,15 +48,19 @@ function BoardMain(props) {
     //         profileref.current.style.background = `url(${userProfile}) no-repeat center center / 100% 100%`
             
     // }, [userProfile])
+
+
     useEffect(() => {   
         loginCheckSubmit();    
     }, []);
     useEffect(() => {
+        if (input == '') return
+
         bbsConditionInput(input)
         bbsConditionInputCount(input);
     }, [input])
     useEffect(() => {
-        
+        console.log("2번쨰")
         if (props.input != '' && props.option == '해시태그'){
             bbsConditionInput(props.input)
             bbsConditionInputCount(props.input);}
@@ -139,7 +143,11 @@ function BoardMain(props) {
                     alert("에러 발생");
                     navigate('/Main');
                 }
-                else setBbslist(response.data);
+                else {
+                    let newContents = JSON.parse(JSON.stringify(response.data));
+                    setBbslist(newContents);
+                }
+
             })
     }
 
@@ -166,6 +174,7 @@ function BoardMain(props) {
                     navigate('/Main');
                 }
                 let maxvalue = 1
+                
                 if (Math.ceil(response.data[0].COUNT / limit) === 0) setMaxPage(maxvalue);
                 else {setMaxPage(Math.ceil(response.data[0].COUNT / limit)); maxvalue=Math.ceil(response.data[0].COUNT / limit)}
                 

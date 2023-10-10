@@ -22,9 +22,15 @@ function HistoryPage(props){
     followSubmit();
   }, [followpage])
 
+  useEffect(()=>{
+    tmparr.current = [];
+    followSubmit();
+    historySubmit();
+  }, [props.input])
+
   const historySubmit = () => {
     const url = '/history/gethistory';
-    const data = {historypage: historypage};
+    const data = {historypage: historypage, input:props.input};
     axios.post(url, data, { withCredentials: true })
       .then((resp)=>{
         let newContents = Array.from(tmparr.current);
@@ -35,6 +41,7 @@ function HistoryPage(props){
         sethistorylist(newContents);
         sethistorymaxpage(Math.ceil(resp.data.historyCount / 15));
         if (morebtn.current != null) morebtn.current.textContent   = 'More'
+
       })
   }
   const morebtnhandle = () => {
@@ -43,11 +50,12 @@ function HistoryPage(props){
   }
   const followSubmit = () => {
       const url = '/history/getfollowlist';
-      const data = {followpage:followpage};
+      const data = {followpage:followpage, input:props.input};
       axios.post(url, data, { withCredentials: true })
         .then((resp)=>{
           setfollowlist(resp.data.follow);
           setfollowmaxpage(Math.ceil(resp.data.followcount / 15))
+          
         })
     }
   return (
@@ -62,17 +70,17 @@ function HistoryPage(props){
           < BoardPage curpage={followpage} maxpage={followmaxpage} setPage={setfollowpage}/>
           </div> : <></>
           }
-          
+           {followmaxpage == 0 ? <div>검색결과가 없습니다.</div> : <></>}
           <div style={{width:'200px',height:'50px'}}></div>
         </div>
         <div className='history-content-container'>
           {historylist.map((data, idx)=>{
             return <HistoryInfoBox key={idx} data={data}/>
           })}
-          {historymaxpage == historypage 
+          {historymaxpage == historypage || historymaxpage == 0
           ? <></> 
           : <div ref={morebtn} onClick={morebtnhandle} className='morebtn'>More</div>}
-          
+          {historymaxpage == 0 ? <div>검색결과가 없습니다.</div> : <></>}
           <div style={{width:'200px',height:'50px'}}></div>
         </div>
       </div>

@@ -100,7 +100,6 @@ function BoardFlex(props){
             newContents.push(e);
             tmparr.current.push(e)
         })
-        console.log(newContents, props.curtag);
         setBbslist(newContents);
         firstRender.current = false;
       })

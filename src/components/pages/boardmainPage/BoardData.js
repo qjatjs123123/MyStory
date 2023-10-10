@@ -15,7 +15,6 @@ function BoardData(props) {
         };
         axios.post(url, data, { withCredentials: true })
             .then((resp)=>{
-                console.log(resp.data);
                 settags(resp.data);
             })
     }

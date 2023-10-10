@@ -232,6 +232,31 @@ router.post("/join", (req, res) => {
             })
     })
 })
+router.post("/loginInfo", (req, res) => {
+    getConnection((conn) => {
+        const sql = "SELECT userNickname, userState, userProfile, userID FROM member WHERE userID = ?";
+        let params = [jwt.verify(req.cookies.jwt, "1234").userID];
+        conn.query(sql,params,
+            (err,rows,fields) => {
+                conn.release();   
+                if (err){ res.send(false);console.log(err)}
+                else res.send(rows);
+            })
+    })
+})
+router.post("/update", (req, res) => {
+    const {userId, userNickname, userState, userProfile} = req.body;  
+    getConnection((conn) => {
+        const sql = "UPDATE member SET userNickname = ?, userState = ?, userProfile = ? WHERE userID = ?";
+        let params = [userNickname, userState, userProfile, userId];
+        conn.query(sql,params,
+            (err,rows,fields) => {
+                conn.release();   
+                if (err) res.send(false);
+                else res.send(rows);
+            })
+    })
+})
 
 router.post("/findId", (req, res) => {
     const {userName, userNum} = req.body;  

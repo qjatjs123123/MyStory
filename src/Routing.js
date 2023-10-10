@@ -12,6 +12,7 @@ import BoardMain from './components/pages/boardmainPage/BoardMain';
 import ProfileMain from './components/pages/ProfilePage/ProfileMain'
 import HomePage from './components/pages/homePage/HomePage';
 import HashtagPage from './components/pages/hashtagPage/HashtagPage';
+import MyPage from './components/pages/MyPage/MyPage';
 class Routing extends Component{
     constructor(props){
         super(props);
@@ -31,20 +32,21 @@ class Routing extends Component{
     setbbsID = (param) => {this.setState({bbsID: param})}
     setbbsTitle = (param) => {this.setState({bbsTitle: param})}
     setbbsContent = (param) => {this.setState({bbsContent: param})}
-
+    setcount = () => {this.setState({count:this.state.count+1});}
     render(){
         return(
             <BrowserRouter>
                 <Header userID={this.state.userID} count={this.state.count}/>
                 <Routes>
                     <Route path='/' element={<Main setlogin={this.setlogin}/>} />  
-                    <Route path='/join' element={<Join />} /> 
+                    <Route path='/join' element={<Join mypage={false}/>} /> 
                     <Route path='/main' element={<Main setlogin={this.setlogin}/>} />
                     <Route path='/FindId' element={<FindId />} />
                     <Route path='/FindPw' element={<FindPw />} />
                     <Route path='/ChangePw' element={<ChangePw />} />
                     <Route path='/Board' element={ <BoardMain />} />
-                    <Route path='/Profile/:userID' element={ <HomePage/>} />                 
+                    <Route path='/Profile/:userID' element={ <HomePage/>} />      
+                    <Route path='/mypage' element={ <MyPage userID={this.state.userID} setcount={this.setcount}/>} />             
                     <Route path='/tags/:hashTag' element={ <HashtagPage/>} />
                     <Route path='/Profile' element={ <ProfileMain ishome={false} curtab={"clock"} tabData={["clock", "board"]}/>} />
                     <Route path='/BoardWrite' element={ <BoardWrite update={false} bbsID={''} bbsTitle={''} bbsContent={''}/>} />

@@ -63,8 +63,7 @@ function ProfileMain(props){
 
 
   useEffect(() => { 
-    
-    if (curpage >= 15){
+    if (curpage >= 15 ){
      // document.removeEventListener('scroll', infiniteScrollRef.current); 
      return;
     }
@@ -73,7 +72,7 @@ function ProfileMain(props){
   }, [curpage]);
 
   useEffect(() => {
-    if (firstRender.current) {
+    if (firstRender.current || curtab == 'follow') {
       return;
   }
 
@@ -191,7 +190,7 @@ function ProfileMain(props){
     else if(curtab === 'home') return <BoardFlex  curtag={'전체보기'} setinput={setinput} userProfileList={userProfileList} userID={props.userID} option={curdropbox} input={input} curtab={"myboard"}/>
     else if(curtab === 'board') return <BoardMain userID={props.userID} option={curdropbox} input={input} curtab={curtab} />
     else if(curtab === 'myboard') return <BoardMain userID={props.userID} option={curdropbox} input={input} curtab={curtab} />
-    else if(curtab === 'follow') return <HistoryPage userID={props.userID} />
+    else if(curtab === 'follow') return <HistoryPage userID={props.userID} input={input}/>
     else if(curtab === 'write') return <BoardWrite tabBarhandle={tabBarhandle}  update={false} bbsID={''} bbsTitle={''} bbsContent={''}/>
 
   }

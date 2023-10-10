@@ -7,8 +7,8 @@ const upload = multer({ dest: 'public/upload' })
 
 router.post("/gethistory", async (req, res) => {
   try {
-    const {historypage} = req.body; 
-    const historyCount = await gethistoryCount(jwt.verify(req.cookies.jwt, "1234").userID)
+    const {historypage,input} = req.body; 
+    const historyCount = await gethistoryCount(jwt.verify(req.cookies.jwt, "1234").userID, input)
       getConnection((conn) => {
         let param = [jwt.verify(req.cookies.jwt, "1234").userID]
           let sql = `SELECT 
@@ -22,13 +22,18 @@ router.post("/gethistory", async (req, res) => {
           member.userState AS userState,
           member.userProfile AS userProfile
          FROM follow, history, bbs, member WHERE follow.fromuserID = ? AND follow.touserID = history.userID AND bbs.bbsID = history.bbsID 
-         AND bbs.bbsAvailable = 1 AND member.userID = bbs.userID ORDER BY history.historyID DESC`;
+         AND bbs.bbsAvailable = 1 AND member.userID = bbs.userID`
+         if (input != ''){
+          sql += " AND bbs.userID LIKE ?"
+          param.push(`${input}%`);
+         }
+         sql += ` ORDER BY history.historyID DESC`;
          sql += ` LIMIT ?, ?`;
          param.push(15 * (historypage-1));
         param.push(15);
           conn.query(sql, param,
               (err, rows, fields) => {
-                  if (err) { throw err }    
+                  if (err) { res.send(false); console.log(err) }    
                   else {res.send({historyCount:historyCount, rows:rows});}
                   conn.release();
               })
@@ -39,7 +44,7 @@ router.post("/gethistory", async (req, res) => {
       res.send(false);
   }
 })
-async function gethistoryCount(userID) {
+async function gethistoryCount(userID,input) {
   return new Promise((resolve, reject) => {
       getConnection((conn) => {
         let param = [userID]
@@ -47,9 +52,13 @@ async function gethistoryCount(userID) {
         COUNT(*) AS COUNT
        FROM follow, history, bbs, member WHERE follow.fromuserID = ? AND follow.touserID = history.userID AND bbs.bbsID = history.bbsID 
        AND bbs.bbsAvailable = 1 AND member.userID = bbs.userID`;
+       if (input != ''){
+        sql += " AND bbs.userID LIKE ?"
+        param.push(`${input}%`);
+       }
         conn.query(sql, param,
             (err, rows, fields) => {
-                if (err) { throw err }    
+                if (err) { res.send(false); console.log(err) }    
                 conn.release();
                 const result = rows[0].COUNT;
                 resolve(result);
@@ -59,15 +68,15 @@ async function gethistoryCount(userID) {
 }
 router.post("/getfollowlist", async (req, res) => {
   try {
-    const {followpage} = req.body; 
-    const follow = await getfollow(jwt.verify(req.cookies.jwt, "1234").userID, followpage);
-    const followcount = await getfollowListCount(jwt.verify(req.cookies.jwt, "1234").userID);
+    const {followpage, input} = req.body; 
+    const follow = await getfollow(jwt.verify(req.cookies.jwt, "1234").userID, followpage, input);
+    const followcount = await getfollowListCount(jwt.verify(req.cookies.jwt, "1234").userID, input);
     res.send({follow:follow, followcount:followcount})
   } catch (error) {
       res.send(false);
   }
 })
-async function getfollow(userID, followpage) {
+async function getfollow(userID, followpage,input) {
   return new Promise((resolve, reject) => {
       getConnection((conn) => {
           let param = [userID]
@@ -78,6 +87,10 @@ async function getfollow(userID, followpage) {
             member.userProfile AS userProfile 
           FROM follow , member
           WHERE follow.fromuserID = ? AND follow.touserID = member.userID`;
+          if (input != ''){
+            sql += " AND member.userID LIKE ?"
+            param.push(`${input}%`);
+           }
           sql += ` LIMIT ?, ?`;
         
         param.push(15 * (followpage-1));
@@ -95,7 +108,7 @@ async function getfollow(userID, followpage) {
       });
   });
 }
-async function getfollowListCount(userID) {
+async function getfollowListCount(userID,input) {
   return new Promise((resolve, reject) => {
       getConnection((conn) => {
           let param = [userID]
@@ -103,6 +116,10 @@ async function getfollowListCount(userID) {
             COUNT(*) AS COUNT
           FROM follow , member
           WHERE follow.fromuserID = ? AND follow.touserID = member.userID`;
+          if (input != ''){
+            sql += " AND member.userID LIKE ?"
+            param.push(`${input}%`);
+           }
           conn.query(sql, param, (err, rows, fields) => {
               if (err) {
                   console.log(err);
