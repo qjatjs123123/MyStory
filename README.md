@@ -91,4 +91,4 @@ https://www.mystory.asia/
  ``` 
 
  ## 💡 시연 영상 (이미지 클릭)
- [![Video Label](http://img.youtube.com/vi/WuhJrxWOWdk/0.jpg)](https://youtu.be/WuhJrxWOWdk?t=0s)
+ [![Video Label](https://youtu.be/TyQVO3QFEDo/0.jpg)](https://youtu.be/TyQVO3QFEDo?si=9lLZNdxKwd-Ec96k)
