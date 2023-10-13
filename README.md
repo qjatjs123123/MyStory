@@ -11,8 +11,11 @@ https://velog.io/@qjatjs123123/series/React-Node-%EA%B2%8C%EC%8B%9C%ED%8C%90
 
 ## 💡 프로젝트 데모 URL
 https://www.mystory.asia/
+### 테스트 계정
+#### ID : test
+#### PW : test111!!
 
-<br>
+
 ## 📋 주요 기능 목록
 
 <br>
