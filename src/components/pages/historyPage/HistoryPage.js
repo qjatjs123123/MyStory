@@ -14,6 +14,7 @@ function HistoryPage(props){
   const [historymaxpage, sethistorymaxpage] = useState(0);
   const tmparr = useRef([]);
   const morebtn = useRef('');
+  const firstrender = useRef(true);
   useEffect(()=>{
     historySubmit();
   }, [historypage])
@@ -23,6 +24,7 @@ function HistoryPage(props){
   }, [followpage])
 
   useEffect(()=>{
+    if(firstrender.current) return
     tmparr.current = [];
     followSubmit();
     historySubmit();
@@ -40,6 +42,7 @@ function HistoryPage(props){
         })
         sethistorylist(newContents);
         sethistorymaxpage(Math.ceil(resp.data.historyCount / 15));
+        firstrender.current = false;
         if (morebtn.current != null) morebtn.current.textContent   = 'More'
 
       })
