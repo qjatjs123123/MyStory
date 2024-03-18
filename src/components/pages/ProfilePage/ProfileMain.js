@@ -151,9 +151,11 @@ function ProfileMain(props){
     return axios.post(url, data, { withCredentials: true });
   }
   const loginCheckSubmit = () => {
+      
       loginCheck()
           .then((response) => {
               if (response.data === false) {
+                  console.log(response.data);
                   setLogin(false);
                   alert("다시 로그인 해주세요");
                   navigate('/Main');

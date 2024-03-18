@@ -5,6 +5,7 @@ import BoardFlex from '../boardmainPage/BoardFlex';
 
 function HashtagPage(){
   const { hashTag } = useParams();
+  const [count, setCount] = useState(0);
 
   return (
     <div className='bbs-container'>
@@ -14,9 +15,9 @@ function HashtagPage(){
             # {hashTag}
           </h1>
           <div className='tags-content-countinfo'>
-            <span>총 862개 게시물</span>
+            <span>총 {count}개 게시물</span>
           </div>
-          <BoardFlex curtag = {hashTag} input={''} curtab={'board'}/>
+          <BoardFlex curtag = {hashTag} input={''} curtab={'board'} setCount={setCount}/>
         </div>
       </div>
     </div>

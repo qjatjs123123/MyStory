@@ -115,13 +115,15 @@ router.post("/gethashTagGroup", async (req, res) => {
     const {userID} = req.body; 
       getConnection((conn) => {
         let param = [userID]
-          let sql = "SELECT hashtag.hashTag, COUNT(*) AS COUNT FROM hashtag,hashtagpost WHERE hashtag.hashtagID = hashtagpost.hashTagID AND hashtagpost.userID = ? GROUP BY hashtag.hashTag";
+          let sql = "SELECT hashtag.hashTag, COUNT(*) AS COUNT FROM hashtag,hashtagpost,bbs WHERE bbs.bbsID = hashtagpost.bbsID AND hashtag.hashtagID = hashtagpost.hashTagID AND bbs.userID = ? AND bbs.bbsAvailable = 1 GROUP BY hashtag.hashTag";
+          console.log(sql);
           conn.query(sql, param,
               (err, rows, fields) => {
                   if (err) { throw err }    
                   else {res.send(rows);}
                   conn.release();
               })
+              
       })
 
   } catch (error) {

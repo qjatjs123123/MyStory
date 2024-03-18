@@ -91,10 +91,7 @@ function Timer(props) {
 
     useEffect(() => {
         if(time.current+1 <= 0){
-            alert("다시 로그인 해주세요");
-            setimg('');
-            clearInterval(timerId.current);
-            navigate('/Main');
+            logoutSubmit();
         }
     }, [sec]);
 

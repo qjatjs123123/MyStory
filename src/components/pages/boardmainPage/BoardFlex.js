@@ -15,7 +15,7 @@ function BoardFlex(props){
 
   const navigate = useNavigate();
   let tmparr = useRef([]);
- 
+  const flg = useRef(false);
 
   // Order Flg
   const [orderTarget, setorderTarget] = useState('bbsID'); //정렬하고자 하는 컬럼
@@ -31,7 +31,9 @@ function BoardFlex(props){
     return () => document.removeEventListener('scroll', infiniteScrollRef.current) ;
   
   }, []);
+
   useEffect(() => {
+    flg.current = false;
     if (curpage == 0) {
       setPage(1);
       return;
@@ -44,7 +46,7 @@ function BoardFlex(props){
       bbsConditionInputCount();
       bbsConditionInput();
     }
-      
+    
   }, [curpage])
 
   useEffect(() => {
@@ -78,6 +80,7 @@ function BoardFlex(props){
     axios.post(url, data, { withCredentials: true })
     .then((response) => {
       count.current = Math.ceil(response.data[0].COUNT / 5) ;
+      if (props.curtab === "board") props.setCount(response.data[0].COUNT );
   })
   }
   const bbsConditionInput = () => {
@@ -108,9 +111,12 @@ function BoardFlex(props){
     const { scrollHeight } = document.documentElement;
     const { scrollTop } = (document.documentElement);
     const { clientHeight } = document.documentElement;
-    if (scrollTop === 0) return
+    console.log(window.innerHeight, document.body.clientHeight, window.screen.availHeight );
+    if (scrollTop === 0 ) return
     let y = Math.ceil(scrollTop);
-    if ((scrollHeight - clientHeight) - y <= 150){
+    if ((scrollHeight - clientHeight) - y <= 0 ){
+
+      flg.current = true;
       setPage((curpage) => {
         if (curpage < count.current) {
           return curpage + 1; // 업데이트된 값을 반환하여 setPage로 전달

@@ -70,7 +70,7 @@ function BoardRead(props) {
                 .then((response) => {
                     if (response.data === true) {
                         alert("삭제 완료");
-                        navigate('/board');
+                        window.history.back();
                     }
                     else {
                         alert("삭제 오류");

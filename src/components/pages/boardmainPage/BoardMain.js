@@ -91,7 +91,7 @@ function BoardMain(props) {
     })
     }
     const bbsConditionInput = (val) => {
-        const url = '/board/bbsConditionInput';
+        const url = '/board/bbsConditionList';
         const data = {
             userID: props.userID,
             curtab:props.curtab,
@@ -119,6 +119,7 @@ function BoardMain(props) {
             orderTarget: orderTarget,
             orderValue: orderValue
           };
+          console.log(data);
         return axios.post(url, data, { withCredentials: true });
     }
     // const selectBbsList = () => {

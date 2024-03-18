@@ -43,6 +43,7 @@ function BBSContent(props) {
                         newContents.push(e.hashTag);
                     })
                     settag(newContents)
+                    
                 }
             })
     }
