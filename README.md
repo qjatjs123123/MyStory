@@ -130,12 +130,48 @@ Velog의 주요 기능을 구현하며 `풀스택 개발`의 기본기를 다지
 
 ## 🤔 배운점
 > ### 커넥션 풀
-> - 커넥션 풀을 사용하면 일정량의 Connection 객체를 미리 생성하여 Pool 이라는 공간(캐시)에 저장해둔다
+> - `커넥션 풀`을 사용하면 일정량의 Connection 객체를 미리 생성하여 Pool 이라는 공간(캐시)에 저장해둔다
 > - [코드 바로보기](https://github.com/qjatjs123123/MyStory/blob/main/db.js#L1-L22)
 > - [articles](https://velog.io/@qjatjs123123/%EA%B0%9C%EB%B0%9C-%EC%9D%BC%EC%A7%80-%EA%B2%8C%EC%8B%9C%ED%8C%90%EC%BB%A4%EB%84%A5%EC%85%98-%ED%92%80)
 <br />
 
+> ### Gmail API
+> - `nodemailer`를 통한 Gamil API 이메일 전송
+> - [코드 바로보기](https://github.com/qjatjs123123/MyStory/blob/main/routes/memberRouter.js#L25-L55)
+> - [articles](https://velog.io/@qjatjs123123/%EA%B0%9C%EB%B0%9C-%EC%9D%BC%EC%A7%80-%EA%B2%8C%EC%8B%9C%ED%8C%90Gmail-API)
+<br />
 
+> ### 이메일을 통한 본인 인증 방법
+> <img src="https://github.com/user-attachments/assets/b657da46-1e26-4440-a539-30480503d6d4" width="550"/>
+> 
+> - `악보공장` 웹 서비스의 이메일 인증 방식 구현
+> - 비밀번호 찾기 시 본인 인증을 위해 이메일 인증을 진행하였습니다.
+> - [코드 바로보기](https://github.com/qjatjs123123/MyStory/blob/main/routes/memberRouter.js#L57-L67)
+> - [articles](https://velog.io/@qjatjs123123/%EA%B0%9C%EB%B0%9C-%EC%9D%BC%EC%A7%80-%EA%B2%8C%EC%8B%9C%ED%8C%90%EC%9D%B4%EB%A9%94%EC%9D%BC-%EC%9D%B8%EC%A6%9D)
+<br />
+
+> ### 민감한 데이터 암호화
+> - `Bcrypt`를 통한 데이터 암호 
+> - DB에 개인정보 암호화하여 저장
+> - [코드 바로보기](https://github.com/qjatjs123123/MyStory/blob/main/routes/memberRouter.js#L222-L234)
+> - [articles](https://velog.io/@qjatjs123123/%EA%B0%9C%EB%B0%9C-%EC%9D%BC%EC%A7%80-%EA%B2%8C%EC%8B%9C%ED%8C%90Bcrypt)
+<br />
+
+> ### jwt
+> - `jwt`를 통한 로그인 처리
+> - `jwt`와 `session` 차이
+> - `accessToken`과 `refreshToken`으로 로그인 연장
+> - [코드 바로보기](https://github.com/qjatjs123123/MyStory/blob/main/routes/memberRouter.js#L121-L186)
+> - [articles](https://velog.io/@qjatjs123123/%EA%B0%9C%EB%B0%9C-%EC%9D%BC%EC%A7%80-%EA%B2%8C%EC%8B%9C%ED%8C%90jwt)
+<br />
+
+> ### Cookie-parser
+> - 클라이언트에서 서버로 요청을 보낼 때 쿠키를 포함
+> - 서버에서 쿠키를 `cookie-parser`로 파싱하여 처리
+> - `refreshToken` cookie값 parser하기
+> - [코드 바로보기](https://github.com/qjatjs123123/MyStory/blob/main/routes/memberRouter.js#L165-L167)
+> - [articles](https://velog.io/@qjatjs123123/%EA%B0%9C%EB%B0%9C-%EC%9D%BC%EC%A7%80-%EA%B2%8C%EC%8B%9C%ED%8C%90cookie-parser)
+<br />
 
 ## 📲 링크
 | :: 시연                                                            |
