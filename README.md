@@ -173,10 +173,63 @@ Velog의 주요 기능을 구현하며 `풀스택 개발`의 기본기를 다지
 > - [articles](https://velog.io/@qjatjs123123/%EA%B0%9C%EB%B0%9C-%EC%9D%BC%EC%A7%80-%EA%B2%8C%EC%8B%9C%ED%8C%90cookie-parser)
 <br />
 
+> ### SPA란?
+> - SPA 정의
+> - 리액트에서 SPA를 구현하는 방법
+> - [articles](https://velog.io/@qjatjs123123/%EA%B0%9C%EB%B0%9C-%EC%9D%BC%EC%A7%80-%EA%B2%8C%EC%8B%9C%ED%8C%90SPA)
+<br />
+
+> ### 자동 로그아웃
+> <img src="https://github.com/user-attachments/assets/d327e460-3e72-4d33-b5b5-fe2b326cd23e" width="550"/>
+>
+> - 사용자가 새로고침시 타이머가 초기화되는 오류 해결
+> - [코드 바로보기](https://github.com/qjatjs123123/MyStory/blob/main/routes/boardRouter.js#L884-L899)
+> - [articles](https://velog.io/@qjatjs123123/%EA%B0%9C%EB%B0%9C-%EC%9D%BC%EC%A7%80-%EA%B2%8C%EC%8B%9C%ED%8C%90%EC%9E%90%EB%8F%99-%EB%A1%9C%EA%B7%B8%EC%95%84%EC%9B%83-%ED%83%80%EC%9D%B4%EB%A8%B8)
+<br />
+
+
+> ### 페이징 속도 개선
+> `No-offset` vs `Covering-index`
+> - 기존 페이징처리에서 Offset이 커질수록 상당히 오랜 시간이 걸리는 문제 발생
+> - 테이블에 접근하는 I/O없이 인덱스 접근만으로 성능을 향상시킬 수 있는 커버링 인덱스 도입
+> <img width="550" alt="image" src="https://github.com/user-attachments/assets/5bfb8a12-1bd3-4cff-88a3-a9319458ed75" />
+> <img width="550" alt="image (1)" src="https://github.com/user-attachments/assets/2966a831-11ef-4807-b14b-4982e11d3078" />
+>
+> - 데이터 변경이 없는 bbsID, userID, bbsAvailable를 토대로 커버링 인덱스 도입 => 데이터가 많은 BBS 테이블에서 복합인덱스 설정
+> - 쿼리 속도 `20배` 향상
+<br />
+
+> ### React.Memo
+> - BoardMain컴포넌트를 렌더링하게 되면 하위 컴포넌트들도 렌더링되는 문제 발생
+> - 함수를 props로 넘길 때에는 `useCallback`을 객체를 props로 넘길 때 `useMemo`를 사용해보자
+
+<br />
+
+## 🤔 회고
+React를 활용한 프론트엔드 SPA 개발과 Node.js를 이용한 Express API 서버 구축, 그리고 이를 실제로 배포까지 경험했던 프로젝트였습니다.  
+이번 프로젝트를 통해 많은 것을 배울 수 있었지만, 동시에 몇 가지 아쉬움도 느꼈습니다.  
+
+**첫째, props drilling 문제입니다.**  
+컴포넌트 계층이 깊어질수록 props를 전달하는 과정이 복잡해지고, 유지보수가 어려워지는 동시에 불필요한 렌더링이 발생한다는 점을 체감했습니다.  
+이를 해결하기 위해 Context API, Redux, Recoil 등 다양한 상태 관리 라이브러리를 활용할 수 있었지만, 프로젝트에서는 적용하지 못한 점이 아쉬움으로 남습니다.
+
+**둘째, useEffect와 useState의 최소화 필요성입니다.**  
+한 컴포넌트에서 상태를 관리할 때, 꼭 렌더링이 필요한 변수만 useState로 설정하고, 나머지는 일반 변수나 useRef를 활용해야 한다는 점을 배웠습니다.  
+이를 통해 렌더링 효율을 높이고 성능을 최적화할 필요성을 느꼈습니다.
+
+**셋째, useMemo와 useCallback의 활용입니다.**  
+함수나 객체를 props로 전달할 때, 값이 변경되지 않아도 하위 컴포넌트가 재렌더링되는 문제가 있었습니다.  
+이러한 상황에서 useMemo와 useCallback을 적절히 사용하면 불필요한 재렌더링을 방지하고 렌더링 성능을 향상시킬 수 있다고 느꼈습니다.  
+
+
 ## 📲 링크
 | :: 시연                                                            |
 | :------------------------------------------------------------------------------------- |
 | :: [Youtube Link](https://youtu.be/TyQVO3QFEDo?si=9lLZNdxKwd-Ec96k) | 
+
+| :: 개발일지                                                         |
+| :------------------------------------------------------------------------------------- |
+| :: [Blog Link](https://velog.io/@qjatjs123123/series/React-Node-%EA%B2%8C%EC%8B%9C%ED%8C%90) | 
 
 
 
