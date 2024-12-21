@@ -3,7 +3,7 @@
   <br/>
 <img src="./public/images/logo.png" width="100" height="100"/>
   
-### SNS 기반 블로그 서비 🖍️
+### SNS 기반 블로그 서비스 🖍️
 
 [<img src="https://img.shields.io/badge/release-v0.0.0-ㅎㄱㄷ두?style=flat&logo=google-chrome&logoColor=white" />]() 
 <br/> [<img src="https://img.shields.io/badge/프로젝트 기간-2023.08.17~2023.10.13-fab2ac?style=flat&logo=&logoColor=white" />]() <br/>
