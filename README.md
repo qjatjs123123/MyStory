@@ -153,8 +153,8 @@ Velog의 주요 기능을 구현하며 `풀스택 개발`의 기본기를 다지
 > ### 민감한 데이터 암호화
 > - `Bcrypt`를 통한 데이터 암호 
 > - DB에 개인정보 암호화하여 저장
-> - [코드 바로보기](https://github.com/qjatjs123123/MyStory/blob/main/routes/memberRouter.js#L222-L234)
-> - [articles](https://velog.io/@qjatjs123123/%EA%B0%9C%EB%B0%9C-%EC%9D%BC%EC%A7%80-%EA%B2%8C%EC%8B%9C%ED%8C%90Bcrypt)
+> - <a href="https://github.com/qjatjs123123/MyStory/blob/main/routes/memberRouter.js#L222-L234" target="_blank">코드 바로보기</a>
+> - <a href="https://velog.io/@qjatjs123123/%EA%B0%9C%EB%B0%9C-%EC%9D%BC%EC%A7%80-%EA%B2%8C%EC%8B%9C%ED%8C%90Bcrypt" target="_blank">articles</a>
 <br />
 
 > ### jwt
